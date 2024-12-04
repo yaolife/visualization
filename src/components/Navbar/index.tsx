@@ -9,6 +9,7 @@ interface IProps {
 
 const Header: FC<IProps> = ({ title }) => {
   const goBack = () => {
+    // history.push('/my');
     history.goBack();
   };
 
