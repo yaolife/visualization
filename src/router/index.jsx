@@ -1,15 +1,10 @@
 const route = [
-  { path: '/', component: '@/pages/home' },
+  { path: '/', component: '@/pages/home', title: '主页' },
 
   {
     path: '/login',
     component: '@/pages/login',
     title: '登录',
-  },
-  {
-    path: '/',
-    component: '@/pages/home',
-    title: '主页',
   },
   {
     path: '/personnel',
@@ -28,6 +23,10 @@ const route = [
   {
     path: '/my',
     component: '@/pages/my',
+  },
+  {
+    path: '/index',
+    component: '@/pages/index',
   },
 ];
 

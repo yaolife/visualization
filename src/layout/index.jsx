@@ -1,6 +1,5 @@
 import Header from '@/components/Navbar';
 import { ConfigProvider } from 'antd-mobile';
-import zhCN from 'antd-mobile/es/locales/zh-CN';
 import { useEffect, useState } from 'react';
 import { KeepAlive } from 'react-activation';
 import { history } from 'umi';
@@ -25,7 +24,7 @@ const Layout = (props) => {
     <>
       <Header title={title} />
 
-      <ConfigProvider locale={zhCN}>
+      <ConfigProvider>
         <KeepAlive
           name={pathname}
           id={`${pathname}${search}`}
