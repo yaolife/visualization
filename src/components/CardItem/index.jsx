@@ -8,7 +8,6 @@ import bgVehicle from '@/images/bg_vehicle.png';
 import styles from './index.less';
 
 const CardItem = (props) => {
-  console.log(props, 'props');
   const { total, key, visitorNumber, fixedPersonnelNumber, title } = props.item;
   const constant = (type) => {
     switch (type) {

@@ -1,16 +1,12 @@
 import Header from '@/components/Navbar';
 import { ConfigProvider } from 'antd-mobile';
 import zhCN from 'antd-mobile/es/locales/zh-CN';
-import type { FC } from 'react';
 import { useEffect, useState } from 'react';
 import { KeepAlive } from 'react-activation';
-import type { IRoute } from 'umi';
 import { history } from 'umi';
 
-interface ILayoutProps {
-  route: IRoute;
-}
-const Layout: FC<ILayoutProps> = (props) => {
+
+const Layout = (props) => {
   const [title, setTitle] = useState('');
   const {
     location: { pathname, search },
