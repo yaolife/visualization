@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavBar, TabBar, Image } from 'antd-mobile';
-import { Route, Switch, useHistory, useLocation, MemoryRouter as Router } from 'react-router-dom';
+import { Route, Switch, useHistory, useLocation, BrowserRouter as Router } from 'react-router-dom';
 import { AppOutline, MessageOutline, UnorderedListOutline, UserOutline } from 'antd-mobile-icons';
 import Personnel from '@/pages/Personnel';
 import Job from '@/pages/job';

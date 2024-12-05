@@ -9,7 +9,8 @@ const Index = () => {
     <div className={styles.home}>
       <div className={styles.image}>
         {' '}
-        <Image src={area} width={2418} height={2309} fit="fill" />
+        {/* <Image src={area} width={2418} height={2309} fit="fill" /> */}
+         <Image src={area} width={'100%'} height={'100%'} fit="fill" />
       </div>
     </div>
   );
