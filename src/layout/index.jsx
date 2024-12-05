@@ -1,9 +1,52 @@
 import Header from '@/components/Navbar';
-import { ConfigProvider } from 'antd-mobile';
+import { ConfigProvider, TabBar } from 'antd-mobile';
+import { useHistory, useLocation, BrowserRouter as Router } from 'react-router-dom';
+import { AppOutline, MessageOutline, UnorderedListOutline, UserOutline } from 'antd-mobile-icons';
 import { useEffect, useState } from 'react';
 import { KeepAlive } from 'react-activation';
 import { history } from 'umi';
+import styles from './index.less';
 
+const Bottom = () => {
+  const history = useHistory();
+  const location = useLocation();
+  const { pathname } = location;
+
+  const setRouteActive = (value) => {
+    history.push(value);
+  };
+
+  const tabs = [
+    {
+      key: '/index',
+      title: '首页',
+      icon: <AppOutline />,
+    },
+    {
+      key: '/personnel',
+      title: '人员车辆',
+      icon: <UnorderedListOutline />,
+    },
+    {
+      key: '/job',
+      title: '作业票',
+      icon: <MessageOutline />,
+    },
+    {
+      key: '/my',
+      title: '我的',
+      icon: <UserOutline />,
+    },
+  ];
+
+  return (
+    <TabBar activeKey={pathname} onChange={(value) => setRouteActive(value)}>
+      {tabs.map((item) => (
+        <TabBar.Item key={item.key} icon={item.icon} title={item.title} />
+      ))}
+    </TabBar>
+  );
+};
 
 const Layout = (props) => {
   const [title, setTitle] = useState('');
@@ -22,8 +65,7 @@ const Layout = (props) => {
   }, [children]);
   return (
     <>
-      <Header title={title} />
-
+      {/* <Header title={title} /> */}
       <ConfigProvider>
         <KeepAlive
           name={pathname}
@@ -34,6 +76,9 @@ const Layout = (props) => {
           {children}
         </KeepAlive>
       </ConfigProvider>
+      <div className={styles.bottom}>
+        <Bottom />
+      </div>
     </>
   );
 };
