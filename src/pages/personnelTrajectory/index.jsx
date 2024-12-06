@@ -1,12 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react';
-import Layout from '@/layout';
 import { Image } from 'antd-mobile';
 import './index.less';
 import area from '@/images/area.png';
 import point from '@/images/point.png';
-import pointIcon from '@/images/pointIcon.png';
 
-const Index = () => {
+const PersonnelTrajectory = () => {
   const [imagePosition, setImagePosition] = useState([
     { latitude: 21.719247, longitude: 112.248985 }, // 图片位置 左上 
     { latitude: 21.719246, longitude: 112.272878 }, // 图片位置 右上 
@@ -104,20 +102,8 @@ const Index = () => {
       >
         <Image src={point} width={18} height={18} />
       </div>
-      <div
-        style={{
-           position: 'fixed',
-           right:'20px',
-           bottom:'105px',
-        }}
-        onClick={handleClick}
-      >
-        {' '}
-        <Image src={pointIcon} width={36} height={36} />
-      </div>
-      <Layout />
     </div>
   );
 };
 
-export default Index;
+export default PersonnelTrajectory;

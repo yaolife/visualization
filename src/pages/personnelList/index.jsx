@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { history } from 'umi';
 import { Button, Image, InfiniteScroll, List, DotLoading, SearchBar } from 'antd-mobile';
 import Header from '@/components/Navbar';
 import styles from './index.less';
@@ -23,7 +24,9 @@ const PersonnelList = () => {
   useEffect(() => {
     doSearch();
   }, []);
-
+  const goPersonnelTrajectory=()=>{
+    history.push('/personnelTrajectory')
+  }
   return (
     <>
       <div className={styles.header}>
@@ -43,7 +46,7 @@ const PersonnelList = () => {
         <>
           <List>
             {data.map((item, index) => (
-              <div key={index} className={styles.singleItem}>
+              <div key={item?.id} className={styles.singleItem} onClick={goPersonnelTrajectory}>
                 {' '}
                 <div className={styles.singleItemLeft}>
                   <Image src={position} width={16} height={16} fit="fill" />

@@ -26,6 +26,12 @@ const route = [
     title: '人员列表'
   },
   {
+    path: '/personnelTrajectory',
+    exact: true,
+    component: '@/pages/personnelTrajectory',//人员轨迹
+    title: ''
+  },
+  {
     path: '/electronicFenceList',
     exact: true,
     component: '@/pages/electronicFenceList',
