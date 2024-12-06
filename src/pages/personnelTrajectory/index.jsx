@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Image } from 'antd-mobile';
+import { Image, Button, Card } from 'antd-mobile';
 import Back from '@/components/Back';
 import area from '@/images/area.png';
 import location from '@/images/location.png';
-import './index.less';
+import portrait from '@/images/portrait.png';
+import styles from './index.less';
 
 const PersonnelTrajectory = () => {
   const [imagePosition, setImagePosition] = useState([
@@ -107,6 +108,41 @@ const PersonnelTrajectory = () => {
           }}
         >
           <Image src={location} width={33} height={44} />
+        </div>
+      </div>
+      <div className={styles.employeeInformation}>
+        <div className={styles.informationTop}>
+          <div>
+            <Image src={portrait} width={40} height={40} />
+          </div>
+          <span>张三</span>
+          <label>P2525214</label>
+          <div className={styles.status}>正常</div>
+        </div>
+        <div className={styles.informationMiddle}>
+          <div>
+            <label>作业票号</label>
+            <span>P2525214</span>
+          </div>
+          <div>
+            <label>所属部门</label>
+            <span>研发一组</span>
+          </div>
+        </div>
+        <div className={styles.informationBottom}>
+          <div className={styles.informationBottomLeft}>
+            <div>
+              <label>联系电话</label>
+              <span>1455485423</span>
+            </div>
+            <div>
+              <label>工作时长</label>
+              <span>04：36：15</span>
+            </div>
+          </div>
+          <div className={styles.informationBottomRight}>
+            <Button> 查看历史轨迹</Button>
+          </div>
         </div>
       </div>
     </>

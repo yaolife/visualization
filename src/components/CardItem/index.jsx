@@ -1,5 +1,4 @@
 import React from 'react';
-import { Button, Card } from 'antd-mobile';
 import bgFence from '@/images/bg_fence.png';
 import bgPersonal from '@/images/bg_personal.png';
 import bgRegional from '@/images/bg_regional.png';
