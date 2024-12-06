@@ -5,7 +5,7 @@ import { AppOutline, MessageOutline, UnorderedListOutline, UserOutline } from 'a
 import { useEffect, useState } from 'react';
 import { KeepAlive } from 'react-activation';
 import { history } from 'umi';
-import styles from './index.less';
+import  './index.less';
 
 const Bottom = () => {
   const history = useHistory();
@@ -76,7 +76,7 @@ const Layout = (props) => {
           {children}
         </KeepAlive>
       </ConfigProvider>
-      <div className={styles.bottom}>
+      <div className='bottom'>
         <Bottom />
       </div>
     </>

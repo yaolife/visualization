@@ -35,11 +35,11 @@ const CardItem = (props) => {
       <div className={styles.cardBottom}>
         <div className={styles.fixedPersonnel}>
           <label>{key == 'vehicle' ? '固定车' : '固定人员'}</label>
-          <span>{fixedPersonnelNumber}</span>
+          <span>{fixedPersonnelNumber || ''}</span>
         </div>
         <div className={styles.visitor}>
           <label>访客</label>
-          <span>{visitorNumber}</span>
+          <span>{visitorNumber || ''}</span>
         </div>
       </div>
     </div>
