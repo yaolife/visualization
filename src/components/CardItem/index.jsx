@@ -7,7 +7,7 @@ import bgVehicle from '@/images/bg_vehicle.png';
 import styles from './index.less';
 
 const CardItem = (props) => {
-  const { total, key, visitorNumber, fixedPersonnelNumber, title } = props.item;
+  const { total, key, visitorNumber, fixedPersonnelNumber, title, subTitle } = props.item;
   const constant = (type) => {
     switch (type) {
       case 'staff':
@@ -32,16 +32,18 @@ const CardItem = (props) => {
           <span className={styles.total}>{total}</span>
         </div>{' '}
       </div>
-      <div className={styles.cardBottom}>
-        <div className={styles.fixedPersonnel}>
-          <label>{key == 'vehicle' ? '固定车' : '固定人员'}</label>
-          <span>{fixedPersonnelNumber || ''}</span>
+      {visitorNumber && (
+        <div className={styles.cardBottom}>
+          <div className={styles.fixedPersonnel}>
+            <label>{subTitle}</label>
+            <span>{fixedPersonnelNumber || ''}</span>
+          </div>
+          <div className={styles.visitor}>
+            <label>{key == 'fence' ? '' : '访客'}</label>
+            <span>{visitorNumber || ''}</span>
+          </div>
         </div>
-        <div className={styles.visitor}>
-          <label>访客</label>
-          <span>{visitorNumber || ''}</span>
-        </div>
-      </div>
+      )}
     </div>
   );
 };
