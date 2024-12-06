@@ -100,7 +100,7 @@ const Index = () => {
           transform: 'translate(-50%, -50%)',
         }}
       >
-        <Image src={point} width={10} height={10} />
+        <Image src={point} width={18} height={18} />
       </div>
       <Layout />
     </div>
