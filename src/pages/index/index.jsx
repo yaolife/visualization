@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Layout from '@/layout';
 import { Image } from 'antd-mobile';
 import './index.less';
@@ -14,6 +14,8 @@ const Index = () => {
   ]);
 
   const [pointPosition, setPointPosition] = useState({ x: 0, y: 0 });
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const areaRef = useRef(null);
 
   useEffect(() => {
     // 人员坐标点
@@ -48,10 +50,47 @@ const Index = () => {
     return { x: pixelX, y: pixelY };
   };
 
+  const handleDragStart = (e) => {
+    e.dataTransfer.setDragImage(new Image(), 0, 0); // 阻止默认拖动效果
+    const rect = areaRef.current.getBoundingClientRect();
+    setDragOffset({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    });
+  };
+
+  const handleDragEnd = (e) => {
+    const rect = areaRef.current.getBoundingClientRect();
+    const newLeft = e.clientX - dragOffset.x;
+    const newTop = e.clientY - dragOffset.y;
+    areaRef.current.style.left = `${newLeft}px`;
+    areaRef.current.style.top = `${newTop}px`;
+
+    // 重新计算 point 的位置
+    const point = {
+      "longitude": 112.264291,
+      "latitude": 21.712255,
+    };
+    const newPosition = calculatePointPosition(point, imagePosition);
+    setPointPosition({
+      x: newLeft + newPosition.x,
+      y: newTop + newPosition.y,
+    });
+  };
+
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-      <div className="firstPage">
-        <Image src={area} width={2418} height={2309} draggable />
+      <div className="firstPage" ref={areaRef}
+        draggable
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+        style={{
+          position: 'absolute',
+          left: '0px',
+          top: '0px',
+        }}
+      >
+        <Image src={area} width={2418} height={2309} />
       </div>
       <div
         style={{
@@ -61,7 +100,7 @@ const Index = () => {
           transform: 'translate(-50%, -50%)',
         }}
       >
-        <Image src={point} width={10} height={10} draggable />
+        <Image src={point} width={10} height={10} />
       </div>
       <Layout />
     </div>
