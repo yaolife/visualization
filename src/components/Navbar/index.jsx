@@ -1,15 +1,11 @@
 import { LeftOutline } from 'antd-mobile-icons';
-import type { FC } from 'react';
 import { history } from 'umi';
 import styles from './index.less';
 
-interface IProps {
-  title?: string;
-}
 
-const Header: FC<IProps> = ({ title }) => {
+
+const Header = ({ title }) => {
   const goBack = () => {
-    // history.push('/my');
     history.goBack();
   };
 

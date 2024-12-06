@@ -50,7 +50,7 @@ const PersonnelList = () => {
                 {' '}
                 <div className={styles.singleItemLeft}>
                   <Image src={position} width={16} height={16} fit="fill" />
-                  <List.Item>{item?.number}</List.Item>
+                  <List.Item key={item?.id}>{item?.number}</List.Item>
                 </div>
                 <span>{item.name}</span>
               </div>

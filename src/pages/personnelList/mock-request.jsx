@@ -7,7 +7,7 @@ export async function mockRequest() {
     return []
   }
   await sleep(2000)
-  count++
+  count
   return [
     {number:'P1532524',name:'李静',id:'1'},
     {number:'P1772524',name:'诸葛亮',id:'2'},
