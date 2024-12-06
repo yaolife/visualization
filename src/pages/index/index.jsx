@@ -17,8 +17,8 @@ const Index = () => {
   useEffect(() => {
      // 人员坐标点
   const point={
-    "longitude": 112.26540850000001,
-		"latitude": 21.711175539999999,
+    "longitude": 112.264291,
+		"latitude": 21.712255,
   }
     calculatePointPosition(point, imagePosition);
   }, [imagePosition]);
