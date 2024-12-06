@@ -27,7 +27,7 @@ const Bottom = () => {
 
   const tabs = [
     {
-      key: '/index',
+      key: '/',
       title: '首页',
       icon: (active) =>
         active ? <Image src={activeIndex} width={32} height={32} /> : <Image src={index} width={32} height={32} />,

@@ -1,6 +1,7 @@
 const route = [
   { path: '/', component: '@/pages/index', title: '' },
 
+
   {
     path: '/login',
     component: '@/pages/login',
