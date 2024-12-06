@@ -4,6 +4,8 @@ import { Image } from 'antd-mobile';
 import './index.less';
 import area from '@/images/area.png';
 import point from '@/images/point.png';
+import pointIcon from '@/images/pointIcon.png';
+
 
 const Index = () => {
   const [imagePosition, setImagePosition] = useState([
@@ -77,7 +79,8 @@ const Index = () => {
       y: newTop + newPosition.y,
     });
   };
-
+  
+  const handleClick = () =>{}
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
       <div className="firstPage" ref={areaRef}
@@ -101,6 +104,17 @@ const Index = () => {
         }}
       >
         <Image src={point} width={18} height={18} />
+      </div>
+      <div
+        style={{
+           position: 'fixed',
+           right:'20px',
+           bottom:'105px',
+        }}
+        onClick={handleClick}
+      >
+        {' '}
+        <Image src={pointIcon} width={36} height={36} />
       </div>
       <Layout />
     </div>
