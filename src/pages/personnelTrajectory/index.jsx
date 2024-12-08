@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Image, Button, Card } from 'antd-mobile';
+import { Image, Button } from 'antd-mobile';
+import { history } from 'umi';
 import Back from '@/components/Back';
 import area from '@/images/area.png';
 import location from '@/images/location.png';
@@ -78,6 +79,9 @@ const PersonnelTrajectory = () => {
       y: newTop + newPosition.y,
     });
   };
+  const clickHistory = (item) => {
+     history.push('/history');
+ };
 
   const handleClick = () => {};
   return (
@@ -140,7 +144,7 @@ const PersonnelTrajectory = () => {
               <span>04：36：15</span>
             </div>
           </div>
-          <div className={styles.informationBottomRight}>
+          <div className={styles.informationBottomRight} onClick={clickHistory}>
             <Button> 查看历史轨迹</Button>
           </div>
         </div>

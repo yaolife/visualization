@@ -32,6 +32,12 @@ const route = [
     title: ''
   },
   {
+    path: '/history',
+    exact: true,
+    component: '@/pages/history',//人员历史轨迹
+    title: ''
+  },
+  {
     path: '/electronicFenceList',
     exact: true,
     component: '@/pages/electronicFenceList',
