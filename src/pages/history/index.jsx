@@ -1,16 +1,20 @@
 import React, { useEffect, useState, useRef } from 'react';
-import Layout from '@/layout';
+import { LeftOutline } from 'antd-mobile-icons';
+import { history } from 'umi';
 import { Image } from 'antd-mobile';
+import UsModal from '@/components/UsModal';
+import { mockRequest } from './mock-request';
 import styles from './index.less';
 import area from '@/images/area.png';
 import point from '@/images/point.png';
 
 const History = () => {
+  const [visible, setVisible] = useState(false);
   const [imagePosition, setImagePosition] = useState([
-    { latitude: 21.719247, longitude: 112.248985 }, // 图片位置 左上 
-    { latitude: 21.719246, longitude: 112.272878 }, // 图片位置 右上 
+    { latitude: 21.719247, longitude: 112.248985 }, // 图片位置 左上
+    { latitude: 21.719246, longitude: 112.272878 }, // 图片位置 右上
     { latitude: 21.698033, longitude: 112.248986 }, // 图片位置 左下
-    { latitude: 21.698032, longitude: 112.272816 }, // 图片位置 右下 
+    { latitude: 21.698032, longitude: 112.272816 }, // 图片位置 右下
   ]);
 
   const [pointPosition, setPointPosition] = useState({ x: 0, y: 0 });
@@ -20,8 +24,8 @@ const History = () => {
   useEffect(() => {
     // 人员坐标点
     const point = {
-      "longitude": 112.264291,
-      "latitude": 21.712255,
+      longitude: 112.264291,
+      latitude: 21.712255,
     };
 
     const position = calculatePointPosition(point, imagePosition);
@@ -30,10 +34,10 @@ const History = () => {
 
   const calculatePointPosition = (point, positions) => {
     // 找到最小和最大纬度和经度
-    const minLatitude = Math.min(...positions.map(pos => pos.latitude));
-    const maxLatitude = Math.max(...positions.map(pos => pos.latitude));
-    const minLongitude = Math.min(...positions.map(pos => pos.longitude));
-    const maxLongitude = Math.max(...positions.map(pos => pos.longitude));
+    const minLatitude = Math.min(...positions.map((pos) => pos.latitude));
+    const maxLatitude = Math.max(...positions.map((pos) => pos.latitude));
+    const minLongitude = Math.min(...positions.map((pos) => pos.longitude));
+    const maxLongitude = Math.max(...positions.map((pos) => pos.longitude));
 
     // 计算相对位置
     const relativeLatitude = (point.latitude - minLatitude) / (maxLatitude - minLatitude);
@@ -68,8 +72,8 @@ const History = () => {
 
     // 重新计算 point 的位置
     const point = {
-      "longitude": 112.264291,
-      "latitude": 21.712255,
+      longitude: 112.264291,
+      latitude: 21.712255,
     };
     const newPosition = calculatePointPosition(point, imagePosition);
     setPointPosition({
@@ -77,37 +81,63 @@ const History = () => {
       y: newTop + newPosition.y,
     });
   };
-  
-  const handleClick = () =>{}
+  const goBack = () => {
+    setVisible(true);
+  };
+  const handleConfirm = () => {
+    history.goBack();
+  };
+  const handleClick=()=>{
+    history.goBack();
+  }
+
   return (
     <>
-    <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-      <div className="firstPage" ref={areaRef}
-        draggable
-        onDragStart={handleDragStart}
-        onDragEnd={handleDragEnd}
-        style={{
-          position: 'absolute',
-          left: '0px',
-          top: '0px',
-        }}
-      >
-        <Image src={area} width={2418} height={2309} />
+      <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+        <div
+          className="firstPage"
+          ref={areaRef}
+          draggable
+          onDragStart={handleDragStart}
+          onDragEnd={handleDragEnd}
+          style={{
+            position: 'absolute',
+            left: '0px',
+            top: '0px',
+          }}
+        >
+          <Image src={area} width={2418} height={2309} />
+        </div>
+        <div
+          style={{
+            position: 'absolute',
+            left: `${pointPosition.x}px`,
+            top: `${pointPosition.y}px`,
+            transform: 'translate(-50%, -50%)',
+          }}
+        >
+          <Image src={point} width={18} height={18} />
+        </div>
       </div>
-      <div
-        style={{
-          position: 'absolute',
-          left: `${pointPosition.x}px`,
-          top: `${pointPosition.y}px`,
-          transform: 'translate(-50%, -50%)',
-        }}
-      >
-        <Image src={point} width={18} height={18} />
+      <div className={styles.historyBottom}>
+        <div className={styles.historyBottomNav}>
+          <div className={styles.historyBottomNavLeft} onClick={goBack}>
+            <LeftOutline fontSize={24} />
+            <span>退出</span>
+          </div>
+          <div className={styles.historyBottomNavRight}>
+            {' '}
+            <label>历史轨迹</label>
+          </div>
+        </div>
       </div>
-    </div>
-    <div className={styles.historyBottom}>
-     历史轨迹
-    </div>
+      <UsModal
+        visible={visible}
+        content={'确定退出?'}
+        handleClick={() => handleClick()}
+        showCloseButtonFlag
+        handleConfirm={handleConfirm}
+      />
     </>
   );
 };

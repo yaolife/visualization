@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Modal, Space, Toast } from 'antd-mobile';
+import { Button, Modal } from 'antd-mobile';
 import './index.less';
 const UsModal = (props) => {
-  const { visible, handleClick, handleConfirm } = props;
+  const { visible, content,handleClick, handleConfirm,showCloseButtonFlag=false } = props;
   const onClose = () => {
-    handleClick(false);
+    handleClick();
   };
   const onConfirm = () => {
     handleConfirm();
@@ -12,9 +12,10 @@ const UsModal = (props) => {
   useEffect(() => {
     if (visible) {
       Modal.alert({
-        content: '领取成功!',
+        content: content,
         visible: visible,
         bodyClassName: 'ticketContent',
+        showCloseButton: showCloseButtonFlag,
         bodyStyle: {
           height: 240,
         },

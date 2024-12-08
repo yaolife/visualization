@@ -19,16 +19,15 @@ const Ticket = () => {
     { content: '2024-06-10  23:59', title: '结束时间', id: '32' },
   ]);
 
-
-  const receiveCard=()=>{
-    setVisible(true)
-  }
-  const handleClickValue=(value)=>{
-    setVisible(value)
-  }
-  const handleConfirm=(value)=>{
+  const receiveCard = () => {
+    setVisible(true);
+  };
+  const handleClickValue = (value) => {
+    setVisible(value);
+  };
+  const handleConfirm = (value) => {
     history.push('/collectionTickets');
-  }
+  };
   return (
     <div className={styles.ticket}>
       <Header />
@@ -65,7 +64,12 @@ const Ticket = () => {
           </Button>
         </div>
       </div>
-      <UsModal visible={visible} handleClick={()=>handleClickValue(value)} handleConfirm={handleConfirm}/>
+      <UsModal
+        visible={visible}
+        content={'领取成功'}
+        handleClick={() => handleClickValue(value)}
+        handleConfirm={handleConfirm}
+      />
     </div>
   );
 };
