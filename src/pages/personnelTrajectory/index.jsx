@@ -111,7 +111,7 @@ const PersonnelTrajectory = () => {
             transform: 'translate(-50%, -50%)',
           }}
         >
-          <Image src={location} width={33} height={44} />
+          <Image src={location} width={33} height={54} />
         </div>
       </div>
       <div className={styles.employeeInformation}>

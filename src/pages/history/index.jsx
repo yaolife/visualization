@@ -59,7 +59,7 @@ const History = () => {
         const locationElement = document.querySelector('.location-image');
         if (locationElement) {
           locationElement.style.left = `${lastPoint.x + areaRef.current.offsetLeft - 16}px`;
-          locationElement.style.top = `${lastPoint.y + areaRef.current.offsetTop - 22}px`;
+          locationElement.style.top = `${lastPoint.y + areaRef.current.offsetTop - 27}px`;
         }
       }
     };
@@ -141,7 +141,7 @@ const History = () => {
           >
             {realName}
           </span>
-          <Image src={location} width={33} height={44} />
+          <Image src={location} width={33} height={54} />
         </div>
       </div>
       <div className={styles.historyBottom}>
