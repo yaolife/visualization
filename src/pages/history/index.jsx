@@ -51,7 +51,6 @@ const History = () => {
           return `${acc} L ${point.x} ${point.y}`;
         }
       }, '');
-      console.log(pathData, 'pathData');
       setPathData(pathData);
 
       // 更新location图片的位置
