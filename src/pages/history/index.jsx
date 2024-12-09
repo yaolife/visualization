@@ -39,7 +39,7 @@ const History = () => {
   useEffect(() => {
     const fetchData = async () => {
       const data = await mockRequest();
-      const points = data.map(point => calculatePointPosition(point, imagePosition));
+      const points = data.map((point) => calculatePointPosition(point, imagePosition));
       const pathData = points.reduce((acc, point, index) => {
         if (index === 0) {
           return `M ${point.x} ${point.y}`;
@@ -48,6 +48,16 @@ const History = () => {
         }
       }, '');
       setPathData(pathData);
+
+      // 更新location图片的位置
+      if (points.length > 0) {
+        const lastPoint = points[points.length - 1];
+        const locationElement = document.querySelector('.location-image');
+        if (locationElement) {
+          locationElement.style.left = `${lastPoint.x + areaRef.current.offsetLeft}px`;
+          locationElement.style.top = `${lastPoint.y + areaRef.current.offsetTop}px`;
+        }
+      }
     };
 
     fetchData();
@@ -69,7 +79,18 @@ const History = () => {
     areaRef.current.style.left = `${newLeft}px`;
     areaRef.current.style.top = `${newTop}px`;
 
-    setPathData(prevPathData => prevPathData.replace(/M (\d+) (\d+)/, `M ${newLeft} ${newTop}`));
+    // 计算新的imagePosition
+    const deltaX = newLeft - parseFloat(areaRef.current.style.left.replace('px', ''));
+    const deltaY = newTop - parseFloat(areaRef.current.style.top.replace('px', ''));
+
+    const newImagePosition = imagePosition.map((point) => ({
+      latitude: point.latitude,
+      longitude: point.longitude,
+      x: point.x + deltaX,
+      y: point.y + deltaY,
+    }));
+
+    setImagePosition(newImagePosition);
   };
 
   const goBack = () => {
@@ -108,8 +129,9 @@ const History = () => {
           style={{
             position: 'absolute',
           }}
+          className="location-image"
         >
-          <Image src={location} width={33} height={44} />
+          <Image src={location} width={33} height={44}  />
         </div>
       </div>
       <div className={styles.historyBottom}>
