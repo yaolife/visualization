@@ -1,18 +1,17 @@
 import React, { useState } from 'react';
 import { Image, Input, Button } from 'antd-mobile';
-import Header from '@/components/Navbar';
 import { history } from 'umi';
 import TicketItem from '@/components/TicketItem';
 import UsModal from '@/components/UsModal';
 import Layout from '@/layout';
 import styles from './index.less';
 
-const Ticket = () => {
+const MyTicket = () => {
   const [value, setValue] = useState('');
   const [visible, setVisible] = useState(false);
   const [ticketList, setTicketList] = useState([
     { content: 'FJ4315665', title: '作业票号', id: '67' },
-    { content: '设备阀门检修长字段显示长字段显示长字段显示', title: '作业内容', id: '6' },
+    { content: '设备阀门检修长字段显示长字段显示长字段显示', title: '作业内容', id: '36' },
     { content: 'SJ2132H,冷却阀门', title: '作业设备', id: '64' },
     { content: '5mx  ， L3   ， R09', title: '作业位置', id: '56' },
     { content: '2024-06-09  23:59', title: '开始时间', id: '78' },
@@ -23,11 +22,10 @@ const Ticket = () => {
     setVisible(true);
   };
   const handleConfirm = (value) => {
-    history.push('/myTickets');
+    history.push('/');
   };
   return (
-    <div className={styles.ticket}>
-      <Header />
+    <div className={styles.myTicket}>
       <div className={styles.ticketContent}>
         <div className={styles.ticketTop}>
           {ticketList.map((item, index) => (
@@ -71,4 +69,4 @@ const Ticket = () => {
   );
 };
 
-export default Ticket;
+export default MyTicket;

@@ -62,6 +62,12 @@ const route = [
     title: '作业票领取'
   },
   {
+    path: '/myTickets',
+    exact: true,
+    component: '@/pages/myTickets',
+    title: ''
+  },
+  {
     path: '/personnel/:id',
     exact: true,
     component: '@/pages/personnel',
