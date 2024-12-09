@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Image, InfiniteScroll, List, DotLoading, SearchBar } from 'antd-mobile';
 import Header from '@/components/Navbar';
+import { history } from 'umi';
 import styles from './index.less';
 import { mockRequest } from './mock-request';
 import position from '@/images/position.png';
@@ -23,7 +24,9 @@ const VehicleList = () => {
   useEffect(() => {
     doSearch();
   }, []);
-
+  const goVehiclePositioning=()=>{
+    history.push('/vehiclePositioning')
+  }
   return (
     <>
       <div className={styles.header}>
@@ -43,7 +46,7 @@ const VehicleList = () => {
         <>
           <List>
             {data.map((item, index) => (
-              <div key={index} className={styles.singleItem}>
+              <div key={index} className={styles.singleItem} onClick={goVehiclePositioning}>
                 {' '}
                 <div className={styles.singleItemLeft}>
                   <Image src={position} width={16} height={16} fit="fill" />

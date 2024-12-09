@@ -20,6 +20,18 @@ const route = [
     title: '车辆列表'
   },
   {
+    path: '/vehiclePositioning',
+    exact: true,
+    component: '@/pages/vehiclePositioning',//车辆定位点
+    title: ''
+  },
+  {
+    path: '/vehicleHistory',
+    exact: true,
+    component: '@/pages/vehicleHistory',//车辆历史轨迹
+    title: ''
+  },
+  {
     path: '/personnelList',
     exact: true,
     component: '@/pages/personnelList',
