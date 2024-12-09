@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { Image, Space, Button } from 'antd-mobile';
 import { history, useLocation } from 'umi';
 import TicketItem from '@/components/TicketItem';
-import UsModal from '@/components/UsModal';
 import Layout from '@/layout';
 import job from '@/images/job.png';
 import navigation from '@/images/navigation.png';
@@ -28,7 +27,7 @@ const MyTicket = () => {
   ]);
 
   const goNavigation = () => {
-    
+    history.push('/ticketNavigation')
   };
 
 

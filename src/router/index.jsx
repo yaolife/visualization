@@ -68,6 +68,12 @@ const route = [
     title: ''
   },
   {
+    path: '/ticketNavigation',
+    exact: true,
+    component: '@/pages/ticketNavigation',
+    title: ''
+  },
+  {
     path: '/personnel/:id',
     exact: true,
     component: '@/pages/personnel',
