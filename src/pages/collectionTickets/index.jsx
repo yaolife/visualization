@@ -25,7 +25,7 @@ const Ticket = () => {
   };
 
   const handleConfirm = (value) => {
-    history.push({ pathname: '/myTickets', state: { activeTab: 2 } }); // 确保传递 activeTab 参数
+    history.push({ pathname: '/myTickets', state: { activeTab: '/job' } }); // 确保传递 activeTab 参数
   };
 
   return (
