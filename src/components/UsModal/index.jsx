@@ -1,14 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { Button, Modal } from 'antd-mobile';
 import './index.less';
+
 const UsModal = (props) => {
-  const { visible, content,handleClick, handleConfirm,showCloseButtonFlag=false } = props;
-  const onClose = () => {
-    handleClick();
-  };
-  const onConfirm = () => {
+  const { visible, content, handleClose, handleConfirm, showCloseButtonFlag = false } = props;
+
+  const onClose = useCallback(() => {
+    if (handleClose) {
+      handleClose();
+    }
+  }, [handleClose]);
+  const onConfirm = useCallback(() => {
     handleConfirm();
-  };
+  }, [handleConfirm]);
+
   useEffect(() => {
     if (visible) {
       Modal.alert({
@@ -22,13 +27,17 @@ const UsModal = (props) => {
         confirmText: '确定',
         onConfirm: () => {
           onConfirm();
+          // 返回 false 阻止模态框自动关闭
+          return false;
         },
         onClose: () => {
           onClose();
         },
       });
     }
-  }, [visible]);
+  }, [visible, content, handleClose, handleConfirm, onConfirm, onClose, showCloseButtonFlag]);
+
   return <></>;
 };
+
 export default UsModal;

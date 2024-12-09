@@ -98,11 +98,12 @@ const History = () => {
   };
 
   const goBack = () => {
-    setVisible(true);
+    setVisible(true); // 显示确认对话框
   };
 
-  const handleConfirm = () => {
-    history.goBack();
+
+  const handleClose = () => {
+    setVisible(false); // 关闭确认对话框
   };
 
   const handleClick = () => {
@@ -158,9 +159,9 @@ const History = () => {
       <UsModal
         visible={visible}
         content={'确定退出?'}
-        handleClick={() => handleClick()}
+        handleClose={handleClose}
         showCloseButtonFlag
-        handleConfirm={handleConfirm}
+        handleConfirm={handleClick}
       />
     </>
   );

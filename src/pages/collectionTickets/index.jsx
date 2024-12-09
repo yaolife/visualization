@@ -22,11 +22,8 @@ const Ticket = () => {
   const receiveCard = () => {
     setVisible(true);
   };
-  const handleClickValue = (value) => {
-    setVisible(value);
-  };
   const handleConfirm = (value) => {
-    history.push('/collectionTickets');
+    history.push('/');
   };
   return (
     <div className={styles.ticket}>
@@ -66,8 +63,8 @@ const Ticket = () => {
       </div>
       <UsModal
         visible={visible}
-        content={'领取成功'}
-        handleClick={() => handleClickValue(value)}
+        content={'领取成功!'}
+        showCloseButtonFlag={false}
         handleConfirm={handleConfirm}
       />
     </div>
