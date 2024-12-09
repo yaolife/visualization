@@ -1,7 +1,7 @@
+// src/layout/index.jsx
 import Header from '@/components/Navbar';
-import { ConfigProvider, TabBar,Image } from 'antd-mobile';
-import { useHistory, useLocation, BrowserRouter as Router } from 'react-router-dom';
-import { AppOutline, MessageOutline, UnorderedListOutline, UserOutline } from 'antd-mobile-icons';
+import { ConfigProvider, TabBar, Image } from 'antd-mobile';
+import { useHistory, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { KeepAlive } from 'react-activation';
 import { history } from 'umi';
@@ -13,16 +13,14 @@ import ticket from '@/images/ticket.png';
 import activeTicket from '@/images/activeTicket.png';
 import my from '@/images/my.png';
 import activeMy from '@/images/activeMy.png';
-import  './index.less';
-import Index from '@/pages/personnel';
+import './index.less';
 
-const Bottom = () => {
+const Bottom = ({ activeKey, setActiveTab }) => {
   const history = useHistory();
-  const location = useLocation();
-  const { pathname } = location;
 
   const setRouteActive = (value) => {
     history.push(value);
+    setActiveTab(value);
   };
 
   const tabs = [
@@ -53,7 +51,7 @@ const Bottom = () => {
   ];
 
   return (
-    <TabBar activeKey={pathname} onChange={(value) => setRouteActive(value)}>
+    <TabBar activeKey={activeKey} onChange={(value) => setRouteActive(value)}>
       {tabs.map((item) => (
         <TabBar.Item key={item.key} icon={item.icon} title={item.title} />
       ))}
@@ -63,11 +61,11 @@ const Bottom = () => {
 
 const Layout = (props) => {
   const [title, setTitle] = useState('');
-  const {
-    location: { pathname, search },
-  } = history;
+  const location = useLocation();
+  const { pathname, state } = location; // 获取 state 参数
   const { children, route } = props;
   const isKeepAlive = route?.routes?.find((item) => item?.path === pathname)?.keepAlive || false;
+  const [activeTab, setActiveTab] = useState(state?.activeTab || pathname); // 使用 state 中的 activeTab 或者 pathname
 
   useEffect(() => {
     if (children) {
@@ -76,13 +74,18 @@ const Layout = (props) => {
       }, 100);
     }
   }, [children]);
+
+  useEffect(() => {
+    setActiveTab(state?.activeTab || pathname); // 更新 activeTab
+  }, [pathname, state]);
+
   return (
     <>
       {/* <Header title={title} /> */}
       <ConfigProvider>
         <KeepAlive
           name={pathname}
-          id={`${pathname}${search}`}
+          id={`${pathname}`}
           when={isKeepAlive}
           saveScrollPosition="screen"
         >
@@ -90,7 +93,7 @@ const Layout = (props) => {
         </KeepAlive>
       </ConfigProvider>
       <div className='bottom'>
-        <Bottom />
+        <Bottom activeKey={activeTab} setActiveTab={setActiveTab} />
       </div>
     </>
   );

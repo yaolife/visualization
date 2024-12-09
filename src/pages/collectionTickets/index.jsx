@@ -1,3 +1,4 @@
+// src/pages/collectionTickets/index.jsx
 import React, { useState } from 'react';
 import { Image, Input, Button } from 'antd-mobile';
 import Header from '@/components/Navbar';
@@ -22,9 +23,11 @@ const Ticket = () => {
   const receiveCard = () => {
     setVisible(true);
   };
+
   const handleConfirm = (value) => {
-    history.push('/myTickets');
+    history.push({ pathname: '/myTickets', state: { activeTab: 2 } }); // 确保传递 activeTab 参数
   };
+
   return (
     <div className={styles.ticket}>
       <Header />
@@ -37,12 +40,11 @@ const Ticket = () => {
           ))}
         </div>
         <div className={styles.ticketNumber}>
-          {' '}
           <Input
             className={styles.customInput}
             placeholder="输入作业票号查询"
             value={value}
-            placeholderTextColor="grey" // 设置占位符的颜色，可以根据需要修改颜色值
+            placeholderTextColor="grey"
             placeholderTextStyle={{ fontSize: 45 }}
             clearable
             onChange={(val) => {
@@ -51,7 +53,6 @@ const Ticket = () => {
           />
         </div>
         <div className={styles.jopButton} onClick={receiveCard}>
-          {' '}
           <Button
             shape="default"
             style={{ backgroundColor: '#004A86' }}
