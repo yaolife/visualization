@@ -10,6 +10,7 @@ import area from '@/images/area.png';
 
 const History = () => {
   const [visible, setVisible] = useState(false);
+  const [realName, setRealName] = useState('');
   const [imagePosition, setImagePosition] = useState([
     { latitude: 21.719247, longitude: 112.248985 }, // 图片位置 左上
     { latitude: 21.719246, longitude: 112.272878 }, // 图片位置 右上
@@ -39,7 +40,10 @@ const History = () => {
   useEffect(() => {
     const fetchData = async () => {
       const data = await mockRequest();
-      const points = data.map((point) => calculatePointPosition(point, imagePosition));
+      if (data?.length > 0) {
+        setRealName(data[0]?.realName);
+      }
+      const points = data?.map((point) => calculatePointPosition(point, imagePosition));
       const pathData = points.reduce((acc, point, index) => {
         if (index === 0) {
           return `M ${point.x} ${point.y}`;
@@ -47,6 +51,7 @@ const History = () => {
           return `${acc} L ${point.x} ${point.y}`;
         }
       }, '');
+      console.log(pathData, 'pathData');
       setPathData(pathData);
 
       // 更新location图片的位置
@@ -54,8 +59,8 @@ const History = () => {
         const lastPoint = points[points.length - 1];
         const locationElement = document.querySelector('.location-image');
         if (locationElement) {
-          locationElement.style.left = `${lastPoint.x + areaRef.current.offsetLeft}px`;
-          locationElement.style.top = `${lastPoint.y + areaRef.current.offsetTop}px`;
+          locationElement.style.left = `${lastPoint.x + areaRef.current.offsetLeft - 16}px`;
+          locationElement.style.top = `${lastPoint.y + areaRef.current.offsetTop - 22}px`;
         }
       }
     };
@@ -128,10 +133,16 @@ const History = () => {
         <div
           style={{
             position: 'absolute',
+            zIndex: 33,
           }}
           className="location-image"
         >
-          <Image src={location} width={33} height={44}  />
+          <span
+             className={styles.locationRealName}
+          >
+            {realName}
+          </span>
+          <Image src={location} width={33} height={44} />
         </div>
       </div>
       <div className={styles.historyBottom}>
