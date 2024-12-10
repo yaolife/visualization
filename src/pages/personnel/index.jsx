@@ -3,38 +3,30 @@ import { useEffect, useState } from 'react';
 import { Button, Card } from 'antd-mobile';
 import { history } from 'umi';
 import Layout from '@/layout';
-import CardItem from '@/components/CardItem';
+import WorkerCardItem from '@/components/WorkerCardItem';
+import VehicleCardItem from '@/components/VehicleCardItem';
 import styles from './index.less';
 
 const Index = () => {
-  let [personnelList, setPersonnelList] = useState([
-    { total: 12, key: 'staff', visitorNumber: 12, fixedPersonnelNumber: 96, title: '人员' ,subTitle:'固定人员'},
-    { total: 35, key: 'vehicle', visitorNumber: 77888, fixedPersonnelNumber: 88, title: '车辆',subTitle:'固定车' },
-    { total: 14, key: 'fence',  title: '电子围栏' },
-    // { total: 25, key: 'alarm', visitorNumber: 8333, fixedPersonnelNumber: 9947, title: '区域报警' },
-  ]);
   const { user } = useModel('user');
-
-  const handleClick = (item) => {
-     if(item?.key=='vehicle'){
-      history.push('/vehicleList');
-     }
-     if(item?.key=='staff'){
-      history.push('/personnelList');
-     }
-     if(item?.key=='fence'){
-      history.push('/electronicFenceList');
-     }
-  };
-
+  const [personnelData, setPersonnelData] = useState({ staffNumber: '4', visitorNumber: '0' });
+  const [vehicleData, setVehicleData] = useState({ interiorVehicles: '3', visitingVehicles: '0',vehicleTypes:[] });
+ 
+  const handleWorkerClick=()=>{
+    history.push('/personnelList');
+  }
+  const handleVehicleClick = () => {
+    history.push('/vehicleList');  
+};
   return (
     <div>
       <div className={styles.home}>
-        {personnelList.map((item, index) => (
-          <span key={item.key} onClick={() => handleClick(item)}>
-            <CardItem key={item.key} item={item} />
+          <span onClick={() => handleWorkerClick()}>
+            <WorkerCardItem personnelData={personnelData}/>
           </span>
-        ))}
+          <span onClick={() => handleVehicleClick()}>
+            <VehicleCardItem vehicleData={vehicleData}/>
+          </span>
       </div>
       <Layout />
     </div>
