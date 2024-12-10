@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import Layout from '@/layout';
 import { Image } from 'antd-mobile';
+import { connectMQTT, subscribeMQTT, publishMQTT, disconnectMQTT } from '@/services/services';
 import './index.less';
 import area from '@/images/area.png';
 import point from '@/images/point.png';
@@ -17,6 +18,27 @@ const Index = () => {
   const [pointPosition, setPointPosition] = useState({ x: 0, y: 0 });
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const areaRef = useRef(null);
+  useEffect(() => {
+    // 连接到 MQTT 代理
+    connectMQTT('ws://10.44.100.132:1883/')
+      .then(() => {
+        // 订阅主题
+        subscribeMQTT('realTimeWorker', (message) => {
+          console.log('Received message:', message);
+        });
+
+        // 发布消息
+        publishMQTT('realTimeWorker', 'Hello MQTT');
+
+        // 清理函数，在组件卸载时断开连接
+        return () => {
+          disconnectMQTT();
+        };
+      })
+      .catch((error) => {
+        console.error('Failed to connect to MQTT broker:', error);
+      });
+  }, []);
 
   useEffect(() => {
     // 人员坐标点
