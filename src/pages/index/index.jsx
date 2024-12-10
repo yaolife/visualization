@@ -20,8 +20,9 @@ const Index = () => {
   const areaRef = useRef(null);
   useEffect(() => {
     // 连接到 MQTT 代理
-    connectMQTT('ws://10.44.100.132:1883/')
+    connectMQTT('wss://broker.emqx.io:8084')
       .then(() => {
+        console.log('88777777')
         // 订阅主题
         subscribeMQTT('realTimeWorker', (message) => {
           console.log('Received message:', message);
