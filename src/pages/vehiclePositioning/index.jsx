@@ -1,13 +1,16 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Image, Button } from 'antd-mobile';
-import { history } from 'umi';
+import { history, useLocation } from 'umi';
 import Back from '@/components/Back';
 import area from '@/images/area.png';
-import location from '@/images/location.png';
+import locationPng from '@/images/location.png';
 import vehicle from '@/images/vehicle.png';
 import styles from './index.less';
 
 const VehiclePositioning = () => {
+  const location = useLocation();
+  const item = location.query;
+
   const [imagePosition, setImagePosition] = useState([
     { latitude: 21.719247, longitude: 112.248985 }, // 图片位置 左上
     { latitude: 21.719246, longitude: 112.272878 }, // 图片位置 右上
@@ -20,15 +23,17 @@ const VehiclePositioning = () => {
   const areaRef = useRef(null);
 
   useEffect(() => {
-    // 车辆坐标点
-    const point = {
-      longitude: 112.264291,
-      latitude: 21.712255,
-    };
+    if (item) {
+      // 使用 item 对象进行其他操作
+      const point = {
+        longitude: item.longitude || 112.264291,
+        latitude: item.latitude || 21.712255,
+      };
 
-    const position = calculatePointPosition(point, imagePosition);
-    setPointPosition(position);
-  }, [imagePosition]);
+      const position = calculatePointPosition(point, imagePosition);
+      setPointPosition(position);
+    }
+  }, [item, imagePosition]);
 
   const calculatePointPosition = (point, positions) => {
     // 找到最小和最大纬度和经度
@@ -70,8 +75,8 @@ const VehiclePositioning = () => {
 
     // 重新计算 point 的位置
     const point = {
-      longitude: 112.264291,
-      latitude: 21.712255,
+      longitude: item.longitude || 112.264291,
+      latitude: item.latitude || 21.712255,
     };
     const newPosition = calculatePointPosition(point, imagePosition);
     setPointPosition({
@@ -79,14 +84,15 @@ const VehiclePositioning = () => {
       y: newTop + newPosition.y,
     });
   };
-  const goVehicleHistory = (item) => {
-     history.push('/vehicleHistory');
- };
+
+  const goVehicleHistory = () => {
+    history.push('/vehicleHistory');
+  };
 
   const handleClick = () => {};
+
   return (
     <>
-      {' '}
       <Back />
       <div style={{ position: 'relative', width: '100%', height: '100%' }}>
         <div
@@ -111,7 +117,7 @@ const VehiclePositioning = () => {
             transform: 'translate(-50%, -50%)',
           }}
         >
-          <Image src={location} width={33} height={54} />
+          <Image src={locationPng} width={33} height={54} />
         </div>
       </div>
       <div className={styles.vehicleInformation}>
@@ -119,31 +125,31 @@ const VehiclePositioning = () => {
           <div>
             <Image src={vehicle} width={36} height={36} />
           </div>
-          <span>粤A-999SS</span>
-          <div className={styles.status}>正常</div>
+          <span>{item?.vehicleNumber || ''}</span>
+          <div className={styles.status}>{item?.status || '正常'}</div>
         </div>
         <div className={styles.informationMiddle}>
           <div>
             <label>车辆类型</label>
-            <span>大巴</span>
+            <span>{item?.vehicleTypeShow || ''}</span>
           </div>
           <div>
             <label>车辆颜色</label>
-            <span>绿色</span>
+            <span>{item?.vehicleColor || ''}</span>
           </div>
         </div>
         <div className={styles.informationBottom}>
           <div className={styles.informationBottomLeft}>
             <div>
               <label>联系电话</label>
-              <span>1455485423</span>
+              <span>{item?.contactNumber || ''}</span>
             </div>
             <div>
               <label>工作时长</label>
-              <span>04：36：15</span>
+              <span>{item?.workDuration || ''}</span>
             </div>
           </div>
-          <div className={styles.informationBottomRight} onClick={goVehicleHistory}>
+          <div className={styles.informationBottomRight} onClick={() => goVehicleHistory(item)}>
             <Button> 查看历史轨迹</Button>
           </div>
         </div>

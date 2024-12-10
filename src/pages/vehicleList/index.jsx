@@ -9,6 +9,7 @@ import position from '@/images/position.png';
 const VehicleList = () => {
   const [data, setVecData] = useState([]);
   const [hasMore, setHasMore] = useState(true);
+
   async function loadMore() {
     const append = await mockRequest();
     setVecData((val) => [...val, ...append]);
@@ -24,9 +25,14 @@ const VehicleList = () => {
   useEffect(() => {
     doSearch();
   }, []);
-  const goVehiclePositioning=()=>{
-    history.push('/vehiclePositioning')
-  }
+
+  const goVehiclePositioning = (item) => {
+    history.push({
+      pathname: '/vehiclePositioning',
+      query: item,
+    });
+  };
+
   return (
     <>
       <div className={styles.header}>
@@ -46,13 +52,12 @@ const VehicleList = () => {
         <>
           <List>
             {data.map((item, index) => (
-              <div key={index} className={styles.singleItem} onClick={goVehiclePositioning}>
-                {' '}
+              <div key={item?.vehicleNumber} className={styles.singleItem} onClick={() => goVehiclePositioning(item)}>
                 <div className={styles.singleItemLeft}>
                   <Image src={position} width={16} height={16} fit="fill" />
-                  <List.Item>{item?.plate}</List.Item>
+                  <List.Item>{item?.vehicleNumber}</List.Item>
                 </div>
-                <span>{item.model}</span>
+                <span>{item?.vehicleTypeShow}</span>
               </div>
             ))}
           </List>
@@ -69,4 +74,5 @@ const VehicleList = () => {
     </>
   );
 };
+
 export default VehicleList;

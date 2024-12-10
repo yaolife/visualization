@@ -1,13 +1,15 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Image, Button } from 'antd-mobile';
-import { history } from 'umi';
+import { history,useLocation } from 'umi';
 import Back from '@/components/Back';
 import area from '@/images/area.png';
-import location from '@/images/location.png';
+import locationPng from '@/images/location.png';
 import portrait from '@/images/portrait.png';
 import styles from './index.less';
 
 const PersonnelTrajectory = () => {
+  const location = useLocation();
+  const item = location.query;
   const [imagePosition, setImagePosition] = useState([
     { latitude: 21.719247, longitude: 112.248985 }, // 图片位置 左上
     { latitude: 21.719246, longitude: 112.272878 }, // 图片位置 右上
@@ -20,15 +22,17 @@ const PersonnelTrajectory = () => {
   const areaRef = useRef(null);
 
   useEffect(() => {
-    // 人员坐标点
-    const point = {
-      longitude: 112.264291,
-      latitude: 21.712255,
-    };
+    if (item) {
+      // 使用 item 对象进行其他操作
+      const point = {
+        longitude: item.longitude || 112.264291,
+        latitude: item.latitude || 21.712255,
+      };
 
-    const position = calculatePointPosition(point, imagePosition);
-    setPointPosition(position);
-  }, [imagePosition]);
+      const position = calculatePointPosition(point, imagePosition);
+      setPointPosition(position);
+    }
+  }, [item, imagePosition]);
 
   const calculatePointPosition = (point, positions) => {
     // 找到最小和最大纬度和经度
@@ -70,8 +74,8 @@ const PersonnelTrajectory = () => {
 
     // 重新计算 point 的位置
     const point = {
-      longitude: 112.264291,
-      latitude: 21.712255,
+      longitude: item.longitude || 112.264291,
+      latitude: item.latitude || 21.712255,
     };
     const newPosition = calculatePointPosition(point, imagePosition);
     setPointPosition({
@@ -80,8 +84,8 @@ const PersonnelTrajectory = () => {
     });
   };
   const clickHistory = (item) => {
-     history.push('/history');
- };
+    history.push('/history');
+  };
 
   const handleClick = () => {};
   return (
@@ -111,7 +115,7 @@ const PersonnelTrajectory = () => {
             transform: 'translate(-50%, -50%)',
           }}
         >
-          <Image src={location} width={33} height={54} />
+          <Image src={locationPng} width={33} height={54} />
         </div>
       </div>
       <div className={styles.employeeInformation}>
@@ -119,29 +123,29 @@ const PersonnelTrajectory = () => {
           <div>
             <Image src={portrait} width={40} height={40} />
           </div>
-          <span>张三</span>
-          <label>P2525214</label>
-          <div className={styles.status}>正常</div>
+          <span>{item?.personName || ''}</span>
+          <label>{item?.orgName || ''}</label>
+          <div className={styles.status}>{item?.status || '正常'}</div>
         </div>
         <div className={styles.informationMiddle}>
           <div>
             <label>作业票号</label>
-            <span>P2525214</span>
+            <span>{item?.orgName || ''}</span>
           </div>
           <div>
             <label>所属部门</label>
-            <span>研发一组</span>
+            <span>{item?.department || ''}</span>
           </div>
         </div>
         <div className={styles.informationBottom}>
           <div className={styles.informationBottomLeft}>
             <div>
               <label>联系电话</label>
-              <span>1455485423</span>
+              <span>{item?.contactNumber || ''}</span>
             </div>
             <div>
               <label>工作时长</label>
-              <span>04：36：15</span>
+              <span>{item?.workDuration || ''}</span>
             </div>
           </div>
           <div className={styles.informationBottomRight} onClick={clickHistory}>

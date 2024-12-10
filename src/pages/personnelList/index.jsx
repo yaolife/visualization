@@ -24,8 +24,11 @@ const PersonnelList = () => {
   useEffect(() => {
     doSearch();
   }, []);
-  const goPersonnelTrajectory=()=>{
-    history.push('/personnelTrajectory')
+  const goPersonnelTrajectory=(item)=>{
+    history.push({
+      pathname: '/personnelTrajectory',
+      query: item,
+    });
   }
   return (
     <>
@@ -46,13 +49,13 @@ const PersonnelList = () => {
         <>
           <List>
             {data.map((item, index) => (
-              <div key={item?.id} className={styles.singleItem} onClick={goPersonnelTrajectory}>
+              <div key={item?.personId} className={styles.singleItem} onClick={()=>goPersonnelTrajectory(item)}>
                 {' '}
                 <div className={styles.singleItemLeft}>
                   <Image src={position} width={16} height={16} fit="fill" />
-                  <List.Item key={item?.id}>{item?.number}</List.Item>
+                  <List.Item key={item?.personId}>{item?.orgName}</List.Item>
                 </div>
-                <span>{item.name}</span>
+                <span>{item?.personName}</span>
               </div>
             ))}
           </List>
