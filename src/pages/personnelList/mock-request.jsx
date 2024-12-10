@@ -2,7 +2,7 @@
 import { sleep } from 'antd-mobile/es/utils/sleep';
 import { getCount } from './sharedState'; // 导入 sharedState
 
-const pageSize = 6;
+const pageSize = 20000;
 
 const allData = [
   {
@@ -77,11 +77,115 @@ const allData = [
     "personType": "3",
     "personTypeShow": "外包"
   },
+  {
+    "personId": "Q001",
+    "personName": "赵六",
+    "department": "市场部门",
+    "orgName": "50505125",
+    "personType": "3",
+    "personTypeShow": "外包"
+  },
+  {
+    "personId": "Q002",
+    "personName": "孙七",
+    "department": "市场部门",
+    "orgName": "50505125",
+    "personType": "3",
+    "personTypeShow": "外包"
+  },
+  {
+    "personId": "Q003",
+    "personName": "周八",
+    "department": "市场部门",
+    "orgName": "50505125",
+    "personType": "3",
+    "personTypeShow": "外包"
+  },
+  {
+    "personId": "Q001",
+    "personName": "赵六",
+    "department": "市场部门",
+    "orgName": "50505125",
+    "personType": "3",
+    "personTypeShow": "外包"
+  },
+  {
+    "personId": "Q002",
+    "personName": "孙七",
+    "department": "市场部门",
+    "orgName": "50505125",
+    "personType": "3",
+    "personTypeShow": "外包"
+  },
+  {
+    "personId": "Q003",
+    "personName": "周八",
+    "department": "市场部门",
+    "orgName": "50578888",
+    "personType": "3",
+    "personTypeShow": "田"
+  },
+  {
+    "personId": "Q001",
+    "personName": "赵六",
+    "department": "市场部门",
+    "orgName": "50505125",
+    "personType": "3",
+    "personTypeShow": "外包"
+  },
+  {
+    "personId": "Q002",
+    "personName": "孙七",
+    "department": "市场部门",
+    "orgName": "50505125",
+    "personType": "3",
+    "personTypeShow": "外包"
+  },
+  {
+    "personId": "Q003",
+    "personName": "周八",
+    "department": "市场部门",
+    "orgName": "50578888",
+    "personType": "3",
+    "personTypeShow": "田"
+  },
+  {
+    "personId": "Q001",
+    "personName": "赵六",
+    "department": "市场部门",
+    "orgName": "50505125",
+    "personType": "3",
+    "personTypeShow": "外包"
+  },
+  {
+    "personId": "Q002",
+    "personName": "孙七",
+    "department": "市场部门",
+    "orgName": "50505125",
+    "personType": "3",
+    "personTypeShow": "外包"
+  },
+  {
+    "personId": "Q003",
+    "personName": "田颖瑶",
+    "department": "市场部门",
+    "orgName": "505788555",
+    "personType": "3",
+    "personTypeShow": "田颖瑶"
+  },
+  {
+    "personId": "Q003",
+    "personName": "田伯光",
+    "department": "市场部门",
+    "orgName": "505788555",
+    "personType": "3",
+    "personTypeShow": "田颖4"
+  },
   // 可以继续添加更多的数据
 ];
 
 export async function mockRequest(count) { // 接受 count 作为参数
-  await sleep(2000);
+  await sleep(1000);
   const startIndex = count * pageSize;
   const endIndex = startIndex + pageSize;
   const result = allData.slice(startIndex, endIndex);

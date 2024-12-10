@@ -55,7 +55,6 @@ const loadMore = useCallback(async () => {
 // index.jsx
 const rowRenderer = ({ key, index, style }) => {
   const item = data[index];
-  console.log(`Rendering row with index: ${index}, item:`, item);
   return (
     <div key={key} style={style} className={styles.singleItem} onClick={() => goPersonnelTrajectory(item)}>
       <div className={styles.singleItemLeft}>
