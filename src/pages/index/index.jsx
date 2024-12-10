@@ -5,6 +5,7 @@ import { connectMQTT, subscribeMQTT, publishMQTT, disconnectMQTT } from '@/servi
 import './index.less';
 import area from '@/images/area.png';
 import point from '@/images/point.png';
+import currentLocation from '@/images/currentLocation.png';
 import pointIcon from '@/images/pointIcon.png';
 
 const Index = () => {
@@ -14,7 +15,7 @@ const Index = () => {
     { latitude: 21.698033, longitude: 112.248986 }, // 图片位置 左下
     { latitude: 21.698032, longitude: 112.272816 }, // 图片位置 右下 
   ]);
-
+  const [orient, setOrient] = useState(true);//没有找到定位点
   const [pointPosition, setPointPosition] = useState({ x: 0, y: 0 });
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const areaRef = useRef(null);
@@ -139,6 +140,12 @@ const Index = () => {
         <Image src={pointIcon} width={36} height={36} />
       </div>
       <Layout />
+      {orient && (
+      <div className="orient">
+         <Image src={currentLocation} width={18} height={18} />
+         <span>未查找到当前区域定位点</span>
+      </div>
+    )}
     </div>
   );
 };

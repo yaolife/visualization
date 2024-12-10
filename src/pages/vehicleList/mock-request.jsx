@@ -7,7 +7,7 @@ export async function mockRequest() {
     return []
   }
   await sleep(2000)
-  count++
+  count=count+1;
   return [
     
       {
