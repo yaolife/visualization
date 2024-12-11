@@ -36,7 +36,7 @@ export const connectMQTT = (brokerUrl, options = {}) => {
       reconnectPeriod: 1000,
       clientId: 'emqx_test',
       username: 'emqx_test',
-      password: 'emqx_test',
+      password: 'yty162gg',
     });
 
     // 当客户端收到一个发布过来的消息时触发回调
@@ -52,7 +52,7 @@ export const connectMQTT = (brokerUrl, options = {}) => {
     });
 
     client.on('connect', () => {
-      console.log('已经连接成功');
+      console.log('已连接成功');
       resolve(client);
     });
 

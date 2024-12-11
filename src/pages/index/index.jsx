@@ -27,13 +27,10 @@ const Index = () => {
         console.log('88777777')
         // 订阅主题
         subscribeMQTT('realTimeWorker', (message) => {
-          console.log('Received message:', message);
+          console.log('订阅的信息:', message);
         });
-        // subscribe('realTimeWorker', () => {
-        //   console.log(`订阅了主题 realTimeWorker`)
-        // })
         // 发布消息
-        publishMQTT('realTimeWorker', 'Hello MQTT');
+        publishMQTT('realTimeWorker', '天使来了');
 
         // 清理函数，在组件卸载时断开连接
         return () => {
