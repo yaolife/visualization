@@ -42,7 +42,7 @@ const Index = () => {
           }
         });
         // 发布消息(这里可以发布，客户端也可以发布)
-        publishMQTT('realTimeWorker', '天使来了');
+        //publishMQTT('realTimeWorker', '天使来了');
 
         // 清理函数，在组件卸载时断开连接
         return () => {
