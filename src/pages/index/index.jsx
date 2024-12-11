@@ -1,5 +1,4 @@
 import area from '@/images/area.png';
-import pointPng from '@/images/point.png';
 import Layout from '@/layout';
 import { connectMQTT, disconnectMQTT, subscribeMQTT } from '@/services/services';
 import { Image } from 'antd-mobile';
@@ -16,6 +15,10 @@ const Index = () => {
   const imageWidth = 2418;
   const imageHeight = 2309;
   const [pointLocation, setPoint] = useState({
+    longitude: 0,
+    latitude: 0,
+  });
+  const [vehicleLocation, setVehicleLocation] = useState({
     longitude: 0,
     latitude: 0,
   });
