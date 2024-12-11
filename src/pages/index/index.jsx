@@ -1,22 +1,24 @@
-import React, { useEffect, useState, useRef } from 'react';
-import Layout from '@/layout';
-import { Image } from 'antd-mobile';
-import { connectMQTT, subscribeMQTT, publishMQTT, disconnectMQTT } from '@/services/services';
-import './index.less';
-import mqtt from 'mqtt';
 import area from '@/images/area.png';
-import point from '@/images/point.png';
-import currentLocation from '@/images/currentLocation.png';
-import pointIcon from '@/images/pointIcon.png';
+import pointPng from '@/images/point.png';
+import Layout from '@/layout';
+import { connectMQTT, disconnectMQTT, publishMQTT, subscribeMQTT } from '@/services/services';
+import { Image } from 'antd-mobile';
+import { useEffect, useRef, useState } from 'react';
+import './index.less';
 
 const Index = () => {
   const [imagePosition, setImagePosition] = useState([
-    { latitude: 21.719247, longitude: 112.248985 }, // 图片位置 左上 
-    { latitude: 21.719246, longitude: 112.272878 }, // 图片位置 右上 
+    { latitude: 21.719247, longitude: 112.248985 }, // 图片位置 左上
+    { latitude: 21.719246, longitude: 112.272878 }, // 图片位置 右上
     { latitude: 21.698033, longitude: 112.248986 }, // 图片位置 左下
-    { latitude: 21.698032, longitude: 112.272816 }, // 图片位置 右下 
+    { latitude: 21.698032, longitude: 112.272816 }, // 图片位置 右下
   ]);
-  const [orient, setOrient] = useState(true);//没有找到定位点
+
+  const [point, setPoint] = useState({
+    longitude: 112.264291,
+    latitude: 21.712255,
+  });
+  const [orient, setOrient] = useState(true); //没有找到定位点
   const [pointPosition, setPointPosition] = useState({ x: 0, y: 0 });
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const areaRef = useRef(null);
@@ -24,7 +26,7 @@ const Index = () => {
     // 连接到 MQTT 代理
     connectMQTT('ws://broker.emqx.io:8083/mqtt')
       .then(() => {
-        console.log('88777777')
+        console.log('88777777');
         // 订阅主题
         subscribeMQTT('realTimeWorker', (message) => {
           console.log('订阅的信息:', message);
@@ -38,30 +40,22 @@ const Index = () => {
         };
       })
       .catch((error) => {
-        console.log(error,'error')
+        console.log(error, 'error');
         console.error('Failed to connect to MQTT broker:', error);
       });
-
-
   }, []);
 
   useEffect(() => {
-    // 人员坐标点
-    const point = {
-      "longitude": 112.264291,
-      "latitude": 21.712255,
-    };
-
     const position = calculatePointPosition(point, imagePosition);
     setPointPosition(position);
   }, [imagePosition]);
 
   const calculatePointPosition = (point, positions) => {
     // 找到最小和最大纬度和经度
-    const minLatitude = Math.min(...positions.map(pos => pos.latitude));
-    const maxLatitude = Math.max(...positions.map(pos => pos.latitude));
-    const minLongitude = Math.min(...positions.map(pos => pos.longitude));
-    const maxLongitude = Math.max(...positions.map(pos => pos.longitude));
+    const minLatitude = Math.min(...positions.map((pos) => pos.latitude));
+    const maxLatitude = Math.max(...positions.map((pos) => pos.latitude));
+    const minLongitude = Math.min(...positions.map((pos) => pos.longitude));
+    const maxLongitude = Math.max(...positions.map((pos) => pos.longitude));
 
     // 计算相对位置
     const relativeLatitude = (point.latitude - minLatitude) / (maxLatitude - minLatitude);
@@ -94,21 +88,18 @@ const Index = () => {
     areaRef.current.style.left = `${newLeft}px`;
     areaRef.current.style.top = `${newTop}px`;
 
-    // 重新计算 point 的位置
-    const point = {
-      "longitude": 112.264291,
-      "latitude": 21.712255,
-    };
     const newPosition = calculatePointPosition(point, imagePosition);
     setPointPosition({
       x: newLeft + newPosition.x,
       y: newTop + newPosition.y,
     });
   };
-  
+
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-      <div className="firstPage" ref={areaRef}
+      <div
+        className="firstPage"
+        ref={areaRef}
         draggable
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
@@ -128,7 +119,7 @@ const Index = () => {
           transform: 'translate(-50%, -50%)',
         }}
       >
-        <Image src={point} width={18} height={18} />
+        <Image src={pointPng} width={18} height={18} />
       </div>
       {/* <div
         style={{
