@@ -1,49 +1,118 @@
-// index.jsx
-import React, { useEffect, useState, useCallback } from 'react';
-import { history } from 'umi';
-import {
-  List as VirtualizedList,
-  AutoSizer,
-  WindowScroller,
-} from 'react-virtualized';
-import { Button, Image, DotLoading, SearchBar } from 'antd-mobile';
 import Header from '@/components/Navbar';
-import styles from './index.less';
-import { mockRequest } from './mock-request';
 import position from '@/images/position.png';
+import { connectMQTT, disconnectMQTT, subscribeMQTT } from '@/services/services';
+import { Button, DotLoading, Image, SearchBar } from 'antd-mobile';
+import { sleep } from 'antd-mobile/es/utils/sleep';
+import { useCallback, useEffect, useState } from 'react';
+import { AutoSizer, List as VirtualizedList, WindowScroller } from 'react-virtualized';
+import { history } from 'umi';
+import styles from './index.less';
 import { getCount, setCount } from './sharedState'; // 导入 sharedState
 
+const pageSize = 20000;
 const PersonnelList = () => {
   const [data, setPerData] = useState([]);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false); // 添加 loading 状态
   const [isFetching, setIsFetching] = useState(false); // 添加 isFetching 状态以防止并发请求
 
-// index.jsx
-const loadMore = useCallback(async () => {
-  if (isFetching || !hasMore) return; // 防止并发请求
-  setIsFetching(true);
-  setLoading(true);
-  try {
-    const currentCount = getCount(); // 获取当前的 count 值
-    console.log(`loadMore called with count: ${currentCount}`);
-    const append = await mockRequest(currentCount); // 使用 getCount 获取 count
-    console.log(`Data appended:`, append);
-    setPerData((val) => [...val, ...append]);
-    setHasMore(append.length > 0);
-    setCount(currentCount + 6); // 更新 count，增加 pageSize 的值
-    console.log(`count updated to: ${getCount()}`);
-  } finally {
-    setIsFetching(false);
-    setLoading(false);
-  }
-}, [isFetching, hasMore]);
+  const sleepRequest = async (count) => {
+    if (data.length > 0) {
+      // 接受 count 作为参数
+      await sleep(1000);
+      const startIndex = count * pageSize;
+      const endIndex = startIndex + pageSize;
+      const result = data.slice(startIndex, endIndex);
+      console.log(
+        `sleepRequest called with count: ${count}, startIndex: ${startIndex}, endIndex: ${endIndex}, result:`,
+        result,
+      );
+      return result;
+    }
+    // 如果数据为空，返回一个空数组
+    return [];
+  };
+
+  const loadMore = useCallback(async () => {
+    if (isFetching || !hasMore) return; // 防止并发请求
+    setIsFetching(true);
+    setLoading(true);
+    try {
+      const currentCount = getCount(); // 获取当前的 count 值
+      console.log(`loadMore called with count: ${currentCount}`);
+      const append = await sleepRequest(currentCount); // 使用 getCount 获取 count
+
+      // 确保 append 是一个数组
+      if (!Array.isArray(append)) {
+        console.warn('append is not an array:', append);
+        append = [];
+      }
+
+      console.log(`Data appended:`, append);
+      setPerData((val) => [...val, ...append]);
+      setHasMore(append.length > 0);
+      setCount(currentCount + 6); // 更新 count，增加 pageSize 的值
+      console.log(`count updated to: ${getCount()}`);
+    } finally {
+      setIsFetching(false);
+      setLoading(false);
+    }
+  }, [isFetching, hasMore]);
+
+  useEffect(() => {
+    // 连接到 MQTT 代理
+    connectMQTT('ws://broker.emqx.io:8083/mqtt')
+      .then(() => {
+        // 订阅主题 人员列表
+        subscribeMQTT('onlineworker', (message) => {
+          console.log('订阅的信息:', message);
+          try {
+            const parsedMessage = JSON.parse(message);
+            console.log('解析后的消息onlineworker:', parsedMessage);
+
+            // 合并新数据到现有数据中
+            setPerData((prevData) => {
+              const newData = Array.isArray(parsedMessage) ? parsedMessage : [parsedMessage];
+              const updatedData = prevData.reduce((acc, item) => {
+                const existingItemIndex = newData.findIndex(newItem => newItem.personId === item.personId);
+                if (existingItemIndex !== -1) {
+                  // 如果存在相同的 personId，则更新该项
+                  acc.push({ ...item, ...newData[existingItemIndex] });
+                  newData.splice(existingItemIndex, 1); // 移除已处理的项
+                } else {
+                  acc.push(item);
+                }
+                return acc;
+              }, []);
+
+              // 添加剩余的新数据
+              updatedData.push(...newData);
+
+              // 去重，假设 personId 是唯一标识
+              const uniqueData = Array.from(new Map(updatedData.map(item => [item.personId, item])).values());
+              return uniqueData;
+            });
+          } catch (error) {
+            console.error('Failed to parse message:', error);
+          }
+        });
+
+        // 清理函数，在组件卸载时断开连接
+        return () => {
+          disconnectMQTT();
+        };
+      })
+      .catch((error) => {
+        console.log(error, 'error');
+        console.error('Failed to connect to MQTT broker:', error);
+      });
+  }, []);
 
   useEffect(() => {
     console.log('useEffect called, calling doSearch');
     doSearch();
   }, [doSearch]);
-  
+
   const doSearch = useCallback(() => {
     setPerData([]);
     setHasMore(true);
@@ -52,19 +121,23 @@ const loadMore = useCallback(async () => {
     loadMore();
   }, [loadMore]);
 
-// index.jsx
-const rowRenderer = ({ key, index, style }) => {
-  const item = data[index];
-  return (
-    <div key={key} style={style} className={styles.singleItem} onClick={() => goPersonnelTrajectory(item)}>
-      <div className={styles.singleItemLeft}>
-        <Image src={position} width={16} height={16} fit="fill" />
-        <div className={styles.listItem}>{item?.orgName}</div>
+  const rowRenderer = ({ key, index, style }) => {
+    const item = data[index];
+    return (
+      <div
+        key={key}
+        style={style}
+        className={styles.singleItem}
+        onClick={() => goPersonnelTrajectory(item)}
+      >
+        <div className={styles.singleItemLeft}>
+          <Image src={position} width={16} height={16} fit="fill" />
+          <div className={styles.listItem}>{item?.orgName}</div>
+        </div>
+        <span>{item?.personName}</span>
       </div>
-      <span>{item?.personName}</span>
-    </div>
-  );
-};
+    );
+  };
 
   const goPersonnelTrajectory = (item) => {
     history.push({
@@ -72,62 +145,58 @@ const rowRenderer = ({ key, index, style }) => {
       query: item,
     });
   };
-// index.jsx
-return (
-  <>
-    <div className={styles.header}>
-      <Header />
-      <div className={styles.searchBar}>
-        <div className={styles.left}>
-          <SearchBar />
-        </div>
-        <div className={styles.right}>
-          <Button size="small" color="primary" onClick={doSearch}>
-            搜索
-          </Button>
+
+  return (
+    <>
+      <div className={styles.header}>
+        <Header />
+        <div className={styles.searchBar}>
+          <div className={styles.left}>
+            <SearchBar />
+          </div>
+          <div className={styles.right}>
+            <Button size="small" color="primary" onClick={doSearch}>
+              搜索
+            </Button>
+          </div>
         </div>
       </div>
-    </div>
-    {loading && data.length === 0 ? (
-      <div className={styles.placeholder}>
-        <div className={styles.loadingWrapper}>
-          <DotLoading />
+      {loading && data.length === 0 ? (
+        <div className={styles.placeholder}>
+          <div className={styles.loadingWrapper}>
+            <DotLoading />
+          </div>
+          正在拼命加载数据
         </div>
-        正在拼命加载数据
-      </div>
-    ) : (
-      <WindowScroller>
-        {({ height, isScrolling, onChildScroll, scrollTop }) => (
-          <AutoSizer disableHeight>
-            {({ width }) => (
-              <VirtualizedList
-                autoHeight
-                height={height}
-                isScrolling={isScrolling}
-                onScroll={onChildScroll}
-                rowCount={data.length}
-                rowHeight={50}
-                rowRenderer={rowRenderer}
-                scrollTop={scrollTop}
-                width={width}
-                onRowsRendered={({ startIndex, stopIndex }) => {
-                  if (stopIndex >= data.length - 1 && hasMore) {
-                    loadMore();
-                  }
-                }}
-              />
-            )}
-          </AutoSizer>
-        )}
-      </WindowScroller>
-    )}
-    {!hasMore && (
-      <div className={styles.noMore}>
-        没有更多数据了
-      </div>
-    )}
-  </>
-);
+      ) : (
+        <WindowScroller>
+          {({ height, isScrolling, onChildScroll, scrollTop }) => (
+            <AutoSizer disableHeight>
+              {({ width }) => (
+                <VirtualizedList
+                  autoHeight
+                  height={height}
+                  isScrolling={isScrolling}
+                  onScroll={onChildScroll}
+                  rowCount={data.length}
+                  rowHeight={50}
+                  rowRenderer={rowRenderer}
+                  scrollTop={scrollTop}
+                  width={width}
+                  onRowsRendered={({ startIndex, stopIndex }) => {
+                    if (stopIndex >= data.length - 1 && hasMore) {
+                      loadMore();
+                    }
+                  }}
+                />
+              )}
+            </AutoSizer>
+          )}
+        </WindowScroller>
+      )}
+      {!hasMore && <div className={styles.noMore}>没有更多数据了</div>}
+    </>
+  );
 };
 
 export default PersonnelList;
