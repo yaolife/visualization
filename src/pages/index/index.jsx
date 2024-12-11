@@ -142,12 +142,13 @@ const Index = () => {
         <Image src={pointIcon} width={36} height={36} />
       </div> */}
       <Layout />
-      {orient && (
+      {/* 先注释后面需要 */}
+      {/* {orient && (
       <div className="orient">
          <Image src={currentLocation} width={18} height={18} />
          <span>未查找到当前区域定位点</span>
       </div>
-    )}
+    )} */}
     </div>
   );
 };
