@@ -1,6 +1,5 @@
 // mock-request.jsx
 import { sleep } from 'antd-mobile/es/utils/sleep';
-import { getCount } from './sharedState'; // 导入 sharedState
 
 const pageSize = 20000;
 

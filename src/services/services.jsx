@@ -41,7 +41,9 @@ export const connectMQTT = (brokerUrl, options = {}) => {
       console.error('MQTT connection error:', error);
       reject(error);
     });
-  });
+  }).catch(e=>{
+    console.log(e,'7777')
+  });;
 };
 
 // 订阅主题

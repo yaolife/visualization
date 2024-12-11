@@ -21,7 +21,7 @@ const Index = () => {
   const areaRef = useRef(null);
   useEffect(() => {
     // 连接到 MQTT 代理
-    connectMQTT('wss://broker.emqx.io:8084')
+    connectMQTT('ws://broker.emqx.io:8083')
       .then(() => {
         console.log('88777777')
         // 订阅主题
