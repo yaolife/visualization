@@ -10,11 +10,12 @@ module.exports = {
     '@typescript-eslint/no-var-requires': 0,
     '@typescript-eslint/explicit-module-boundary-types': 0,
     '@typescript-eslint/no-explicit-any': 0,
-    '@typescript-eslint/no-use-before-define': [
-      // 允许function的提升使用
-      'error',
-      { functions: false, classes: true },
-    ],
+    // '@typescript-eslint/no-use-before-define': [
+    //   // 允许function的提升使用
+    //   'error',
+    //   { functions: false, classes: true },
+    // ],
+    '@typescript-eslint/no-use-before-define': 'off', // 关闭该规则
     'import/no-anonymous-default-export': 0,
     'no-console': 0,
     'no-plusplus': ['error', { allowForLoopAfterthoughts: true }],

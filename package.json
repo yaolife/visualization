@@ -36,8 +36,10 @@
     "antd-mobile": "^5.24.0",
     "antd-mobile-icons": "^0.3.0",
     "hox": "^1.1.6",
+    "mqtt": "^5.10.3",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-virtualized": "^9.22.5",
     "umi": "^3.5.23",
     "umi-plugin-keep-alive": "^0.0.1-beta.34"
   },

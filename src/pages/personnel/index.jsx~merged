@@ -1,0 +1,55 @@
+import { useModel } from 'umi';
+import { useEffect, useState } from 'react';
+import { Button, Card } from 'antd-mobile';
+<<<<<<< HEAD
+import CardItem from '@/components/CardItem';
+import styles from './index.less';
+
+const Index = () => {
+  let [personnelList, setPersonnelList] = useState([
+    { total: 12, key: 'staff', visitorNumber: 12, fixedPersonnelNumber: 96,title:'人员' },
+    { total: 35, key: 'vehicle', visitorNumber: 77888, fixedPersonnelNumber: 88,title:'车辆' },
+    { total: 14, key: 'fence', visitorNumber: 48, fixedPersonnelNumber: 34,title:'电子围栏' },
+    { total: 25, key: 'alarm', visitorNumber: 8333, fixedPersonnelNumber: 9947,title:'区域报警' },
+  ]);
+  const { user } = useModel('user');
+  return (
+    <div className={styles.home}>
+      {personnelList.map((item, index) => (
+        <CardItem key={item.key} item={item}/>
+      ))}
+=======
+import { history } from 'umi';
+import Layout from '@/layout';
+import WorkerCardItem from '@/components/WorkerCardItem';
+import VehicleCardItem from '@/components/VehicleCardItem';
+import styles from './index.less';
+
+const Index = () => {
+  const { user } = useModel('user');
+  const [personnelData, setPersonnelData] = useState({ staffNumber: '4', visitorNumber: '0' });
+  const [vehicleData, setVehicleData] = useState({ interiorVehicles: '3', visitingVehicles: '0',vehicleTypes:[] });
+ 
+  const handleWorkerClick=()=>{
+    history.push('/personnelList');
+  }
+  const handleVehicleClick = () => {
+    history.push('/vehicleList');  
+};
+  return (
+    <div>
+      <div className={styles.home}>
+          <span onClick={() => handleWorkerClick()}>
+            <WorkerCardItem personnelData={personnelData}/>
+          </span>
+          <span onClick={() => handleVehicleClick()}>
+            <VehicleCardItem vehicleData={vehicleData}/>
+          </span>
+      </div>
+      <Layout />
+>>>>>>> dev
+    </div>
+  );
+};
+
+export default Index;

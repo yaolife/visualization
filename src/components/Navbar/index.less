@@ -6,6 +6,7 @@
   z-index: 99;
   width: 100%;
   height: @navBarHeight;
+  margin-bottom: @navBarHeight;
   padding: 10px 20px;
   font-weight: bold;
   text-align: center;
@@ -13,11 +14,13 @@
   .navBarLeft {
     position: absolute;
     top: 50%;
-    left: 20px;
+    left: 10px;
     transform: translateY(-50%);
   }
   .navBarTitle {
     font-size: 17px;
+    color: #060606;
+    font-weight: 500;
   }
   & + div {
     padding-top: @navBarHeight;
