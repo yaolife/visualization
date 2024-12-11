@@ -3,6 +3,7 @@ import Layout from '@/layout';
 import { Image } from 'antd-mobile';
 import { connectMQTT, subscribeMQTT, publishMQTT, disconnectMQTT } from '@/services/services';
 import './index.less';
+import mqtt from 'mqtt';
 import area from '@/images/area.png';
 import point from '@/images/point.png';
 import currentLocation from '@/images/currentLocation.png';
@@ -21,14 +22,16 @@ const Index = () => {
   const areaRef = useRef(null);
   useEffect(() => {
     // 连接到 MQTT 代理
-    connectMQTT('ws://broker.emqx.io:8083')
+    connectMQTT('ws://broker.emqx.io:8083/mqtt')
       .then(() => {
         console.log('88777777')
         // 订阅主题
         subscribeMQTT('realTimeWorker', (message) => {
           console.log('Received message:', message);
         });
-
+        // subscribe('realTimeWorker', () => {
+        //   console.log(`订阅了主题 realTimeWorker`)
+        // })
         // 发布消息
         publishMQTT('realTimeWorker', 'Hello MQTT');
 
@@ -38,8 +41,11 @@ const Index = () => {
         };
       })
       .catch((error) => {
+        console.log(error,'error')
         console.error('Failed to connect to MQTT broker:', error);
       });
+
+
   }, []);
 
   useEffect(() => {
@@ -103,7 +109,6 @@ const Index = () => {
     });
   };
   
-  const handleClick = () =>{}
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
       <div className="firstPage" ref={areaRef}
@@ -128,7 +133,7 @@ const Index = () => {
       >
         <Image src={point} width={18} height={18} />
       </div>
-      <div
+      {/* <div
         style={{
            position: 'fixed',
            right:'20px',
@@ -138,7 +143,7 @@ const Index = () => {
       >
         {' '}
         <Image src={pointIcon} width={36} height={36} />
-      </div>
+      </div> */}
       <Layout />
       {orient && (
       <div className="orient">

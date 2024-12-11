@@ -1,5 +1,5 @@
-import { request } from 'umi';
 import mqtt from 'mqtt';
+import { request } from 'umi';
 
 // 通用请求函数
 const requestWithMethod = (url, method, data = {}) => {
@@ -30,10 +30,29 @@ let client = null;
 // 连接到 MQTT 代理
 export const connectMQTT = (brokerUrl, options = {}) => {
   return new Promise((resolve, reject) => {
-    client = mqtt.connect(brokerUrl, options);
+    client = mqtt.connect(brokerUrl, {
+      clean: true,
+      connectTimeout: 4000,
+      reconnectPeriod: 1000,
+      clientId: 'emqx_test',
+      username: 'emqx_test',
+      password: 'emqx_test',
+    });
+
+    // 当客户端收到一个发布过来的消息时触发回调
+    client.on('message', function (message) {
+      // 这里有可能拿到的数据格式是Uint8Array格式，所以可以直接用toString转成字符串
+      // let data = JSON.parse(message.toString());
+      console.log('返回的数据：', message);
+    });
+
+    // 连接断开后触发的回调
+    client.on('close', function () {
+      console.log('已断开连接');
+    });
 
     client.on('connect', () => {
-      console.log('Connected to MQTT broker');
+      console.log('已经连接成功');
       resolve(client);
     });
 
@@ -41,9 +60,9 @@ export const connectMQTT = (brokerUrl, options = {}) => {
       console.error('MQTT connection error:', error);
       reject(error);
     });
-  }).catch(e=>{
-    console.log(e,'7777')
-  });;
+  }).catch((e) => {
+    console.log(e, '7777');
+  });
 };
 
 // 订阅主题
