@@ -25,8 +25,10 @@ const Index = () => {
   const [orient, setOrient] = useState(true); // 没有找到定位点
   const [pointPosition, setPointPosition] = useState({ x: 0, y: 0 });
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState([]); // 人员的
+  const [vehicleMessages, setVehicleMessages] = useState([]); // 车辆的
   const [pointPositions, setPointPositions] = useState([]);
+  const [vehiclePointPositions, setVehiclePointPositions] = useState([]); // 新增状态来存储车辆的坐标
 
   const areaRef = useRef(null);
 
@@ -34,7 +36,7 @@ const Index = () => {
     // 连接到 MQTT 代理
     connectMQTT('ws://broker.emqx.io:8083/mqtt')
       .then(() => {
-        // 订阅主题
+        // 订阅主题 人员的
         subscribeMQTT('realTimeWorker', (message) => {
           console.log('订阅的信息:', message);
           try {
@@ -48,6 +50,41 @@ const Index = () => {
                 setMessages((prevMessages) => {
                   // 检查是否存在相同的 personId 并更新
                   const existingIndex = prevMessages.findIndex(msg => msg.personId === firstMessage.personId);
+                  if (existingIndex !== -1) {
+                    const updatedMessages = [...prevMessages];
+                    updatedMessages[existingIndex] = firstMessage;
+                    console.log(updatedMessages, 'updatedMessages');
+                    return updatedMessages;
+                  } else {
+                    console.log(prevMessages, firstMessage, 'prevMessages___parsedMessage');
+                    return [...prevMessages, firstMessage];
+                  }
+                });
+              } else {
+                console.error('消息格式不正确:', firstMessage);
+              }
+            } else {
+              console.error('消息格式不正确:', parsedMessage);
+            }
+          } catch (error) {
+            console.error('Failed to parse message:', error);
+          }
+        });
+
+        // 订阅主题 车辆的
+        subscribeMQTT('vehicle', (message) => {
+          console.log('订阅的信息:', message);
+          try {
+            const parsedMessage = JSON.parse(message);
+            console.log('解析后的消息:', parsedMessage);
+
+            // 检查消息格式
+            if (Array.isArray(parsedMessage) && parsedMessage.length > 0) {
+              const firstMessage = parsedMessage[0];
+              if (firstMessage.vehicleNumber && firstMessage.latitude && firstMessage.longitude) {
+                setVehicleMessages((prevMessages) => {
+                  // 检查是否存在相同的 vehicleNumber(车牌号) 并更新
+                  const existingIndex = prevMessages.findIndex(msg => msg.vehicleNumber === firstMessage.vehicleNumber);
                   if (existingIndex !== -1) {
                     const updatedMessages = [...prevMessages];
                     updatedMessages[existingIndex] = firstMessage;
@@ -89,6 +126,11 @@ const Index = () => {
     const newPointPositions = messages.map((msg) => calculatePointPosition(msg, imagePosition));
     setPointPositions(newPointPositions);
   }, [messages, imagePosition]);
+
+  useEffect(() => {
+    const newVehiclePointPositions = vehicleMessages.map((msg) => calculatePointPosition(msg, imagePosition));
+    setVehiclePointPositions(newVehiclePointPositions);
+  }, [vehicleMessages, imagePosition]);
 
   const calculatePointPosition = (point, positions) => {
     if (!point.latitude || !point.longitude) {
@@ -137,7 +179,7 @@ const Index = () => {
     areaRef.current.style.left = `${newLeft}px`;
     areaRef.current.style.top = `${newTop}px`;
 
-    const newPosition = calculatePointPosition(point, imagePosition);
+    const newPosition = calculatePointPosition(pointLocation, imagePosition);
     setPointPosition({
       x: newLeft + newPosition.x,
       y: newTop + newPosition.y,
@@ -145,6 +187,7 @@ const Index = () => {
   };
 
   console.log(pointPositions, 'pointPositions 的数据');
+  console.log(vehiclePointPositions, 'vehiclePointPositions 的数据');
 
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
@@ -174,6 +217,22 @@ const Index = () => {
             width: '10px',
             height: '10px',
             backgroundColor: '#77FF00',
+            borderRadius: '50%',
+          }}
+        />
+      ))}
+      {vehiclePointPositions.map((position, index) => (
+        <div
+          key={index}
+          className={`vehicle${index}`}
+          style={{
+            position: 'absolute',
+            left: `${position.x}px`,
+            top: `${position.y}px`,
+            transform: 'translate(-50%, -50%)',
+            width: '10px',
+            height: '10px',
+            backgroundColor: '#01E6FF',
             borderRadius: '50%',
           }}
         />
