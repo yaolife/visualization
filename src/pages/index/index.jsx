@@ -1,7 +1,7 @@
 import area from '@/images/area.png';
 import pointPng from '@/images/point.png';
 import Layout from '@/layout';
-import { connectMQTT, disconnectMQTT, publishMQTT, subscribeMQTT } from '@/services/services';
+import { connectMQTT, disconnectMQTT, subscribeMQTT } from '@/services/services';
 import { Image } from 'antd-mobile';
 import { useEffect, useRef, useState } from 'react';
 import './index.less';
@@ -15,11 +15,11 @@ const Index = () => {
   ]);
   const imageWidth = 2418;
   const imageHeight = 2309;
-  const [point, setPoint] = useState({
+  const [pointLocation, setPoint] = useState({
     longitude: 0,
     latitude: 0,
   });
-  const [orient, setOrient] = useState(true); //没有找到定位点
+  const [orient, setOrient] = useState(true); // 没有找到定位点
   const [pointPosition, setPointPosition] = useState({ x: 0, y: 0 });
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [messages, setMessages] = useState([]);
@@ -78,9 +78,9 @@ const Index = () => {
   }, []);
 
   useEffect(() => {
-    const position = calculatePointPosition(point, imagePosition);
+    const position = calculatePointPosition(pointLocation, imagePosition);
     setPointPosition(position);
-  }, [imagePosition]);
+  }, [pointLocation, imagePosition]);
 
   useEffect(() => {
     const newPointPositions = messages.map((msg) => calculatePointPosition(msg, imagePosition));
@@ -181,4 +181,3 @@ const Index = () => {
 };
 
 export default Index;
-
