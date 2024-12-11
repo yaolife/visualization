@@ -13,10 +13,11 @@ const Index = () => {
     { latitude: 21.698033, longitude: 112.248986 }, // 图片位置 左下
     { latitude: 21.698032, longitude: 112.272816 }, // 图片位置 右下
   ]);
-
+  const imageWidth = 2418;
+  const imageHeight = 2309;
   const [point, setPoint] = useState({
-    longitude: '',
-    latitude: '',
+    longitude: 0,
+    latitude: 0,
   });
   const [orient, setOrient] = useState(true); //没有找到定位点
   const [pointPosition, setPointPosition] = useState({ x: 0, y: 0 });
@@ -30,19 +31,40 @@ const Index = () => {
     // 连接到 MQTT 代理
     connectMQTT('ws://broker.emqx.io:8083/mqtt')
       .then(() => {
-        console.log('88777777');
         // 订阅主题
         subscribeMQTT('realTimeWorker', (message) => {
           console.log('订阅的信息:', message);
           try {
             const parsedMessage = JSON.parse(message);
-            setMessages((prevMessages) => [...prevMessages, parsedMessage]);
+            console.log('解析后的消息:', parsedMessage);
+
+            // 检查消息格式
+            if (Array.isArray(parsedMessage) && parsedMessage.length > 0) {
+              const firstMessage = parsedMessage[0];
+              if (firstMessage.personId && firstMessage.latitude && firstMessage.longitude) {
+                setMessages((prevMessages) => {
+                  // 检查是否存在相同的 personId 并更新
+                  const existingIndex = prevMessages.findIndex(msg => msg.personId === firstMessage.personId);
+                  if (existingIndex !== -1) {
+                    const updatedMessages = [...prevMessages];
+                    updatedMessages[existingIndex] = firstMessage;
+                    console.log(updatedMessages, 'updatedMessages');
+                    return updatedMessages;
+                  } else {
+                    console.log(prevMessages, firstMessage, 'prevMessages___parsedMessage');
+                    return [...prevMessages, firstMessage];
+                  }
+                });
+              } else {
+                console.error('消息格式不正确:', firstMessage);
+              }
+            } else {
+              console.error('消息格式不正确:', parsedMessage);
+            }
           } catch (error) {
             console.error('Failed to parse message:', error);
           }
         });
-        // 发布消息(这里可以发布，客户端也可以发布)
-        //publishMQTT('realTimeWorker', '天使来了');
 
         // 清理函数，在组件卸载时断开连接
         return () => {
@@ -66,23 +88,32 @@ const Index = () => {
   }, [messages, imagePosition]);
 
   const calculatePointPosition = (point, positions) => {
+    if (!point.latitude || !point.longitude) {
+      console.error('点的坐标无效:', point);
+      return { x: NaN, y: NaN };
+    }
+
     // 找到最小和最大纬度和经度
     const minLatitude = Math.min(...positions.map((pos) => pos.latitude));
     const maxLatitude = Math.max(...positions.map((pos) => pos.latitude));
     const minLongitude = Math.min(...positions.map((pos) => pos.longitude));
     const maxLongitude = Math.max(...positions.map((pos) => pos.longitude));
 
+    if (minLatitude === maxLatitude || minLongitude === maxLongitude) {
+      console.error('位置范围无效:', positions);
+      return { x: NaN, y: NaN };
+    }
+
     // 计算相对位置
     const relativeLatitude = (point.latitude - minLatitude) / (maxLatitude - minLatitude);
     const relativeLongitude = (point.longitude - minLongitude) / (maxLongitude - minLongitude);
 
-    // 图片的实际尺寸
-    const imageWidth = 2418;
-    const imageHeight = 2309;
-
     // 将相对位置转换为像素位置
     const pixelX = relativeLongitude * imageWidth;
     const pixelY = (1 - relativeLatitude) * imageHeight; // 注意：Y轴是从上到下的
+
+    console.log(`计算结果: relativeLatitude=${relativeLatitude}, relativeLongitude=${relativeLongitude}`);
+    console.log(`计算结果: pixelX=${pixelX}, pixelY=${pixelY}`);
 
     return { x: pixelX, y: pixelY };
   };
@@ -110,6 +141,8 @@ const Index = () => {
     });
   };
 
+  console.log(pointPositions, 'pointPositions 的数据');
+
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
       <div
@@ -124,11 +157,12 @@ const Index = () => {
           top: '0px',
         }}
       >
-        <Image src={area} width={2418} height={2309} />
+        <Image src={area} width={imageWidth} height={imageHeight} />
       </div>
       {pointPositions.map((position, index) => (
         <div
           key={index}
+          className={`worker${index}`}
           style={{
             position: 'absolute',
             left: `${position.x}px`,
@@ -141,27 +175,10 @@ const Index = () => {
           }}
         />
       ))}
-      {/* <div
-        style={{
-          position: 'fixed',
-          right: '20px',
-          bottom: '105px',
-        }}
-        onClick={handleClick}
-      >
-        {' '}
-        <Image src={pointIcon} width={36} height={36} />
-      </div> */}
       <Layout />
-      {/* 先注释后面需要 */}
-      {/* {orient && (
-        <div className="orient">
-          <Image src={currentLocation} width={18} height={18} />
-          <span>未查找到当前区域定位点</span>
-        </div>
-      )} */}
     </div>
   );
 };
 
 export default Index;
+
