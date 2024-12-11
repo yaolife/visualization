@@ -15,13 +15,17 @@ const Index = () => {
   ]);
 
   const [point, setPoint] = useState({
-    longitude: 112.264291,
-    latitude: 21.712255,
+    longitude: '',
+    latitude: '',
   });
   const [orient, setOrient] = useState(true); //没有找到定位点
   const [pointPosition, setPointPosition] = useState({ x: 0, y: 0 });
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [messages, setMessages] = useState([]);
+  const [pointPositions, setPointPositions] = useState([]);
+
   const areaRef = useRef(null);
+
   useEffect(() => {
     // 连接到 MQTT 代理
     connectMQTT('ws://broker.emqx.io:8083/mqtt')
@@ -30,6 +34,12 @@ const Index = () => {
         // 订阅主题
         subscribeMQTT('realTimeWorker', (message) => {
           console.log('订阅的信息:', message);
+          try {
+            const parsedMessage = JSON.parse(message);
+            setMessages((prevMessages) => [...prevMessages, parsedMessage]);
+          } catch (error) {
+            console.error('Failed to parse message:', error);
+          }
         });
         // 发布消息(这里可以发布，客户端也可以发布)
         publishMQTT('realTimeWorker', '天使来了');
@@ -49,6 +59,11 @@ const Index = () => {
     const position = calculatePointPosition(point, imagePosition);
     setPointPosition(position);
   }, [imagePosition]);
+
+  useEffect(() => {
+    const newPointPositions = messages.map((msg) => calculatePointPosition(msg, imagePosition));
+    setPointPositions(newPointPositions);
+  }, [messages, imagePosition]);
 
   const calculatePointPosition = (point, positions) => {
     // 找到最小和最大纬度和经度
@@ -111,21 +126,26 @@ const Index = () => {
       >
         <Image src={area} width={2418} height={2309} />
       </div>
-      <div
-        style={{
-          position: 'absolute',
-          left: `${pointPosition.x}px`,
-          top: `${pointPosition.y}px`,
-          transform: 'translate(-50%, -50%)',
-        }}
-      >
-        <Image src={pointPng} width={18} height={18} />
-      </div>
+      {pointPositions.map((position, index) => (
+        <div
+          key={index}
+          style={{
+            position: 'absolute',
+            left: `${position.x}px`,
+            top: `${position.y}px`,
+            transform: 'translate(-50%, -50%)',
+            width: '10px',
+            height: '10px',
+            backgroundColor: '#77FF00',
+            borderRadius: '50%',
+          }}
+        />
+      ))}
       {/* <div
         style={{
-           position: 'fixed',
-           right:'20px',
-           bottom:'105px',
+          position: 'fixed',
+          right: '20px',
+          bottom: '105px',
         }}
         onClick={handleClick}
       >
@@ -135,11 +155,11 @@ const Index = () => {
       <Layout />
       {/* 先注释后面需要 */}
       {/* {orient && (
-      <div className="orient">
-         <Image src={currentLocation} width={18} height={18} />
-         <span>未查找到当前区域定位点</span>
-      </div>
-    )} */}
+        <div className="orient">
+          <Image src={currentLocation} width={18} height={18} />
+          <span>未查找到当前区域定位点</span>
+        </div>
+      )} */}
     </div>
   );
 };
