@@ -3,7 +3,8 @@ import bgVehicle from '@/images/bg_vehicle.png';
 import styles from './index.less';
 
 const VehicleCardItem = (props) => {
-  const { interiorVehicles, visitingVehicles } = props.vehicleData;
+  console.log(props,'props')
+  const { interiorVehicles, visitingVehicles } = props?.vehicleData;
   return (
     <div
       className={styles.card}

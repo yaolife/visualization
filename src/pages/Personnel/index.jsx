@@ -1,7 +1,7 @@
 import { useModel } from 'umi';
 import { useEffect, useState } from 'react';
-import { Button, Card } from 'antd-mobile';
 import { history } from 'umi';
+import { connectMQTT, disconnectMQTT, subscribeMQTT } from '@/services/services';
 import Layout from '@/layout';
 import WorkerCardItem from '@/components/WorkerCardItem';
 import VehicleCardItem from '@/components/VehicleCardItem';
@@ -9,8 +9,52 @@ import styles from './index.less';
 
 const Index = () => {
   const { user } = useModel('user');
-  const [personnelData, setPersonnelData] = useState({ staffNumber: '4', visitorNumber: '0' });
-  const [vehicleData, setVehicleData] = useState({ interiorVehicles: '3', visitingVehicles: '0',vehicleTypes:[] });
+  const [personnelData, setPersonnelData] = useState({ staffNumber: 0, visitorNumber: 0 });
+  const [vehicleData, setVehicleData] = useState({ interiorVehicles: 0, visitingVehicles: 0,vehicleTypes:[] });
+  useEffect(() => {
+    // 连接到 MQTT 代理
+    connectMQTT('ws://broker.emqx.io:8083/mqtt')
+      .then(() => {
+        // 订阅主题 区域人员统计的
+        subscribeMQTT('worker', (message) => {
+          console.log('订阅的信息:', message);
+          try {
+            const parsedMessage = JSON.parse(message);
+            console.log('解析后的消息:', parsedMessage);
+            setPersonnelData({
+              staffNumber: parsedMessage?.staffNumber,
+              visitorNumber: parsedMessage?.visitorNumber
+            })
+
+          } catch (error) {
+            console.error('Failed to parse message:', error);
+          }
+        });
+
+        // 订阅主题 区域车辆统计的
+        subscribeMQTT('vehicleStatistic', (message) => {
+          console.log('订阅的信息:', message);
+          try {
+            const parsedMessage = JSON.parse(message);
+            console.log('解析后的消息:', parsedMessage);
+            setVehicleData({
+              interiorVehicles: parsedMessage?.interiorVehicles,
+              visitingVehicles: parsedMessage?.visitingVehicles
+            })
+          } catch (error) {
+            console.error('Failed to parse message:', error);
+          }
+        });
+
+        // 清理函数，在组件卸载时断开连接
+        return () => {
+          disconnectMQTT();
+        };
+      })
+      .catch((error) => {
+        console.error('Failed to connect to MQTT broker:', error);
+      });
+  }, []);
  
   const handleWorkerClick=()=>{
     history.push('/personnelList');
