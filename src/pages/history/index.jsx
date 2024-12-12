@@ -5,7 +5,7 @@ import { Image } from 'antd-mobile';
 import UsModal from '@/components/UsModal';
 import { mockRequest } from './mock-request';
 import styles from './index.less';
-import location from '@/images/location.png';
+import locationPng from '@/images/location.png';
 import area from '@/images/area.png';
 
 const History = () => {
@@ -142,7 +142,7 @@ const History = () => {
           >
             {realName}
           </span>
-          <Image src={location} width={33} height={54} />
+          <Image src={locationPng} width={33} height={54} />
         </div>
       </div>
       <div className={styles.historyBottom}>

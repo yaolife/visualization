@@ -75,9 +75,9 @@ const PersonnelTrajectory = () => {
           }
         });
         // 清理函数，在组件卸载时断开连接
-        return () => {
-          disconnectMQTT();
-        };
+        // return () => {
+        //   disconnectMQTT();
+        // };
       })
       .catch((error) => {
         console.log(error, 'error');
@@ -108,7 +108,7 @@ const PersonnelTrajectory = () => {
     const pixelX = relativeLongitude * imageWidth;
     const pixelY = (1 - relativeLatitude) * imageHeight; // 注意：Y轴是从上到下的
 
-    return { x: pixelX, y: pixelY };
+    return { x: pixelX, y: pixelY }; //减去图片宽度和高度的一半
   };
 
   const handleDragStart = (e) => {
@@ -162,11 +162,12 @@ const PersonnelTrajectory = () => {
         <div
           style={{
             position: 'absolute',
-            left: `${pointPosition.x}px`,
-            top: `${pointPosition.y}px`,
+            left: `${pointPosition.x+4}px`,
+            top: `${pointPosition.y-14}px`,
             transform: 'translate(-50%, -50%)',
           }}
         >
+          {/* <span className={styles.locationRealName}>巡视人员</span> */}
           <Image src={locationPng} width={33} height={54} />
         </div>
       </div>
