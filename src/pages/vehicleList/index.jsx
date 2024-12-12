@@ -17,18 +17,15 @@ const VehicleList = () => {
   const [isFetching, setIsFetching] = useState(false); // 添加 isFetching 状态以防止并发请求
 
   const sleepRequest = useCallback(async (count) => {
-    if (data.length > 0) {
-      await sleep(1000);
-      const startIndex = count * pageSize;
-      const endIndex = startIndex + pageSize;
-      const result = data.slice(startIndex, endIndex);
-      console.log(
-        `sleepRequest called with count: ${count}, startIndex: ${startIndex}, endIndex: ${endIndex}, result:`,
-        result,
-      );
-      return result;
-    }
-    return [];
+    await sleep(1000); // 模拟网络延迟
+    const startIndex = count * pageSize;
+    const endIndex = startIndex + pageSize;
+    const result = data.slice(startIndex, endIndex);
+    console.log(
+      `sleepRequest called with count: ${count}, startIndex: ${startIndex}, endIndex: ${endIndex}, result:`,
+      result,
+    );
+    return result;
   }, [data]);
   
   const loadMore = useCallback(async () => {
