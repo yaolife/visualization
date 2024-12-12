@@ -1,39 +1,95 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { Image, Button } from 'antd-mobile';
-import { history, useLocation } from 'umi';
 import Back from '@/components/Back';
 import area from '@/images/area.png';
 import locationPng from '@/images/location.png';
 import vehicle from '@/images/vehicle.png';
+import portrait from '@/images/portrait.png';
+import { connectMQTT, subscribeMQTT } from '@/services/services';
+import { Button, Image } from 'antd-mobile';
+import { useEffect, useRef, useState } from 'react';
+import { history, useLocation } from 'umi';
 import styles from './index.less';
 
 const VehiclePositioning = () => {
   const location = useLocation();
   const item = location.query;
-  console.log(item, '车辆item的参数');
+  console.log(item, 'item的参数');
   const [imagePosition, setImagePosition] = useState([
     { latitude: 21.719247, longitude: 112.248985 }, // 图片位置 左上
     { latitude: 21.719246, longitude: 112.272878 }, // 图片位置 右上
     { latitude: 21.698033, longitude: 112.248986 }, // 图片位置 左下
     { latitude: 21.698032, longitude: 112.272816 }, // 图片位置 右下
   ]);
-
+  const [pointLocation, setPointLocation] = useState({
+    longitude: 0,
+    latitude: 0,
+  });
   const [pointPosition, setPointPosition] = useState({ x: 0, y: 0 });
+  const [vehicleMessages, setVehicleMessages] = useState([]); // 人员的消息
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const areaRef = useRef(null);
 
   useEffect(() => {
-    if (item) {
-      // 使用 item 对象进行其他操作
-      const point = {
-        longitude: item.longitude || 112.264291,
-        latitude: item.latitude || 21.712255,
-      };
+    // 连接到 MQTT 代理
+    connectMQTT('ws://broker.emqx.io:8083/mqtt')
+      .then(() => {
+        // 订阅主题 当前车辆的实时定位
+        subscribeMQTT('vehicle', (message) => {
+          console.log('订阅的信息:', message);
+          try {
+            const parsedMessage = JSON.parse(message);
+            console.log('解析后的消息:', parsedMessage);
 
-      const position = calculatePointPosition(point, imagePosition);
-      setPointPosition(position);
-    }
-  }, [item, imagePosition]);
+            // 检查消息格式
+            if (Array.isArray(parsedMessage) && parsedMessage.length > 0) {
+              const firstMessage = parsedMessage[0];
+              if (firstMessage.vehicleNumber && firstMessage.latitude && firstMessage.longitude) {
+                setVehicleMessages((prevMessages) => {
+                  // 检查是否存在相同的 vehicleNumber 并更新
+                  const existingIndex = prevMessages.findIndex(
+                    (msg) => msg.vehicleNumber === firstMessage.vehicleNumber,
+                  );
+                  if (existingIndex !== -1) {
+                    const updatedMessages = [...prevMessages];
+                    updatedMessages[existingIndex] = firstMessage;
+                    console.log(updatedMessages, 'updatedMessages');
+                    return updatedMessages;
+                  } else {
+                    console.log(prevMessages, firstMessage, 'prevMessages___parsedMessage');
+                    return [...prevMessages, firstMessage];
+                  }
+                });
+                // 如果匹配到当前车辆的车牌号，则更新 pointLocation
+                if (firstMessage.vehicleNumber === item.vehicleNumber) {
+                  setPointLocation({
+                    longitude: firstMessage.longitude,
+                    latitude: firstMessage.latitude,
+                  });
+                }
+              } else {
+                console.error('消息格式不正确:', firstMessage);
+              }
+            } else {
+              console.error('消息格式不正确:', parsedMessage);
+            }
+          } catch (error) {
+            console.error('Failed to parse message:', error);
+          }
+        });
+      })
+      .catch((error) => {
+        console.log(error, 'error');
+        console.error('Failed to connect to MQTT broker:', error);
+      });
+
+    // 清理函数，在组件卸载时断开连接
+    // return () => {
+    //   disconnectMQTT();
+    // };
+  }, [item.vehicleNumber]); // 添加 item.vehicleNumber 作为依赖
+  useEffect(() => {
+    const position = calculatePointPosition(pointLocation, imagePosition);
+    setPointPosition(position);
+  }, [pointLocation, imagePosition]);
 
   const calculatePointPosition = (point, positions) => {
     // 找到最小和最大纬度和经度
@@ -54,7 +110,7 @@ const VehiclePositioning = () => {
     const pixelX = relativeLongitude * imageWidth;
     const pixelY = (1 - relativeLatitude) * imageHeight; // 注意：Y轴是从上到下的
 
-    return { x: pixelX, y: pixelY };
+    return { x: pixelX, y: pixelY }; //减去图片宽度和高度的一半
   };
 
   const handleDragStart = (e) => {
@@ -73,24 +129,19 @@ const VehiclePositioning = () => {
     areaRef.current.style.left = `${newLeft}px`;
     areaRef.current.style.top = `${newTop}px`;
 
-    // 重新计算 point 的位置
-    const point = {
-      longitude: item.longitude || 112.264291,
-      latitude: item.latitude || 21.712255,
-    };
-    const newPosition = calculatePointPosition(point, imagePosition);
+    const newPosition = calculatePointPosition(pointLocation, imagePosition);
     setPointPosition({
       x: newLeft + newPosition.x,
       y: newTop + newPosition.y,
     });
   };
 
-  const goVehicleHistory = () => {
+  const goVehicleHistory = (item) => {
     history.push('/vehicleHistory');
   };
 
-  const handleClick = () => {};
-
+  console.log('vehicleMessages', vehicleMessages);
+  console.log('pointPosition', pointPosition);
   return (
     <>
       <Back />
@@ -112,11 +163,13 @@ const VehiclePositioning = () => {
         <div
           style={{
             position: 'absolute',
-            left: `${pointPosition.x}px`,
-            top: `${pointPosition.y}px`,
+            left: `${pointPosition.x + 4}px`,
+            top: `${pointPosition.y - 14}px`,
             transform: 'translate(-50%, -50%)',
           }}
+          className="location-image"
         >
+          <span className={styles.locationRealName}>{vehicleMessages[0]?.vehicleNumber || ''}</span>
           <Image src={locationPng} width={33} height={54} />
         </div>
       </div>
