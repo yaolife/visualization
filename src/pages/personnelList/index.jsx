@@ -88,7 +88,7 @@ const PersonnelList = () => {
               // 添加剩余的新数据
               updatedData.push(...newData);
 
-              // 去重，假设 personId 是唯一标识
+              // 去重，personId 就是唯一标识
               const uniqueData = Array.from(new Map(updatedData.map(item => [item.personId, item])).values());
               return uniqueData;
             });
