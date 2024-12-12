@@ -25,22 +25,30 @@ export const login = (data) => {
 };
 
 // MQTT 客户端实例
+// MQTT 客户端实例
 let client = null;
+let isConnected = false;
 
 // 连接到 MQTT 代理
 export const connectMQTT = (brokerUrl, options = {}) => {
   return new Promise((resolve, reject) => {
+    if (isConnected) {
+      console.log('Already connected to MQTT broker');
+      resolve(client);
+      return;
+    }
+
     client = mqtt.connect(brokerUrl, {
       clean: true,
       connectTimeout: 4000,
-      reconnectPeriod: 1000,
+      reconnectPeriod: 0, // 禁用自动重连机制
       clientId: 'emqx_test',
       username: 'emqx_test',
       password: 'yty162gg',
     });
 
     // 当客户端收到一个发布过来的消息时触发回调
-    client.on('message', function (message) {
+    client.on('message', function (topic, message) {
       // 这里有可能拿到的数据格式是Uint8Array格式，所以可以直接用toString转成字符串
       // let data = JSON.parse(message.toString());
       console.log('返回的数据：', message);
@@ -49,15 +57,18 @@ export const connectMQTT = (brokerUrl, options = {}) => {
     // 连接断开后触发的回调
     client.on('close', function () {
       console.log('已断开连接');
+      isConnected = false;
     });
 
     client.on('connect', () => {
       console.log('已连接成功');
+      isConnected = true;
       resolve(client);
     });
 
     client.on('error', (error) => {
       console.error('MQTT connection error:', error);
+      isConnected = false;
       reject(error);
     });
   }).catch((e) => {

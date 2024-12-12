@@ -2,7 +2,7 @@ import Back from '@/components/Back';
 import area from '@/images/area.png';
 import locationPng from '@/images/location.png';
 import portrait from '@/images/portrait.png';
-import { connectMQTT, disconnectMQTT, subscribeMQTT } from '@/services/services';
+import { connectMQTT, subscribeMQTT } from '@/services/services';
 import { Button, Image } from 'antd-mobile';
 import { useEffect, useRef, useState } from 'react';
 import { history, useLocation } from 'umi';
@@ -74,15 +74,16 @@ const PersonnelTrajectory = () => {
             console.error('Failed to parse message:', error);
           }
         });
-        // 清理函数，在组件卸载时断开连接
-        // return () => {
-        //   disconnectMQTT();
-        // };
       })
       .catch((error) => {
         console.log(error, 'error');
         console.error('Failed to connect to MQTT broker:', error);
       });
+
+    // 清理函数，在组件卸载时断开连接
+    // return () => {
+    //   disconnectMQTT();
+    // };
   }, [item.personId]); // 添加 item.personId 作为依赖
   useEffect(() => {
     const position = calculatePointPosition(pointLocation, imagePosition);
@@ -138,7 +139,6 @@ const PersonnelTrajectory = () => {
     history.push('/history');
   };
 
-  const handleClick = () => {};
   console.log('personMessages', personMessages);
   console.log('pointPosition', pointPosition);
   return (
@@ -162,12 +162,13 @@ const PersonnelTrajectory = () => {
         <div
           style={{
             position: 'absolute',
-            left: `${pointPosition.x+4}px`,
-            top: `${pointPosition.y-14}px`,
+            left: `${pointPosition.x + 4}px`,
+            top: `${pointPosition.y - 14}px`,
             transform: 'translate(-50%, -50%)',
           }}
+          className="location-image"
         >
-          {/* <span className={styles.locationRealName}>巡视人员</span> */}
+          <span className={styles.locationRealName}>{personMessages[0]?.realName || ''}</span>
           <Image src={locationPng} width={33} height={54} />
         </div>
       </div>
@@ -176,14 +177,18 @@ const PersonnelTrajectory = () => {
           <div>
             <Image src={portrait} width={40} height={40} />
           </div>
-          <span>{personMessages?.realName || ''}</span>
-          <label>{personMessages?.ticketNo || ''}</label>
-          <div className={styles.status}>{personMessages?.workStatus || '正常'}</div>
+          <div className={styles.informationTopMiddle}>
+            {' '}
+            <span>{personMessages[0]?.realName || ''}</span>
+            <label>{personMessages[0]?.ticketNo || ''}</label>
+          </div>
+
+          <div className={styles.status}>{personMessages[0]?.workStatus || '正常'}</div>
         </div>
         <div className={styles.informationMiddle}>
           <div>
             <label>作业票号</label>
-            <span>{personMessages?.ticketNo || ''}</span>
+            <span>{personMessages[0]?.ticketNo || ''}</span>
           </div>
           <div>
             <label>所属部门</label>
@@ -198,7 +203,7 @@ const PersonnelTrajectory = () => {
             </div>
             <div>
               <label>工作时长</label>
-              <span>{personMessages?.acceptTime || ''}</span>
+              <span>{personMessages[0]?.acceptTime || ''}</span>
             </div>
           </div>
           <div className={styles.informationBottomRight} onClick={clickHistory}>
