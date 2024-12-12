@@ -2,8 +2,9 @@ import React, { useEffect, useState, useRef } from 'react';
 import { LeftOutline } from 'antd-mobile-icons';
 import { history } from 'umi';
 import { Image } from 'antd-mobile';
+import { sleep } from 'antd-mobile/es/utils/sleep'
+import { connectMQTT, disconnectMQTT, subscribeMQTT } from '@/services/services';
 import UsModal from '@/components/UsModal';
-import { mockRequest } from './mock-request';
 import styles from './index.less';
 import locationPng from '@/images/location.png';
 import area from '@/images/area.png';
@@ -38,34 +39,53 @@ const History = () => {
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      const data = await mockRequest();
-      if (data?.length > 0) {
-        setRealName(data[0]?.realName);
-      }
-      const points = data?.map((point) => calculatePointPosition(point, imagePosition));
-      const pathData = points.reduce((acc, point, index) => {
-        if (index === 0) {
-          return `M ${point.x} ${point.y}`;
-        } else {
-          return `${acc} L ${point.x} ${point.y}`;
-        }
-      }, '');
-      setPathData(pathData);
+    // 连接到 MQTT 代理
+    connectMQTT('ws://broker.emqx.io:8083/mqtt')
+      .then(() => {
+        // 订阅主题 人员历史轨迹
+        subscribeMQTT('workerHistory', (message) => {
+          console.log('历史轨迹:', message);
+          try {
+            const data = JSON.parse(message);
+            if (data?.length > 0) {
+              setRealName(data[0]?.realName);
+            }
+            const points = data?.map((point) => calculatePointPosition(point, imagePosition));
+            const pathData = points.reduce((acc, point, index) => {
+              if (index === 0) {
+                return `M ${point.x} ${point.y}`;
+              } else {
+                return `${acc} L ${point.x} ${point.y}`;
+              }
+            }, '');
+            setPathData(pathData);
+      
+            // 更新location图片的位置
+            if (points.length > 0) {
+              const lastPoint = points[points.length - 1];
+              const locationElement = document.querySelector('.location-image');
+              if (locationElement) {
+                locationElement.style.left = `${lastPoint.x + areaRef.current.offsetLeft - 16}px`;
+                locationElement.style.top = `${lastPoint.y + areaRef.current.offsetTop - 27}px`;
+              }
+            }
+     
+              
+          } catch (error) {
+            console.error('Failed to parse message:', error);
+          }
+        });
+      })
+      .catch((error) => {
+        console.log(error, 'error');
+        console.error('Failed to connect to MQTT broker:', error);
+      });
 
-      // 更新location图片的位置
-      if (points.length > 0) {
-        const lastPoint = points[points.length - 1];
-        const locationElement = document.querySelector('.location-image');
-        if (locationElement) {
-          locationElement.style.left = `${lastPoint.x + areaRef.current.offsetLeft - 16}px`;
-          locationElement.style.top = `${lastPoint.y + areaRef.current.offsetTop - 27}px`;
-        }
-      }
-    };
-
-    fetchData();
-  }, [imagePosition]);
+    // 清理函数，在组件卸载时断开连接
+    // return () => {
+    //   disconnectMQTT();
+    // };
+  }, [imagePosition]); 
 
   const handleDragStart = (e) => {
     e.dataTransfer.setDragImage(new Image(), 0, 0);
