@@ -16,9 +16,8 @@ const PersonnelList = () => {
   const [loading, setLoading] = useState(false); // 添加 loading 状态
   const [isFetching, setIsFetching] = useState(false); // 添加 isFetching 状态以防止并发请求
 
-  const sleepRequest = async (count) => {
+  const sleepRequest = useCallback(async (count) => {
     if (data.length > 0) {
-      // 接受 count 作为参数
       await sleep(1000);
       const startIndex = count * pageSize;
       const endIndex = startIndex + pageSize;
@@ -31,8 +30,8 @@ const PersonnelList = () => {
     }
     // 如果数据为空，返回一个空数组
     return [];
-  };
-
+  }, [data]);
+  
   const loadMore = useCallback(async () => {
     if (isFetching || !hasMore) return; // 防止并发请求
     setIsFetching(true);
@@ -41,13 +40,13 @@ const PersonnelList = () => {
       const currentCount = getCount(); // 获取当前的 count 值
       console.log(`loadMore called with count: ${currentCount}`);
       const append = await sleepRequest(currentCount); // 使用 getCount 获取 count
-
+  
       // 确保 append 是一个数组
       if (!Array.isArray(append)) {
         console.warn('append is not an array:', append);
         append = [];
       }
-
+  
       console.log(`Data appended:`, append);
       setPerData((val) => [...val, ...append]);
       setHasMore(append.length > 0);
@@ -57,7 +56,7 @@ const PersonnelList = () => {
       setIsFetching(false);
       setLoading(false);
     }
-  }, [isFetching, hasMore]);
+  }, [isFetching, hasMore, sleepRequest, setPerData, setHasMore, setIsFetching, setLoading]);
 
   useEffect(() => {
     // 连接到 MQTT 代理
@@ -103,7 +102,6 @@ const PersonnelList = () => {
         };
       })
       .catch((error) => {
-        console.log(error, 'error');
         console.error('Failed to connect to MQTT broker:', error);
       });
   }, []);
