@@ -2,15 +2,16 @@ import React, { useEffect, useState, useRef } from 'react';
 import { LeftOutline } from 'antd-mobile-icons';
 import { history } from 'umi';
 import { Image } from 'antd-mobile';
+import { connectMQTT, disconnectMQTT, subscribeMQTT } from '@/services/services';
 import UsModal from '@/components/UsModal';
-import { mockRequest } from './mock-request';
 import styles from './index.less';
-import location from '@/images/location.png';
+import locationPng from '@/images/location.png';
 import area from '@/images/area.png';
+
 
 const VehicleHistory = () => {
   const [visible, setVisible] = useState(false);
-  const [realName, setRealName] = useState('');
+  const [vehicleNumber, setVehicleNumber] = useState('');
   const [imagePosition, setImagePosition] = useState([
     { latitude: 21.719247, longitude: 112.248985 }, // 图片位置 左上
     { latitude: 21.719246, longitude: 112.272878 }, // 图片位置 右上
@@ -20,6 +21,7 @@ const VehicleHistory = () => {
 
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [pathData, setPathData] = useState('');
+  const [isLocationImageVisible, setIsLocationImageVisible] = useState(false); // 新增状态变量
   const areaRef = useRef(null);
 
   const calculatePointPosition = (point, imageCorners) => {
@@ -38,34 +40,62 @@ const VehicleHistory = () => {
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      const data = await mockRequest();
-      if (data?.length > 0) {
-        setRealName(data[0]?.realName);
-      }
-      const points = data?.map((point) => calculatePointPosition(point, imagePosition));
-      const pathData = points.reduce((acc, point, index) => {
-        if (index === 0) {
-          return `M ${point.x} ${point.y}`;
-        } else {
-          return `${acc} L ${point.x} ${point.y}`;
-        }
-      }, '');
-      setPathData(pathData);
+    // 连接到 MQTT 代理
+    connectMQTT('ws://broker.emqx.io:8083/mqtt')
+      .then(() => {
+        // 订阅主题 车辆历史轨迹
+        subscribeMQTT('vehicleHistory', (message) => {
+          console.log('历史轨迹:', message);
+          try {
+            const data = JSON.parse(message);
+            if (data?.length > 0) {
+              setVehicleNumber(data[0]?.vehicleNumber);
+            }
+            const points = data?.map((point) => calculatePointPosition(point, imagePosition));
+            const pathData = generatePathData(points);
+            setPathData(pathData);
 
-      // 更新location图片的位置
-      if (points.length > 0) {
-        const lastPoint = points[points.length - 1];
-        const locationElement = document.querySelector('.location-image');
-        if (locationElement) {
-          locationElement.style.left = `${lastPoint.x + areaRef.current.offsetLeft - 16}px`;
-          locationElement.style.top = `${lastPoint.y + areaRef.current.offsetTop - 27}px`;
-        }
-      }
-    };
+            // 更新location图片的位置
+            if (points.length > 0) {
+              const lastPoint = points[points.length - 1];
+              updateLocationImagePosition(lastPoint);
+              setIsLocationImageVisible(true); // 设置为可见
+            } else {
+              setIsLocationImageVisible(false); // 设置为不可见
+            }
+          } catch (error) {
+            console.error('Failed to parse message:', error);
+          }
+        });
+      })
+      .catch((error) => {
+        console.log(error, 'error');
+        console.error('Failed to connect to MQTT broker:', error);
+      });
 
-    fetchData();
+    // 清理函数，在组件卸载时断开连接
+    // return () => {
+    //   disconnectMQTT();
+    // };
   }, [imagePosition]);
+
+  const generatePathData = (points) => {
+    return points.reduce((acc, point, index) => {
+      if (index === 0) {
+        return `M ${point.x} ${point.y}`;
+      } else {
+        return `${acc} L ${point.x} ${point.y}`;
+      }
+    }, '');
+  };
+
+  const updateLocationImagePosition = (point) => {
+    const locationElement = document.querySelector('.location-image');
+    if (locationElement) {
+      locationElement.style.left = `${point.x + areaRef.current.offsetLeft - 16}px`;
+      locationElement.style.top = `${point.y + areaRef.current.offsetTop - 27}px`;
+    }
+  };
 
   const handleDragStart = (e) => {
     e.dataTransfer.setDragImage(new Image(), 0, 0);
@@ -101,7 +131,6 @@ const VehicleHistory = () => {
     setVisible(true); // 显示确认对话框
   };
 
-
   const handleClose = () => {
     setVisible(false); // 关闭确认对话框
   };
@@ -134,15 +163,12 @@ const VehicleHistory = () => {
           style={{
             position: 'absolute',
             zIndex: 33,
+            display: isLocationImageVisible ? 'block' : 'none', // 根据状态控制显示和隐藏
           }}
           className="location-image"
         >
-          <span
-             className={styles.locationRealName}
-          >
-            {realName}
-          </span>
-          <Image src={location} width={33} height={54} />
+          <span className={styles.locationRealName}>{vehicleNumber}</span>
+          <Image src={locationPng} width={33} height={54} />
         </div>
       </div>
       <div className={styles.historyBottom}>
@@ -152,7 +178,7 @@ const VehicleHistory = () => {
             <span>退出</span>
           </div>
           <div className={styles.historyBottomNavRight}>
-            <label>历史轨迹</label>
+            <span>历史轨迹</span>
           </div>
         </div>
       </div>

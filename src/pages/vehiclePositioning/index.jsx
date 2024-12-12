@@ -1,5 +1,5 @@
 import Back from '@/components/Back';
-import { StatusEnum,BgEnum } from '@/constants';
+import { BgEnum, StatusEnum } from '@/constants';
 import area from '@/images/area.png';
 import locationPng from '@/images/location.png';
 import vehicle from '@/images/vehicle.png';
@@ -86,7 +86,7 @@ const VehiclePositioning = () => {
     //   disconnectMQTT();
     // };
   }, [item.vehicleNumber]); // 添加 item.vehicleNumber 作为依赖
-  
+
   useEffect(() => {
     const position = calculatePointPosition(pointLocation, imagePosition);
     setPointPosition(position);
@@ -186,7 +186,7 @@ const VehiclePositioning = () => {
             <div
               className={styles.status}
               style={{
-               backgroundColor:BgEnum[vehicleMessages[0]?.workStatus]
+                backgroundColor: BgEnum[vehicleMessages[0]?.workStatus],
               }}
             >
               {StatusEnum[vehicleMessages[0]?.workStatus] || ''}
