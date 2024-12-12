@@ -74,9 +74,9 @@ const VehicleHistory = () => {
       });
 
     // 清理函数，在组件卸载时断开连接
-    // return () => {
-    //   disconnectMQTT();
-    // };
+    return () => {
+      disconnectMQTT();
+    };
   }, [imagePosition]);
 
   const generatePathData = (points) => {
@@ -156,7 +156,7 @@ const VehicleHistory = () => {
         >
           <Image src={area} width={2418} height={2309} />
           <svg width="2418" height="2309" style={{ position: 'absolute', left: '0px', top: '0px' }}>
-            <path d={pathData} stroke="#FFAE00" fill="none" strokeWidth="3" />
+            <path d={pathData} stroke="#84FF25" fill="none" strokeWidth="3" />
           </svg>
         </div>
         <div
