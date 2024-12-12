@@ -20,6 +20,7 @@ const History = () => {
 
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [pathData, setPathData] = useState('');
+  const [isLocationImageVisible, setIsLocationImageVisible] = useState(false); // 新增状态变量
   const areaRef = useRef(null);
 
   const calculatePointPosition = (point, imageCorners) => {
@@ -57,6 +58,9 @@ const History = () => {
             if (points.length > 0) {
               const lastPoint = points[points.length - 1];
               updateLocationImagePosition(lastPoint);
+              setIsLocationImageVisible(true); // 设置为可见
+            } else {
+              setIsLocationImageVisible(false); // 设置为不可见
             }
           } catch (error) {
             console.error('Failed to parse message:', error);
@@ -158,6 +162,7 @@ const History = () => {
           style={{
             position: 'absolute',
             zIndex: 33,
+            display: isLocationImageVisible ? 'block' : 'none', // 根据状态控制显示和隐藏
           }}
           className="location-image"
         >
