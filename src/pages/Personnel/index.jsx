@@ -52,9 +52,9 @@ const Index = () => {
         console.error('Failed to connect to MQTT broker:', error);
       });
     // 清理函数，在组件卸载时断开连接
-    return () => {
-      disconnectMQTT();
-    };
+    // return () => {
+    //   disconnectMQTT();
+    // };
   }, []);
 
   const handleWorkerClick = () => {

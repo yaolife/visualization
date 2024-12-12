@@ -86,6 +86,7 @@ const VehiclePositioning = () => {
     //   disconnectMQTT();
     // };
   }, [item.vehicleNumber]); // 添加 item.vehicleNumber 作为依赖
+  
   useEffect(() => {
     const position = calculatePointPosition(pointLocation, imagePosition);
     setPointPosition(position);

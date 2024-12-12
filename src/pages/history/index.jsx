@@ -73,9 +73,9 @@ const History = () => {
       });
 
     // 清理函数，在组件卸载时断开连接
-    return () => {
-      disconnectMQTT();
-    };
+    // return () => {
+    //   disconnectMQTT();
+    // };
   }, [imagePosition]);
 
   const generatePathData = (points) => {
