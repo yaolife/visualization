@@ -1,16 +1,19 @@
-import { useModel } from 'umi';
-import { useEffect, useState } from 'react';
-import { history } from 'umi';
-import { connectMQTT, disconnectMQTT, subscribeMQTT } from '@/services/services';
-import Layout from '@/layout';
-import WorkerCardItem from '@/components/WorkerCardItem';
 import VehicleCardItem from '@/components/VehicleCardItem';
+import WorkerCardItem from '@/components/WorkerCardItem';
+import Layout from '@/layout';
+import { connectMQTT, disconnectMQTT, subscribeMQTT } from '@/services/services';
+import { useEffect, useState } from 'react';
+import { history, useModel } from 'umi';
 import styles from './index.less';
 
 const Index = () => {
   const { user } = useModel('user');
   const [personnelData, setPersonnelData] = useState({ staffNumber: 0, visitorNumber: 0 });
-  const [vehicleData, setVehicleData] = useState({ interiorVehicles: 0, visitingVehicles: 0,vehicleTypes:[] });
+  const [vehicleData, setVehicleData] = useState({
+    interiorVehicles: 0,
+    visitingVehicles: 0,
+    vehicleTypes: [],
+  });
   useEffect(() => {
     // 连接到 MQTT 代理
     connectMQTT('ws://broker.emqx.io:8083/mqtt')
@@ -23,9 +26,8 @@ const Index = () => {
             console.log('解析后的消息:', parsedMessage);
             setPersonnelData({
               staffNumber: parsedMessage?.staffNumber,
-              visitorNumber: parsedMessage?.visitorNumber
-            })
-
+              visitorNumber: parsedMessage?.visitorNumber,
+            });
           } catch (error) {
             console.error('Failed to parse message:', error);
           }
@@ -39,38 +41,37 @@ const Index = () => {
             console.log('解析后的消息:', parsedMessage);
             setVehicleData({
               interiorVehicles: parsedMessage?.interiorVehicles,
-              visitingVehicles: parsedMessage?.visitingVehicles
-            })
+              visitingVehicles: parsedMessage?.visitingVehicles,
+            });
           } catch (error) {
             console.error('Failed to parse message:', error);
           }
         });
-
-        // 清理函数，在组件卸载时断开连接
-        return () => {
-          disconnectMQTT();
-        };
       })
       .catch((error) => {
         console.error('Failed to connect to MQTT broker:', error);
       });
+    // 清理函数，在组件卸载时断开连接
+    return () => {
+      disconnectMQTT();
+    };
   }, []);
- 
-  const handleWorkerClick=()=>{
+
+  const handleWorkerClick = () => {
     history.push('/personnelList');
-  }
+  };
   const handleVehicleClick = () => {
-    history.push('/vehicleList');  
-};
+    history.push('/vehicleList');
+  };
   return (
     <div>
       <div className={styles.home}>
-          <span onClick={() => handleWorkerClick()}>
-            <WorkerCardItem personnelData={personnelData}/>
-          </span>
-          <span onClick={() => handleVehicleClick()}>
-            <VehicleCardItem vehicleData={vehicleData}/>
-          </span>
+        <span onClick={() => handleWorkerClick()}>
+          <WorkerCardItem personnelData={personnelData} />
+        </span>
+        <span onClick={() => handleVehicleClick()}>
+          <VehicleCardItem vehicleData={vehicleData} />
+        </span>
       </div>
       <Layout />
     </div>

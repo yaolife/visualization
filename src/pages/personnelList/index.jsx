@@ -16,22 +16,25 @@ const PersonnelList = () => {
   const [loading, setLoading] = useState(false); // 添加 loading 状态
   const [isFetching, setIsFetching] = useState(false); // 添加 isFetching 状态以防止并发请求
 
-  const sleepRequest = useCallback(async (count) => {
-    if (data.length > 0) {
-      await sleep(1000);
-      const startIndex = count * pageSize;
-      const endIndex = startIndex + pageSize;
-      const result = data.slice(startIndex, endIndex);
-      console.log(
-        `sleepRequest called with count: ${count}, startIndex: ${startIndex}, endIndex: ${endIndex}, result:`,
-        result,
-      );
-      return result;
-    }
-    // 如果数据为空，返回一个空数组
-    return [];
-  }, [data]);
-  
+  const sleepRequest = useCallback(
+    async (count) => {
+      if (data.length > 0) {
+        await sleep(1000);
+        const startIndex = count * pageSize;
+        const endIndex = startIndex + pageSize;
+        const result = data.slice(startIndex, endIndex);
+        console.log(
+          `sleepRequest called with count: ${count}, startIndex: ${startIndex}, endIndex: ${endIndex}, result:`,
+          result,
+        );
+        return result;
+      }
+      // 如果数据为空，返回一个空数组
+      return [];
+    },
+    [data],
+  );
+
   const loadMore = useCallback(async () => {
     if (isFetching || !hasMore) return; // 防止并发请求
     setIsFetching(true);
@@ -40,13 +43,13 @@ const PersonnelList = () => {
       const currentCount = getCount(); // 获取当前的 count 值
       console.log(`loadMore called with count: ${currentCount}`);
       const append = await sleepRequest(currentCount); // 使用 getCount 获取 count
-  
+
       // 确保 append 是一个数组
       if (!Array.isArray(append)) {
         console.warn('append is not an array:', append);
         append = [];
       }
-  
+
       console.log(`Data appended:`, append);
       setPerData((val) => [...val, ...append]);
       setHasMore(append.length > 0);
@@ -73,7 +76,9 @@ const PersonnelList = () => {
             setPerData((prevData) => {
               const newData = Array.isArray(parsedMessage) ? parsedMessage : [parsedMessage];
               const updatedData = prevData.reduce((acc, item) => {
-                const existingItemIndex = newData.findIndex(newItem => newItem.personId === item.personId);
+                const existingItemIndex = newData.findIndex(
+                  (newItem) => newItem.personId === item.personId,
+                );
                 if (existingItemIndex !== -1) {
                   // 如果存在相同的 personId，则更新该项
                   acc.push({ ...item, ...newData[existingItemIndex] });
@@ -88,22 +93,23 @@ const PersonnelList = () => {
               updatedData.push(...newData);
 
               // 去重，personId 就是唯一标识
-              const uniqueData = Array.from(new Map(updatedData.map(item => [item.personId, item])).values());
+              const uniqueData = Array.from(
+                new Map(updatedData.map((item) => [item.personId, item])).values(),
+              );
               return uniqueData;
             });
           } catch (error) {
             console.error('Failed to parse message:', error);
           }
         });
-
-        // 清理函数，在组件卸载时断开连接
-        return () => {
-          disconnectMQTT();
-        };
       })
       .catch((error) => {
         console.error('Failed to connect to MQTT broker:', error);
       });
+    // 清理函数，在组件卸载时断开连接
+    return () => {
+      disconnectMQTT();
+    };
   }, []);
 
   useEffect(() => {
