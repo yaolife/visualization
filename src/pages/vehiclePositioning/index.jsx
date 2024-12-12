@@ -1,8 +1,8 @@
 import Back from '@/components/Back';
+import { StatusEnum,BgEnum } from '@/constants';
 import area from '@/images/area.png';
 import locationPng from '@/images/location.png';
 import vehicle from '@/images/vehicle.png';
-import portrait from '@/images/portrait.png';
 import { connectMQTT, subscribeMQTT } from '@/services/services';
 import { Button, Image } from 'antd-mobile';
 import { useEffect, useRef, useState } from 'react';
@@ -178,28 +178,39 @@ const VehiclePositioning = () => {
           <div>
             <Image src={vehicle} width={36} height={36} />
           </div>
-          <span>{item?.vehicleNumber || ''}</span>
-          <div className={styles.status}>{item?.status || '正常'}</div>
+          <div className={styles.informationTopMiddle}>
+            {vehicleMessages[0]?.vehicleNumber || ''}
+          </div>
+          {vehicleMessages[0]?.workStatus && (
+            <div
+              className={styles.status}
+              style={{
+               backgroundColor:BgEnum[vehicleMessages[0]?.workStatus]
+              }}
+            >
+              {StatusEnum[vehicleMessages[0]?.workStatus] || ''}
+            </div>
+          )}
         </div>
         <div className={styles.informationMiddle}>
           <div>
             <label>车辆类型</label>
-            <span>{item?.vehicleTypeShow || ''}</span>
+            <span>{vehicleMessages[0]?.vehicleType || ''}</span>
           </div>
           <div>
             <label>车辆颜色</label>
-            <span>{item?.vehicleColor || ''}</span>
+            <span>{vehicleMessages[0]?.vehicleColor || ''}</span>
           </div>
         </div>
         <div className={styles.informationBottom}>
           <div className={styles.informationBottomLeft}>
             <div>
               <label>联系电话</label>
-              <span>{item?.contactNumber || ''}</span>
+              <span>{vehicleMessages[0]?.driverTel || ''}</span>
             </div>
             <div>
               <label>工作时长</label>
-              <span>{item?.workDuration || ''}</span>
+              <span>{''}</span>
             </div>
           </div>
           <div className={styles.informationBottomRight} onClick={() => goVehicleHistory(item)}>

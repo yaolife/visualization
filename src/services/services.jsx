@@ -23,7 +23,15 @@ export const get = (url) => {
 export const login = (data) => {
   return post('/api/user', data);
 };
-
+function generateRandomClientId(length) {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    result += characters.charAt(randomIndex);
+  }
+  return result;
+}
 // MQTT 客户端实例
 // MQTT 客户端实例
 let client = null;
@@ -42,9 +50,9 @@ export const connectMQTT = (brokerUrl, options = {}) => {
       clean: true,
       connectTimeout: 4000,
       reconnectPeriod: 0, // 禁用自动重连机制
-      clientId: 'emqx_test',
-      username: 'emqx_test',
-      password: 'yty162gg',
+      clientId: generateRandomClientId(16),
+      username: 'admin',
+      password: 'Getech@1234',
     });
 
     // 当客户端收到一个发布过来的消息时触发回调

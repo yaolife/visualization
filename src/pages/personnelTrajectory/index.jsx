@@ -182,8 +182,16 @@ const PersonnelTrajectory = () => {
             <span>{personMessages[0]?.realName || ''}</span>
             <label>{personMessages[0]?.ticketNo || ''}</label>
           </div>
-
-          <div className={styles.status}>{personMessages[0]?.workStatus || '正常'}</div>
+          {personMessages[0]?.workStatus && (
+            <div
+              className={styles.status}
+              style={{
+                backgroundColor: BgEnum[personMessages[0]?.workStatus],
+              }}
+            >
+             {StatusEnum[personMessages[0]?.workStatus] || ''}
+            </div>
+          )}
         </div>
         <div className={styles.informationMiddle}>
           <div>
@@ -192,18 +200,18 @@ const PersonnelTrajectory = () => {
           </div>
           <div>
             <label>所属部门</label>
-            <span>{item?.department || ''}</span>
+            <span>{personMessages[0]?.deptName || ''}</span>
           </div>
         </div>
         <div className={styles.informationBottom}>
           <div className={styles.informationBottomLeft}>
             <div>
               <label>联系电话</label>
-              <span>{item?.contactNumber || ''}</span>
+              <span>{''}</span>
             </div>
             <div>
               <label>工作时长</label>
-              <span>{personMessages[0]?.acceptTime || ''}</span>
+              <span>{''}</span>
             </div>
           </div>
           <div className={styles.informationBottomRight} onClick={clickHistory}>
