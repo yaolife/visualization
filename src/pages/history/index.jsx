@@ -2,7 +2,6 @@ import React, { useEffect, useState, useRef } from 'react';
 import { LeftOutline } from 'antd-mobile-icons';
 import { history } from 'umi';
 import { Image } from 'antd-mobile';
-import { sleep } from 'antd-mobile/es/utils/sleep'
 import { connectMQTT, disconnectMQTT, subscribeMQTT } from '@/services/services';
 import UsModal from '@/components/UsModal';
 import styles from './index.less';
@@ -51,26 +50,14 @@ const History = () => {
               setRealName(data[0]?.realName);
             }
             const points = data?.map((point) => calculatePointPosition(point, imagePosition));
-            const pathData = points.reduce((acc, point, index) => {
-              if (index === 0) {
-                return `M ${point.x} ${point.y}`;
-              } else {
-                return `${acc} L ${point.x} ${point.y}`;
-              }
-            }, '');
+            const pathData = generatePathData(points);
             setPathData(pathData);
-      
+
             // 更新location图片的位置
             if (points.length > 0) {
               const lastPoint = points[points.length - 1];
-              const locationElement = document.querySelector('.location-image');
-              if (locationElement) {
-                locationElement.style.left = `${lastPoint.x + areaRef.current.offsetLeft - 16}px`;
-                locationElement.style.top = `${lastPoint.y + areaRef.current.offsetTop - 27}px`;
-              }
+              updateLocationImagePosition(lastPoint);
             }
-     
-              
           } catch (error) {
             console.error('Failed to parse message:', error);
           }
@@ -82,10 +69,28 @@ const History = () => {
       });
 
     // 清理函数，在组件卸载时断开连接
-    // return () => {
-    //   disconnectMQTT();
-    // };
-  }, [imagePosition]); 
+    return () => {
+      disconnectMQTT();
+    };
+  }, [imagePosition]);
+
+  const generatePathData = (points) => {
+    return points.reduce((acc, point, index) => {
+      if (index === 0) {
+        return `M ${point.x} ${point.y}`;
+      } else {
+        return `${acc} L ${point.x} ${point.y}`;
+      }
+    }, '');
+  };
+
+  const updateLocationImagePosition = (point) => {
+    const locationElement = document.querySelector('.location-image');
+    if (locationElement) {
+      locationElement.style.left = `${point.x + areaRef.current.offsetLeft - 16}px`;
+      locationElement.style.top = `${point.y + areaRef.current.offsetTop - 27}px`;
+    }
+  };
 
   const handleDragStart = (e) => {
     e.dataTransfer.setDragImage(new Image(), 0, 0);
@@ -120,7 +125,6 @@ const History = () => {
   const goBack = () => {
     setVisible(true); // 显示确认对话框
   };
-
 
   const handleClose = () => {
     setVisible(false); // 关闭确认对话框
@@ -157,11 +161,7 @@ const History = () => {
           }}
           className="location-image"
         >
-          <span
-             className={styles.locationRealName}
-          >
-            {realName}
-          </span>
+          <span className={styles.locationRealName}>{realName}</span>
           <Image src={locationPng} width={33} height={54} />
         </div>
       </div>
