@@ -61,10 +61,12 @@ const VehicleList = () => {
         // 订阅主题 人员列表
         subscribeMQTT('onlineVehicle', (message) => {
           console.log('订阅的信息:', message);
+          setLoading(true); // 设置 loading 状态为 true
+  
           try {
             const parsedMessage = JSON.parse(message);
             console.log('解析后的消息onlineVehicle:', parsedMessage);
-
+  
             // 合并新数据到现有数据中
             setPerData((prevData) => {
               const newData = Array.isArray(parsedMessage) ? parsedMessage : [parsedMessage];
@@ -79,19 +81,21 @@ const VehicleList = () => {
                 }
                 return acc;
               }, []);
-
+  
               // 添加剩余的新数据
               updatedData.push(...newData);
-
+  
               // 去重， vehicleNumber就是唯一标识
               const uniqueData = Array.from(new Map(updatedData.map(item => [item.vehicleNumber, item])).values());
               return uniqueData;
             });
           } catch (error) {
             console.error('Failed to parse message:', error);
+          } finally {
+            setLoading(false); // 数据更新完成后设置 loading 状态为 false
           }
         });
-
+  
         // 清理函数，在组件卸载时断开连接
         return () => {
           disconnectMQTT();
@@ -102,7 +106,6 @@ const VehicleList = () => {
         console.error('Failed to connect to MQTT broker:', error);
       });
   }, []);
-
   useEffect(() => {
     console.log('useEffect called, calling doSearch');
     doSearch();
