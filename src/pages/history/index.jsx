@@ -152,7 +152,7 @@ const History = () => {
             <span>退出</span>
           </div>
           <div className={styles.historyBottomNavRight}>
-            <label>历史轨迹</label>
+            <span>历史轨迹</span>
           </div>
         </div>
       </div>

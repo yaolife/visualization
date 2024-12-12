@@ -1,38 +1,93 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { Image, Button } from 'antd-mobile';
-import { history,useLocation } from 'umi';
 import Back from '@/components/Back';
 import area from '@/images/area.png';
 import locationPng from '@/images/location.png';
 import portrait from '@/images/portrait.png';
+import { connectMQTT, disconnectMQTT, subscribeMQTT } from '@/services/services';
+import { Button, Image } from 'antd-mobile';
+import { useEffect, useRef, useState } from 'react';
+import { history, useLocation } from 'umi';
 import styles from './index.less';
 
 const PersonnelTrajectory = () => {
   const location = useLocation();
   const item = location.query;
+  console.log(item, 'item的参数');
   const [imagePosition, setImagePosition] = useState([
     { latitude: 21.719247, longitude: 112.248985 }, // 图片位置 左上
     { latitude: 21.719246, longitude: 112.272878 }, // 图片位置 右上
     { latitude: 21.698033, longitude: 112.248986 }, // 图片位置 左下
     { latitude: 21.698032, longitude: 112.272816 }, // 图片位置 右下
   ]);
-
+  const [pointLocation, setPointLocation] = useState({
+    longitude: 0,
+    latitude: 0,
+  });
   const [pointPosition, setPointPosition] = useState({ x: 0, y: 0 });
+  const [personMessages, setPersonMessages] = useState([]); // 人员的消息
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const areaRef = useRef(null);
 
   useEffect(() => {
-    if (item) {
-      // 使用 item 对象进行其他操作
-      const point = {
-        longitude: item.longitude || 112.264291,
-        latitude: item.latitude || 21.712255,
-      };
+    // 连接到 MQTT 代理
+    connectMQTT('ws://broker.emqx.io:8083/mqtt')
+      .then(() => {
+        // 订阅主题 人员的
+        subscribeMQTT('realTimeWorker', (message) => {
+          console.log('订阅的信息:', message);
+          try {
+            const parsedMessage = JSON.parse(message);
+            console.log('解析后的消息:', parsedMessage);
 
-      const position = calculatePointPosition(point, imagePosition);
-      setPointPosition(position);
-    }
-  }, [item, imagePosition]);
+            // 检查消息格式
+            if (Array.isArray(parsedMessage) && parsedMessage.length > 0) {
+              const firstMessage = parsedMessage[0];
+              if (firstMessage.personId && firstMessage.latitude && firstMessage.longitude) {
+                setPersonMessages((prevMessages) => {
+                  // 检查是否存在相同的 personId 并更新
+                  const existingIndex = prevMessages.findIndex(
+                    (msg) => msg.personId === firstMessage.personId,
+                  );
+                  if (existingIndex !== -1) {
+                    const updatedMessages = [...prevMessages];
+                    updatedMessages[existingIndex] = firstMessage;
+                    console.log(updatedMessages, 'updatedMessages');
+                    return updatedMessages;
+                  } else {
+                    console.log(prevMessages, firstMessage, 'prevMessages___parsedMessage');
+                    return [...prevMessages, firstMessage];
+                  }
+                });
+                // 如果匹配到当前人员的 personId，则更新 pointLocation
+                if (firstMessage.personId === item.personId) {
+                  setPointLocation({
+                    longitude: firstMessage.longitude,
+                    latitude: firstMessage.latitude,
+                  });
+                }
+              } else {
+                console.error('消息格式不正确:', firstMessage);
+              }
+            } else {
+              console.error('消息格式不正确:', parsedMessage);
+            }
+          } catch (error) {
+            console.error('Failed to parse message:', error);
+          }
+        });
+        // 清理函数，在组件卸载时断开连接
+        return () => {
+          disconnectMQTT();
+        };
+      })
+      .catch((error) => {
+        console.log(error, 'error');
+        console.error('Failed to connect to MQTT broker:', error);
+      });
+  }, [item.personId]); // 添加 item.personId 作为依赖
+  useEffect(() => {
+    const position = calculatePointPosition(pointLocation, imagePosition);
+    setPointPosition(position);
+  }, [pointLocation, imagePosition]);
 
   const calculatePointPosition = (point, positions) => {
     // 找到最小和最大纬度和经度
@@ -72,25 +127,22 @@ const PersonnelTrajectory = () => {
     areaRef.current.style.left = `${newLeft}px`;
     areaRef.current.style.top = `${newTop}px`;
 
-    // 重新计算 point 的位置
-    const point = {
-      longitude: item.longitude || 112.264291,
-      latitude: item.latitude || 21.712255,
-    };
-    const newPosition = calculatePointPosition(point, imagePosition);
+    const newPosition = calculatePointPosition(pointLocation, imagePosition);
     setPointPosition({
       x: newLeft + newPosition.x,
       y: newTop + newPosition.y,
     });
   };
+
   const clickHistory = (item) => {
     history.push('/history');
   };
 
   const handleClick = () => {};
+  console.log('personMessages', personMessages);
+  console.log('pointPosition', pointPosition);
   return (
     <>
-      {' '}
       <Back />
       <div style={{ position: 'relative', width: '100%', height: '100%' }}>
         <div
@@ -123,14 +175,14 @@ const PersonnelTrajectory = () => {
           <div>
             <Image src={portrait} width={40} height={40} />
           </div>
-          <span>{item?.personName || ''}</span>
-          <label>{item?.orgName || ''}</label>
-          <div className={styles.status}>{item?.status || '正常'}</div>
+          <span>{personMessages?.realName || ''}</span>
+          <label>{personMessages?.ticketNo || ''}</label>
+          <div className={styles.status}>{personMessages?.workStatus || '正常'}</div>
         </div>
         <div className={styles.informationMiddle}>
           <div>
             <label>作业票号</label>
-            <span>{item?.orgName || ''}</span>
+            <span>{personMessages?.ticketNo || ''}</span>
           </div>
           <div>
             <label>所属部门</label>
@@ -145,7 +197,7 @@ const PersonnelTrajectory = () => {
             </div>
             <div>
               <label>工作时长</label>
-              <span>{item?.workDuration || ''}</span>
+              <span>{personMessages?.acceptTime || ''}</span>
             </div>
           </div>
           <div className={styles.informationBottomRight} onClick={clickHistory}>
