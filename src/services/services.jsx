@@ -12,6 +12,7 @@ const requestWithMethod = (url, method, data = {}, headers = {}) => {
   return request(url, {
     method,
     headers,
+    timeout: 10000, // 增加超时时间，例如 10 秒
     ...(method === 'POST' ? { data: requestData } : {}),
   });
 };
