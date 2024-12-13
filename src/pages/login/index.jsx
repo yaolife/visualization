@@ -1,17 +1,17 @@
-import { login } from '@/services/services';
+
 import { Button, Form, Input } from 'antd-mobile';
 import { history, useModel, useRequest } from 'umi';
 import styles from './index.less';
 
 const Index = () => {
-  const { run } = useRequest(login, { manual: true });
-  const { setUser } = useModel('user');
-  const onFinish = (values) => {
-    run(values).then((res) => {
-      history.push('/');
-      setUser(res);
-    });
-  };
+  // const { run } = useRequest(login, { manual: true });
+  // const { setUser } = useModel('user');
+  // const onFinish = (values) => {
+  //   run(values).then((res) => {
+  //     history.push('/');
+  //     setUser(res);
+  //   });
+  // };
 
   return (
     <div className={styles.login}>

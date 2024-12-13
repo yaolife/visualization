@@ -141,6 +141,11 @@ const PersonnelTrajectory = () => {
   };
 
   const clickHistory = () => {
+    const queryParams = {
+      ...item,
+      startTime,
+      endTime,
+    };
     if (!startTime || !endTime) {
       Toast.show('请选择开始时间和结束时间');
       return;
@@ -150,7 +155,10 @@ const PersonnelTrajectory = () => {
       Toast.show('结束时间必须晚于开始时间');
       return;
     }
-    history.push('/history');
+    history.push({
+      pathname: '/history',
+      query: queryParams,
+    });
   };
 
   console.log('personMessages', personMessages);

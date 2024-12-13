@@ -1,28 +1,82 @@
+// services.jsx
 import mqtt from 'mqtt';
 import { request } from 'umi';
+const API_ROOT = 'http://10.44.100.133:8080';
 
 // 通用请求函数
-const requestWithMethod = (url, method, data = {}) => {
+const requestWithMethod = (url, method, data = {}, headers = {}) => {
+  let requestData = data;
+  if (headers['Content-Type'] === 'application/x-www-form-urlencoded') {
+    requestData = Object.keys(data).map(key => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`).join('&');
+  }
   return request(url, {
     method,
-    ...(method === 'POST' ? { data } : {}),
+    headers,
+    ...(method === 'POST' ? { data: requestData } : {}),
   });
 };
 
 // POST 请求封装
-export const post = (url, data) => {
-  return requestWithMethod(url, 'POST', data);
+export const post = (url, data, headers = {}) => {
+  return requestWithMethod(url, 'POST', data, headers);
 };
 
 // GET 请求封装
-export const get = (url) => {
-  return requestWithMethod(url, 'GET');
+export const get = (url, headers = {}) => {
+  return requestWithMethod(url, 'GET', {}, headers);
 };
 
-// 示例：登录请求
-export const login = (data) => {
-  return post('/api/user', data);
+// 设置公共请求头
+let accessToken = '';
+
+
+
+export const getHeaders = (includeAuth = true) => {
+  const baseHeaders = {
+    'Content-Type': 'application/json',
+    'Authorization':''
+  };
+  return baseHeaders;
 };
+
+// 示例：使用公共请求头发送请求
+export const authenticatedPost = (url, data) => {
+  const headers = getHeaders();
+  return post(url, data, headers);
+};
+
+export const authenticatedGet = (url) => {
+  const headers = getHeaders();
+  return get(url, headers);
+};
+
+// 封装获取当前用户轨迹列表请求
+export const getUserTrackList = async (params) => {
+  const url = `${API_ROOT}/api/yj-server/personTracks/getUserTrackList`;
+  const headers = getHeaders(); // 使用公共请求头，包括 Authorization 头
+
+  try {
+    const response = await post(url, params, headers);
+    return response;
+  } catch (error) {
+    console.error('Failed to get user track list:', error);
+    throw error;
+  }
+};
+export const getVehicleTrackList = async (params) => {
+  const url = `${API_ROOT}/api/yj-server/vehicleTracks/getVehicleTrackList`;
+  const headers = getHeaders(); // 使用公共请求头，包括 Authorization 头
+
+  try {
+    const response = await post(url, params, headers);
+    return response;
+  } catch (error) {
+    console.error('Failed to get user track list:', error);
+    throw error;
+  }
+};
+
+
 function generateRandomClientId(length) {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let result = '';
@@ -32,7 +86,7 @@ function generateRandomClientId(length) {
   }
   return result;
 }
-// MQTT 客户端实例
+
 // MQTT 客户端实例
 let client = null;
 let isConnected = false;
@@ -57,8 +111,6 @@ export const connectMQTT = (brokerUrl, options = {}) => {
 
     // 当客户端收到一个发布过来的消息时触发回调
     client.on('message', function (topic, message) {
-      // 这里有可能拿到的数据格式是Uint8Array格式，所以可以直接用toString转成字符串
-      // let data = JSON.parse(message.toString());
       console.log('返回的数据：', message);
     });
 

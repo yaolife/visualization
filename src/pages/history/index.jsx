@@ -1,14 +1,16 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { LeftOutline } from 'antd-mobile-icons';
-import { history } from 'umi';
-import { Image } from 'antd-mobile';
-import { connectMQTT, disconnectMQTT, subscribeMQTT } from '@/services/services';
+// index.jsx
 import UsModal from '@/components/UsModal';
-import styles from './index.less';
-import locationPng from '@/images/location.png';
 import area from '@/images/area.png';
+import locationPng from '@/images/location.png';
+import { getUserTrackList } from '@/services/services';
+import { Image } from 'antd-mobile';
+import { LeftOutline } from 'antd-mobile-icons';
+import { useEffect, useRef, useState } from 'react';
+import { history } from 'umi';
+import styles from './index.less';
 
 const History = () => {
+  const { item, startTime, endTime } = location.query;
   const [visible, setVisible] = useState(false);
   const [realName, setRealName] = useState('');
   const [imagePosition, setImagePosition] = useState([
@@ -39,44 +41,45 @@ const History = () => {
   };
 
   useEffect(() => {
-    // 连接到 MQTT 代理
-    connectMQTT('ws://broker.emqx.io:8083/mqtt')
-      .then(() => {
-        // 订阅主题 人员历史轨迹
-        subscribeMQTT('workerHistory', (message) => {
-          console.log('历史轨迹:', message);
-          try {
-            const data = JSON.parse(message);
-            if (data?.length > 0) {
-              setRealName(data[0]?.realName);
-            }
-            const points = data?.map((point) => calculatePointPosition(point, imagePosition));
-            const pathData = generatePathData(points);
-            setPathData(pathData);
+    // 获取当前用户轨迹列表
+    const fetchUserTrackList = async () => {
+      try {
+        const params = {
+          cardId: item?.cardId,
+          personId: item?.personId,
+          startTime: startTime,
+          endTime: endTime,
+        };
+        const response = await getUserTrackList(params);
+        console.log('User Track List:', response);
+        if (response?.data?.length === 0) return;
+        setRealName(response?.data[0]?.realName);
+        // 处理响应数据
+        const points = response?.data?.map((point) => calculatePointPosition(point, imagePosition));
+        const pathData = generatePathData(points);
+        setPathData(pathData);
 
-            // 更新location图片的位置
-            if (points.length > 0) {
-              const lastPoint = points[points.length - 1];
-              updateLocationImagePosition(lastPoint);
-              setIsLocationImageVisible(true); // 设置为可见
-            } else {
-              setIsLocationImageVisible(false); // 设置为不可见
-            }
-          } catch (error) {
-            console.error('Failed to parse message:', error);
-          }
-        });
-      })
-      .catch((error) => {
-        console.log(error, 'error');
-        console.error('Failed to connect to MQTT broker:', error);
-      });
+        // 更新location图片的位置
+        if (points.length > 0) {
+          const lastPoint = points[points.length - 1];
+          updateLocationImagePosition(lastPoint);
+          setIsLocationImageVisible(true); // 设置为可见
+        } else {
+          setIsLocationImageVisible(false); // 设置为不可见
+        }
+      } catch (error) {
+        console.error('Failed to fetch user track list:', error);
+      }
+    };
+
+    fetchUserTrackList();
 
     // 清理函数，在组件卸载时断开连接
-    // return () => {
-    //   disconnectMQTT();
-    // };
-  }, [imagePosition]);
+    return () => {
+      // 如果之前有使用 MQTT，这里可以调用 disconnectMQTT()
+      // disconnectMQTT();
+    };
+  }, [imagePosition, item, startTime, endTime]);
 
   const generatePathData = (points) => {
     return points.reduce((acc, point, index) => {
