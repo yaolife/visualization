@@ -142,9 +142,9 @@ const PersonnelTrajectory = () => {
 
   const clickHistory = () => {
     const queryParams = {
-      ...item,
-      startTime,
-      endTime,
+      personId:item?.personId,
+      startTime:formatDateTime(startTime),
+      endTime:formatDateTime(endTime),
       cardId:personMessages[0]?.cardId
     };
     if (!startTime || !endTime) {

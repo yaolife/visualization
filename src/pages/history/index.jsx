@@ -11,7 +11,9 @@ import styles from './index.less';
 
 const History = () => {
   const location = useLocation();
-  const { item, startTime, endTime } = location.query;
+  const { personId, cardId, startTime, endTime } = location.query;
+  console.log(personId, cardId, startTime, endTime, 'History的参数');
+
   const [visible, setVisible] = useState(false);
   const [realName, setRealName] = useState('');
   const [imagePosition, setImagePosition] = useState([
@@ -46,28 +48,36 @@ const History = () => {
     const fetchUserTrackList = async () => {
       try {
         const params = {
-          cardId: item?.cardId,
-          personId: item?.personId,
+          cardId: cardId,
+          personId: personId,
           startTime: startTime,
           endTime: endTime,
         };
         const response = await getUserTrackList(params);
         console.log('User Track List:', response);
-        if (response?.data?.length === 0) return;
-        setRealName(response?.data[0]?.realName);
-        // 处理响应数据
-        const points = response?.data?.map((point) => calculatePointPosition(point, imagePosition));
-        const pathData = generatePathData(points);
-        setPathData(pathData);
 
-        // 更新location图片的位置
-        if (points.length > 0) {
-          const lastPoint = points[points.length - 1];
-          updateLocationImagePosition(lastPoint);
-          setIsLocationImageVisible(true); // 设置为可见
+        if (response.code === '0') {
+          if (response.data?.length > 0) {
+            setRealName(response?.data[0]?.realName);
+          }       
+          // 处理响应数据
+          const points = response?.data?.map((point) => calculatePointPosition(point, imagePosition));
+          const pathData = generatePathData(points);
+          setPathData(pathData);
+  
+          // 更新location图片的位置
+          if (points.length > 0) {
+            const lastPoint = points[points.length - 1];
+            updateLocationImagePosition(lastPoint);
+            setIsLocationImageVisible(true); // 设置为可见
+          } else {
+            setIsLocationImageVisible(false); // 设置为不可见
+          }
         } else {
-          setIsLocationImageVisible(false); // 设置为不可见
+          console.error('获取用户轨迹列表失败:', response.msg);
         }
+
+     
       } catch (error) {
         console.error('Failed to fetch user track list:', error);
       }
@@ -80,7 +90,7 @@ const History = () => {
         setIsLocationImageVisible(false);
       };
 
-  }, [imagePosition, item, startTime, endTime]);
+  }, [imagePosition, startTime, endTime,personId,cardId]);
 
   const generatePathData = (points) => {
     return points.reduce((acc, point, index) => {
