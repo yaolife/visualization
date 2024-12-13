@@ -74,11 +74,6 @@ const History = () => {
 
     fetchUserTrackList();
 
-    // 清理函数，在组件卸载时断开连接
-    return () => {
-      // 如果之前有使用 MQTT，这里可以调用 disconnectMQTT()
-      // disconnectMQTT();
-    };
   }, [imagePosition, item, startTime, endTime]);
 
   const generatePathData = (points) => {

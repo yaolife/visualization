@@ -1,6 +1,6 @@
 import Header from '@/components/Navbar';
 import position from '@/images/position.png';
-import { connectMQTT, disconnectMQTT, subscribeMQTT } from '@/services/services';
+import { connectMQTT, subscribeMQTT } from '@/services/services';
 import { Button, DotLoading, Image, SearchBar } from 'antd-mobile';
 import { sleep } from 'antd-mobile/es/utils/sleep';
 import { useCallback, useEffect, useState } from 'react';
@@ -146,7 +146,7 @@ const PersonnelList = () => {
   const goPersonnelTrajectory = (item) => {
     history.push({
       pathname: '/personnelTrajectory',
-      query: item,
+      query: { ...item, cardId: data[0]?.cardId || item?.cardId },
     });
   };
 
