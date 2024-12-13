@@ -1,6 +1,6 @@
 import Header from '@/components/Navbar';
 import position from '@/images/position.png';
-import { connectMQTT,disconnectMQTT, subscribeMQTT } from '@/services/services';
+import { connectMQTT, disconnectMQTT, subscribeMQTT } from '@/services/services';
 import { Button, DotLoading, Image, SearchBar } from 'antd-mobile';
 import { sleep } from 'antd-mobile/es/utils/sleep';
 import { useCallback, useEffect, useState } from 'react';
@@ -63,8 +63,9 @@ const PersonnelList = () => {
 
   useEffect(() => {
     // 连接到 MQTT 代理
-    connectMQTT()
-      .then(() => {
+    const connectAndSubscribe = async () => {
+      try {
+        await connectMQTT();
         // 订阅主题 人员列表
         subscribeMQTT('onlinePerson', (message) => {
           console.log('订阅的信息:', message);
@@ -102,15 +103,18 @@ const PersonnelList = () => {
             console.error('Failed to parse message:', error);
           }
         });
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error('Failed to connect to MQTT broker:', error);
-      });
+      }
+    };
+
+    connectAndSubscribe();
+
     // 清理函数，在组件卸载时断开连接
     return () => {
       disconnectMQTT();
     };
-  }, []);
+  }, []); // 空依赖数组确保只在组件挂载和卸载时执行
 
   useEffect(() => {
     console.log('useEffect called, calling doSearch');
@@ -146,7 +150,7 @@ const PersonnelList = () => {
   const goPersonnelTrajectory = (item) => {
     history.push({
       pathname: '/personnelTrajectory',
-      query: item ,
+      query: item,
     });
   };
 
