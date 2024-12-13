@@ -74,6 +74,11 @@ const History = () => {
     };
 
     fetchUserTrackList();
+      // 清理函数，在组件卸载时清除数据
+      return () => {
+        setPathData('');
+        setIsLocationImageVisible(false);
+      };
 
   }, [imagePosition, item, startTime, endTime]);
 

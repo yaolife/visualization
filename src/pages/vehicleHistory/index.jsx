@@ -1,20 +1,19 @@
+// vehicleHistory/index.jsx
 import React, { useEffect, useState, useRef } from 'react';
 import { LeftOutline } from 'antd-mobile-icons';
-import { history,useLocation } from 'umi';
+import { history, useLocation } from 'umi';
 import { getVehicleTrackList } from '@/services/services';
-import { Image } from 'antd-mobile';
-import { connectMQTT, disconnectMQTT, subscribeMQTT } from '@/services/services';
+import { Image } from 'antd';
 import UsModal from '@/components/UsModal';
 import styles from './index.less';
 import locationPng from '@/images/location.png';
 import area from '@/images/area.png';
 
-
 const VehicleHistory = () => {
   const location = useLocation();
-  const { vehicleNumber, cardId,startTime, endTime } = location.query;
+  const { vehicleNumber, cardId, startTime, endTime } = location.query;
 
-  console.log(vehicleNumber, cardId,startTime, endTime , 'VehicleHistory的参数');
+  console.log(vehicleNumber, cardId, startTime, endTime, 'VehicleHistory的参数');
   const [visible, setVisible] = useState(false);
   const [vNumber, setVehicleNumber] = useState('');
   const [imagePosition, setImagePosition] = useState([
@@ -45,44 +44,47 @@ const VehicleHistory = () => {
   };
 
   useEffect(() => {
-    // 连接到 MQTT 代理
-    connectMQTT('ws://broker.emqx.io:8083/mqtt')
-      .then(() => {
-        // 订阅主题 车辆历史轨迹
-        subscribeMQTT('vehicleHistory', (message) => {
-          console.log('历史轨迹:', message);
-          try {
-            const data = JSON.parse(message);
-            if (data?.length > 0) {
-              setVehicleNumber(data[0]?.vehicleNumber);
-            }
-            const points = data?.map((point) => calculatePointPosition(point, imagePosition));
-            const pathData = generatePathData(points);
-            setPathData(pathData);
-
-            // 更新location图片的位置
-            if (points.length > 0) {
-              const lastPoint = points[points.length - 1];
-              updateLocationImagePosition(lastPoint);
-              setIsLocationImageVisible(true); // 设置为可见
-            } else {
-              setIsLocationImageVisible(false); // 设置为不可见
-            }
-          } catch (error) {
-            console.error('Failed to parse message:', error);
+    const fetchVehicleTrackList = async () => {
+      try {
+        const params = {
+          cardId: cardId,
+          vehicleNumber: vehicleNumber,
+          startTime: startTime,
+          endTime: endTime,
+        };
+        const response = await getVehicleTrackList(params);
+        if (response.code === '0') {
+          if (response.data?.length > 0) {
+            setVehicleNumber(response.data[0]?.vehicleNumber);
           }
-        });
-      })
-      .catch((error) => {
-        console.log(error, 'error');
-        console.error('Failed to connect to MQTT broker:', error);
-      });
+          const points = response.data?.map((point) => calculatePointPosition(point, imagePosition));
+          const pathData = generatePathData(points);
+          setPathData(pathData);
 
-    // 清理函数，在组件卸载时断开连接
-    return () => {
-      disconnectMQTT();
+          // 更新location图片的位置
+          if (points.length > 0) {
+            const lastPoint = points[points.length - 1];
+            updateLocationImagePosition(lastPoint);
+            setIsLocationImageVisible(true); // 设置为可见
+          } else {
+            setIsLocationImageVisible(false); // 设置为不可见
+          }
+        } else {
+          console.error('获取车辆轨迹失败:', response.msg);
+        }
+      } catch (error) {
+        console.error('请求错误:', error);
+      }
     };
-  }, [imagePosition]);
+
+    fetchVehicleTrackList();
+
+    // 清理函数，在组件卸载时清除数据
+    return () => {
+      setPathData('');
+      setIsLocationImageVisible(false);
+    };
+  }, [vehicleNumber, cardId, startTime, endTime, imagePosition]);
 
   const generatePathData = (points) => {
     return points.reduce((acc, point, index) => {
@@ -172,7 +174,7 @@ const VehicleHistory = () => {
           }}
           className="location-image"
         >
-          <span className={styles.locationRealName}>{vNumber}</span>
+          <span className={styles.locationRealName}>{vehicleNumber}</span>
           <Image src={locationPng} width={33} height={54} />
         </div>
       </div>
