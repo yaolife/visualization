@@ -2,7 +2,7 @@ import Back from '@/components/Back';
 import area from '@/images/area.png';
 import locationPng from '@/images/location.png';
 import portrait from '@/images/portrait.png';
-import { connectMQTT, subscribeMQTT } from '@/services/services';
+import { connectMQTT, disconnectMQTT,subscribeMQTT } from '@/services/services';
 import { formatDateTime } from '@/utils';
 import { Button, DatePicker, Image, Toast } from 'antd-mobile';
 import { useEffect, useRef, useState } from 'react';
@@ -85,9 +85,9 @@ const PersonnelTrajectory = () => {
       });
 
     // 清理函数，在组件卸载时断开连接
-    // return () => {
-    //   disconnectMQTT();
-    // };
+    return () => {
+      disconnectMQTT();
+    };
   }, [item.personId]); // 添加 item.personId 作为依赖
   useEffect(() => {
     const position = calculatePointPosition(pointLocation, imagePosition);

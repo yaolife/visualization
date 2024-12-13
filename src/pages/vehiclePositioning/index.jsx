@@ -4,7 +4,7 @@ import area from '@/images/area.png';
 import locationPng from '@/images/location.png';
 import vehicle from '@/images/vehicle.png';
 import { formatDateTime } from '@/utils';
-import { connectMQTT, subscribeMQTT } from '@/services/services';
+import { connectMQTT,disconnectMQTT, subscribeMQTT } from '@/services/services';
 import { Button, DatePicker, Image, Toast } from 'antd-mobile';
 import { useEffect, useRef, useState } from 'react';
 import { history, useLocation } from 'umi';
@@ -87,9 +87,9 @@ const VehiclePositioning = () => {
       });
 
     // 清理函数，在组件卸载时断开连接
-    // return () => {
-    //   disconnectMQTT();
-    // };
+    return () => {
+      disconnectMQTT();
+    };
   }, [item.vehicleNumber]); // 添加 item.vehicleNumber 作为依赖
 
   useEffect(() => {
