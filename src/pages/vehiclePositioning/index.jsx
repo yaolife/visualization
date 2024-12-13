@@ -3,8 +3,9 @@ import { BgEnum, StatusEnum } from '@/constants';
 import area from '@/images/area.png';
 import locationPng from '@/images/location.png';
 import vehicle from '@/images/vehicle.png';
+import { formatDateTime } from '@/utils';
 import { connectMQTT, subscribeMQTT } from '@/services/services';
-import { Button, Card, DatePicker, Image, Toast } from 'antd-mobile';
+import { Button, DatePicker, Image, Toast } from 'antd-mobile';
 import { useEffect, useRef, useState } from 'react';
 import { history, useLocation } from 'umi';
 import styles from './index.less';
@@ -12,7 +13,7 @@ import styles from './index.less';
 const VehiclePositioning = () => {
   const location = useLocation();
   const item = location.query;
-  console.log(item, 'item的参数');
+  console.log(item, 'VehiclePositioning的参数');
   const [imagePosition, setImagePosition] = useState([
     { latitude: 21.719247, longitude: 112.248985 }, // 图片位置 左上
     { latitude: 21.719246, longitude: 112.272878 }, // 图片位置 右上
@@ -142,11 +143,20 @@ const VehiclePositioning = () => {
   };
 
   const goVehicleHistory = (item) => {
+    if (!startTime || !endTime) {
+      Toast.show('请选择开始时间和结束时间');
+      return;
+    }
+
+    if (startTime >= endTime) {
+      Toast.show('结束时间必须晚于开始时间');
+      return;
+    }
     const queryParams = {
-      ...item,
-      startTime,
-      endTime,
-      cardId:vehicleMessages[0]?.cardId
+      vehicleNumber:item?.vehicleNumber,
+      startTime:formatDateTime(startTime),
+      endTime:formatDateTime(endTime),
+      cardId: vehicleMessages[0]?.cardId,
     };
     history.push({
       pathname: '/vehicleHistory',
@@ -207,13 +217,66 @@ const VehiclePositioning = () => {
           )}
         </div>
         <div className={styles.informationMiddle}>
-          <div>
-            <label>车辆类型</label>
-            <span>{vehicleMessages[0]?.vehicleType || ''}</span>
+          <div className={styles.informationMiddleLeft}>
+            {' '}
+            <div>
+              <label>车辆类型</label>
+              <span>{vehicleMessages[0]?.vehicleType || ''}</span>
+            </div>
+            <div>
+              <label>车辆颜色</label>
+              <span>{vehicleMessages[0]?.vehicleColor || ''}</span>
+            </div>
           </div>
-          <div>
-            <label>车辆颜色</label>
-            <span>{vehicleMessages[0]?.vehicleColor || ''}</span>
+          <div className={styles.informationMiddleRight}>
+            <div>
+              {' '}
+              <Button
+                onClick={() => {
+                  setStartDateVisible(true);
+                }}
+              >
+                开始时间
+              </Button>
+              <DatePicker
+                title="开始时间"
+                visible={startDateVisible}
+                value={startTime}  // 绑定 value 属性到 startTime
+                onClose={() => {
+                  setStartDateVisible(false);
+                }}
+                mouseWheel
+                precision="second"
+                onConfirm={(val) => {
+                  setStartTime(val);          
+                }}
+              />   
+              {startTime && <span >{formatDateTime(startTime)}</span>}       
+            </div>
+            <div>
+              {' '}
+              <Button
+                onClick={() => {
+                  setEndDateVisible(true);
+                }}
+              >
+                结束时间
+              </Button>
+              <DatePicker
+                title="结束时间"
+                visible={endDateVisible}
+                value={endTime}  // 绑定 value 属性到 endTime
+                onClose={() => {
+                  setEndDateVisible(false);
+                }}
+                mouseWheel
+                precision="second"
+                onConfirm={(val) => {
+                  setEndTime(val);           
+                }}
+              />            
+              {endTime && <span >{formatDateTime(endTime)}</span>}       
+            </div>
           </div>
         </div>
         <div className={styles.informationBottom}>

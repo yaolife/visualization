@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { LeftOutline } from 'antd-mobile-icons';
-import { history } from 'umi';
+import { history,useLocation } from 'umi';
+import { getVehicleTrackList } from '@/services/services';
 import { Image } from 'antd-mobile';
 import { connectMQTT, disconnectMQTT, subscribeMQTT } from '@/services/services';
 import UsModal from '@/components/UsModal';
@@ -10,8 +11,12 @@ import area from '@/images/area.png';
 
 
 const VehicleHistory = () => {
+  const location = useLocation();
+  const { vehicleNumber, cardId,startTime, endTime } = location.query;
+
+  console.log(vehicleNumber, cardId,startTime, endTime , 'VehicleHistory的参数');
   const [visible, setVisible] = useState(false);
-  const [vehicleNumber, setVehicleNumber] = useState('');
+  const [vNumber, setVehicleNumber] = useState('');
   const [imagePosition, setImagePosition] = useState([
     { latitude: 21.719247, longitude: 112.248985 }, // 图片位置 左上
     { latitude: 21.719246, longitude: 112.272878 }, // 图片位置 右上
@@ -167,7 +172,7 @@ const VehicleHistory = () => {
           }}
           className="location-image"
         >
-          <span className={styles.locationRealName}>{vehicleNumber}</span>
+          <span className={styles.locationRealName}>{vNumber}</span>
           <Image src={locationPng} width={33} height={54} />
         </div>
       </div>

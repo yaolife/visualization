@@ -6,10 +6,11 @@ import { getUserTrackList } from '@/services/services';
 import { Image } from 'antd-mobile';
 import { LeftOutline } from 'antd-mobile-icons';
 import { useEffect, useRef, useState } from 'react';
-import { history } from 'umi';
+import { history,useLocation } from 'umi';
 import styles from './index.less';
 
 const History = () => {
+  const location = useLocation();
   const { item, startTime, endTime } = location.query;
   const [visible, setVisible] = useState(false);
   const [realName, setRealName] = useState('');

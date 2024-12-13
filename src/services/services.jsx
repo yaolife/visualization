@@ -63,6 +63,7 @@ export const getUserTrackList = async (params) => {
     throw error;
   }
 };
+// 封装获取当前车辆轨迹列表请求
 export const getVehicleTrackList = async (params) => {
   const url = `${API_ROOT}/api/yj-server/vehicleTracks/getVehicleTrackList`;
   const headers = getHeaders(); // 使用公共请求头，包括 Authorization 头
