@@ -22,11 +22,11 @@ const WorkerCardItem = (props) => {
         <div className={styles.cardBottom}>
           <div className={styles.fixedPersonnel}>
             <label> 固定人员</label>
-            <span>{staffNumber || ''}</span>
+            <span>{staffNumber || 0}</span>
           </div>
           <div className={styles.visitor}>
             <label>访客</label>
-            <span>{visitorNumber || ''}</span>
+            <span>{visitorNumber || 0}</span>
           </div>
         </div> 
     </div>

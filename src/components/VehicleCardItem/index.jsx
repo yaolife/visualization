@@ -20,11 +20,11 @@ const VehicleCardItem = (props) => {
         <div className={styles.cardBottom}>
           <div className={styles.fixedPersonnel}>
             <label>固定车</label>
-            <span>{interiorVehicles || ''}</span>
+            <span>{interiorVehicles || 0}</span>
           </div>
           <div className={styles.visitor}>
             <label>访客车</label>
-            <span>{visitingVehicles || ''}</span>
+            <span>{visitingVehicles || 0}</span>
           </div>
         </div>
     

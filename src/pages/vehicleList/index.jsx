@@ -16,33 +16,36 @@ const VehicleList = () => {
   const [loading, setLoading] = useState(false); // 添加 loading 状态
   const [isFetching, setIsFetching] = useState(false); // 添加 isFetching 状态以防止并发请求
 
-  const sleepRequest = useCallback(async (count) => {
-    await sleep(1000); // 模拟网络延迟
-    const startIndex = count * pageSize;
-    const endIndex = startIndex + pageSize;
-    const result = data.slice(startIndex, endIndex);
-    console.log(
-      `sleepRequest called with count: ${count}, startIndex: ${startIndex}, endIndex: ${endIndex}, result:`,
-      result,
-    );
-    return result;
-  }, [data]);
-  
+  const sleepRequest = useCallback(
+    async (count) => {
+      await sleep(1000); // 模拟网络延迟
+      const startIndex = count * pageSize;
+      const endIndex = startIndex + pageSize;
+      const result = data.slice(startIndex, endIndex);
+      console.log(
+        `sleepRequest called with count: ${count}, startIndex: ${startIndex}, endIndex: ${endIndex}, result:`,
+        result,
+      );
+      return result;
+    },
+    [data],
+  );
+
   const loadMore = useCallback(async () => {
     if (isFetching || !hasMore) return; // 防止并发请求
     setIsFetching(true);
     setLoading(true);
-  
+
     try {
       const currentCount = getCount(); // 获取当前的 count 值
       console.log(`loadMore called with count: ${currentCount}`);
       const append = await sleepRequest(currentCount); // 使用 getCount 获取 count
-  
+
       if (!Array.isArray(append)) {
         console.warn('append is not an array:', append);
         append = [];
       }
-  
+
       console.log(`Data appended:`, append);
       setPerData((val) => [...val, ...append]);
       setHasMore(append.length > 0);
@@ -62,16 +65,18 @@ const VehicleList = () => {
         subscribeMQTT('onlineVehicle', (message) => {
           console.log('订阅的信息:', message);
           setLoading(true); // 设置 loading 状态为 true
-  
+
           try {
             const parsedMessage = JSON.parse(message);
             console.log('解析后的消息onlineVehicle:', parsedMessage);
-  
+
             // 合并新数据到现有数据中
             setPerData((prevData) => {
               const newData = Array.isArray(parsedMessage) ? parsedMessage : [parsedMessage];
               const updatedData = prevData.reduce((acc, item) => {
-                const existingItemIndex = newData.findIndex(newItem => newItem.vehicleNumber === item.vehicleNumber);
+                const existingItemIndex = newData.findIndex(
+                  (newItem) => newItem.vehicleNumber === item.vehicleNumber,
+                );
                 if (existingItemIndex !== -1) {
                   // 如果存在相同的 vehicleNumber，则更新该项
                   acc.push({ ...item, ...newData[existingItemIndex] });
@@ -81,12 +86,14 @@ const VehicleList = () => {
                 }
                 return acc;
               }, []);
-  
+
               // 添加剩余的新数据
               updatedData.push(...newData);
-  
+
               // 去重， vehicleNumber就是唯一标识
-              const uniqueData = Array.from(new Map(updatedData.map(item => [item.vehicleNumber, item])).values());
+              const uniqueData = Array.from(
+                new Map(updatedData.map((item) => [item.vehicleNumber, item])).values(),
+              );
               return uniqueData;
             });
           } catch (error) {
@@ -100,10 +107,10 @@ const VehicleList = () => {
         console.log(error, 'error');
         console.error('Failed to connect to MQTT broker:', error);
       });
-             // 清理函数，在组件卸载时断开连接
-             return () => {
-              disconnectMQTT();
-            };
+    // 清理函数，在组件卸载时断开连接
+    return () => {
+      disconnectMQTT();
+    };
   }, []);
   useEffect(() => {
     console.log('useEffect called, calling doSearch');
@@ -118,11 +125,15 @@ const VehicleList = () => {
     loadMore();
   }, [loadMore]);
 
-
   const rowRenderer = ({ key, index, style }) => {
     const item = data[index];
     return (
-      <div key={key} style={style} className={styles.singleItem} onClick={() => goVehiclePositioning(item)}>
+      <div
+        key={key}
+        style={style}
+        className={styles.singleItem}
+        onClick={() => goVehiclePositioning(item)}
+      >
         <div className={styles.singleItemLeft}>
           <Image src={position} width={16} height={16} fit="fill" />
           <div className={styles.listItem}>{item?.vehicleNumber}</div>
