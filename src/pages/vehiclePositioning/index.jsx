@@ -4,7 +4,7 @@ import area from '@/images/area.png';
 import locationPng from '@/images/location.png';
 import vehicle from '@/images/vehicle.png';
 import { connectMQTT, subscribeMQTT } from '@/services/services';
-import { Button, Image } from 'antd-mobile';
+import { Button, Card, DatePicker, Image, Toast } from 'antd-mobile';
 import { useEffect, useRef, useState } from 'react';
 import { history, useLocation } from 'umi';
 import styles from './index.less';
@@ -23,6 +23,10 @@ const VehiclePositioning = () => {
     longitude: 0,
     latitude: 0,
   });
+  const [startTime, setStartTime] = useState(null);
+  const [endTime, setEndTime] = useState(null);
+  const [startDateVisible, setStartDateVisible] = useState(false);
+  const [endDateVisible, setEndDateVisible] = useState(false);
   const [pointPosition, setPointPosition] = useState({ x: 0, y: 0 });
   const [vehicleMessages, setVehicleMessages] = useState([]); // 人员的消息
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
@@ -138,7 +142,16 @@ const VehiclePositioning = () => {
   };
 
   const goVehicleHistory = (item) => {
-    history.push('/vehicleHistory');
+    const queryParams = {
+      ...item,
+      startTime,
+      endTime,
+      cardId:vehicleMessages[0]?.cardId
+    };
+    history.push({
+      pathname: '/vehicleHistory',
+      query: queryParams,
+    });
   };
 
   console.log('vehicleMessages', vehicleMessages);

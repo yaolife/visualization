@@ -145,6 +145,7 @@ const PersonnelTrajectory = () => {
       ...item,
       startTime,
       endTime,
+      cardId:personMessages[0]?.cardId
     };
     if (!startTime || !endTime) {
       Toast.show('请选择开始时间和结束时间');

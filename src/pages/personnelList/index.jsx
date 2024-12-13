@@ -146,7 +146,7 @@ const PersonnelList = () => {
   const goPersonnelTrajectory = (item) => {
     history.push({
       pathname: '/personnelTrajectory',
-      query: { ...item, cardId: data[0]?.cardId || item?.cardId },
+      query: item ,
     });
   };
 
