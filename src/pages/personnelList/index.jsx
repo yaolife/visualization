@@ -63,14 +63,14 @@ const PersonnelList = () => {
 
   useEffect(() => {
     // 连接到 MQTT 代理
-    connectMQTT('ws://broker.emqx.io:8083/mqtt')
+    connectMQTT()
       .then(() => {
         // 订阅主题 人员列表
         subscribeMQTT('onlinePerson', (message) => {
           console.log('订阅的信息:', message);
           try {
             const parsedMessage = JSON.parse(message);
-            console.log('解析后的消息onlineworker:', parsedMessage);
+            console.log('解析后的消息onlinePerson:', parsedMessage);
 
             // 合并新数据到现有数据中
             setPerData((prevData) => {

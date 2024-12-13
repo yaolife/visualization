@@ -35,7 +35,7 @@ const VehiclePositioning = () => {
 
   useEffect(() => {
     // 连接到 MQTT 代理
-    connectMQTT('ws://broker.emqx.io:8083/mqtt')
+    connectMQTT()
       .then(() => {
         // 订阅主题 当前车辆的实时定位
         subscribeMQTT('realTimeVehicle', (message) => {

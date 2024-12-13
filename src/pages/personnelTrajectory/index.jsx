@@ -33,7 +33,7 @@ const PersonnelTrajectory = () => {
 
   useEffect(() => {
     // 连接到 MQTT 代理
-    connectMQTT('ws://broker.emqx.io:8083/mqtt')
+    connectMQTT()
       .then(() => {
         // 订阅主题 人员的
         subscribeMQTT('realTimeWorker', (message) => {

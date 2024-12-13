@@ -56,7 +56,7 @@ const VehicleList = () => {
 
   useEffect(() => {
     // 连接到 MQTT 代理
-    connectMQTT('ws://broker.emqx.io:8083/mqtt')
+    connectMQTT()
       .then(() => {
         // 订阅主题 车辆列表
         subscribeMQTT('onlineVehicle', (message) => {

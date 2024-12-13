@@ -30,12 +30,10 @@ export const get = (url, headers = {}) => {
 // 设置公共请求头
 let accessToken = '';
 
-
-
 export const getHeaders = (includeAuth = true) => {
   const baseHeaders = {
     'Content-Type': 'application/json',
-    'Authorization':''
+    'Authorization': ''
   };
   return baseHeaders;
 };
@@ -64,6 +62,7 @@ export const getUserTrackList = async (params) => {
     throw error;
   }
 };
+
 // 封装获取当前车辆轨迹列表请求
 export const getVehicleTrackList = async (params) => {
   const url = `${API_ROOT}/api/yj-server/vehicleTracks/getVehicleTrackList`;
@@ -73,11 +72,10 @@ export const getVehicleTrackList = async (params) => {
     const response = await post(url, params, headers);
     return response;
   } catch (error) {
-    console.error('Failed to get user track list:', error);
+    console.error('Failed to get vehicle track list:', error);
     throw error;
   }
 };
-
 
 function generateRandomClientId(length) {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -94,9 +92,10 @@ let client = null;
 let isConnected = false;
 
 // 连接到 MQTT 代理
-const brokerUrl='ws://broker.emqx.io:8083/mqtt'//本地调试
-// const brokerUrl='tcp://10.44.100.132:1883'//生产环境
-export const connectMQTT = (brokerUrl, options = {}) => {
+export const connectMQTT = (options = {}) => {
+  const brokerUrl='ws://broker.emqx.io:8083/mqtt'//本地调试
+  // const brokerUrl = 'tcp://10.44.100.132:1883'; // 写死的 brokerUrl生产环境的
+
   return new Promise((resolve, reject) => {
     if (isConnected) {
       console.log('Already connected to MQTT broker');
