@@ -40,13 +40,26 @@
     }
   }
   .informationMiddle {
-    > div {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .informationMiddleLeft {
+      width: 35%;
       color: #333;
       font-size: 12px;
       font-weight: 400;
       line-height: 25px;
       label {
-        margin-right: 15px;
+        margin-right: 10px;
+      }
+    }
+    .informationMiddleRight{
+      width: 65%;
+      >div{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
       }
     }
   }

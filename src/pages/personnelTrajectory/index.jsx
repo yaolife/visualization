@@ -3,7 +3,8 @@ import area from '@/images/area.png';
 import locationPng from '@/images/location.png';
 import portrait from '@/images/portrait.png';
 import { connectMQTT, subscribeMQTT } from '@/services/services';
-import { Button, Image } from 'antd-mobile';
+import { formatDateTime } from '@/utils';
+import { Button, DatePicker, Image, Toast } from 'antd-mobile';
 import { useEffect, useRef, useState } from 'react';
 import { history, useLocation } from 'umi';
 import styles from './index.less';
@@ -22,6 +23,10 @@ const PersonnelTrajectory = () => {
     longitude: 0,
     latitude: 0,
   });
+  const [startTime, setStartTime] = useState(null);
+  const [endTime, setEndTime] = useState(null);
+  const [startDateVisible, setStartDateVisible] = useState(false);
+  const [endDateVisible, setEndDateVisible] = useState(false);
   const [pointPosition, setPointPosition] = useState({ x: 0, y: 0 });
   const [personMessages, setPersonMessages] = useState([]); // 人员的消息
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
@@ -135,7 +140,16 @@ const PersonnelTrajectory = () => {
     });
   };
 
-  const clickHistory = (item) => {
+  const clickHistory = () => {
+    if (!startTime || !endTime) {
+      Toast.show('请选择开始时间和结束时间');
+      return;
+    }
+
+    if (startTime >= endTime) {
+      Toast.show('结束时间必须晚于开始时间');
+      return;
+    }
     history.push('/history');
   };
 
@@ -189,18 +203,70 @@ const PersonnelTrajectory = () => {
                 backgroundColor: BgEnum[personMessages[0]?.workStatus],
               }}
             >
-             {StatusEnum[personMessages[0]?.workStatus] || ''}
+              {StatusEnum[personMessages[0]?.workStatus] || ''}
             </div>
           )}
         </div>
         <div className={styles.informationMiddle}>
-          <div>
-            <label>作业票号</label>
-            <span>{personMessages[0]?.ticketNo || ''}</span>
+          <div className={styles.informationMiddleLeft}>
+            <div>
+              <label>作业票号</label>
+              <span>{personMessages[0]?.ticketNo || ''}</span>
+            </div>
+            <div>
+              <label>所属部门</label>
+              <span>{personMessages[0]?.deptName || ''}</span>
+            </div>
           </div>
-          <div>
-            <label>所属部门</label>
-            <span>{personMessages[0]?.deptName || ''}</span>
+          <div className={styles.informationMiddleRight}>
+            <div>
+              {' '}
+              <Button
+                onClick={() => {
+                  setStartDateVisible(true);
+                }}
+              >
+                开始时间
+              </Button>
+              <DatePicker
+                title="开始时间"
+                visible={startDateVisible}
+                value={startTime}  // 绑定 value 属性到 startTime
+                onClose={() => {
+                  setStartDateVisible(false);
+                }}
+                mouseWheel
+                precision="second"
+                onConfirm={(val) => {
+                  setStartTime(val);          
+                }}
+              />   
+              {startTime && <span >{formatDateTime(startTime)}</span>}       
+            </div>
+            <div>
+              {' '}
+              <Button
+                onClick={() => {
+                  setEndDateVisible(true);
+                }}
+              >
+                结束时间
+              </Button>
+              <DatePicker
+                title="结束时间"
+                visible={endDateVisible}
+                value={endTime}  // 绑定 value 属性到 endTime
+                onClose={() => {
+                  setEndDateVisible(false);
+                }}
+                mouseWheel
+                precision="second"
+                onConfirm={(val) => {
+                  setEndTime(val);           
+                }}
+              />            
+              {endTime && <span >{formatDateTime(endTime)}</span>}       
+            </div>
           </div>
         </div>
         <div className={styles.informationBottom}>
@@ -215,7 +281,7 @@ const PersonnelTrajectory = () => {
             </div>
           </div>
           <div className={styles.informationBottomRight} onClick={clickHistory}>
-            <Button> 查看历史轨迹</Button>
+            <Button>查看历史轨迹</Button>
           </div>
         </div>
       </div>
