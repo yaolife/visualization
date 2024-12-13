@@ -12,7 +12,6 @@ import styles from './index.less';
 const PersonnelTrajectory = () => {
   const location = useLocation();
   const item = location.query;
-  console.log(item, 'item的参数');
   const [imagePosition, setImagePosition] = useState([
     { latitude: 21.719247, longitude: 112.248985 }, // 图片位置 左上
     { latitude: 21.719246, longitude: 112.272878 }, // 图片位置 右上

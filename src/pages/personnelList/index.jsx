@@ -66,7 +66,7 @@ const PersonnelList = () => {
     connectMQTT('ws://broker.emqx.io:8083/mqtt')
       .then(() => {
         // 订阅主题 人员列表
-        subscribeMQTT('onlineworker', (message) => {
+        subscribeMQTT('onlinePerson', (message) => {
           console.log('订阅的信息:', message);
           try {
             const parsedMessage = JSON.parse(message);

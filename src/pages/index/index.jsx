@@ -72,7 +72,7 @@ const Index = () => {
         });
 
         // 订阅主题 车辆的
-        subscribeMQTT('vehicle', (message) => {
+        subscribeMQTT('realTimeVehicle', (message) => {
           console.log('订阅的信息:', message);
           try {
             const parsedMessage = JSON.parse(message);

@@ -94,6 +94,8 @@ let client = null;
 let isConnected = false;
 
 // 连接到 MQTT 代理
+const brokerUrl='ws://broker.emqx.io:8083/mqtt'//本地调试
+// const brokerUrl='tcp://10.44.100.132:1883'//生产环境
 export const connectMQTT = (brokerUrl, options = {}) => {
   return new Promise((resolve, reject) => {
     if (isConnected) {

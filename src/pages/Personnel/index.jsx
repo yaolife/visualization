@@ -19,7 +19,7 @@ const Index = () => {
     connectMQTT('ws://broker.emqx.io:8083/mqtt')
       .then(() => {
         // 订阅主题 区域人员统计的
-        subscribeMQTT('worker', (message) => {
+        subscribeMQTT('workerStatistics', (message) => {
           console.log('订阅的信息:', message);
           try {
             const parsedMessage = JSON.parse(message);
@@ -34,7 +34,7 @@ const Index = () => {
         });
 
         // 订阅主题 区域车辆统计的
-        subscribeMQTT('vehicleStatistic', (message) => {
+        subscribeMQTT('vehicleStatistics', (message) => {
           console.log('订阅的信息:', message);
           try {
             const parsedMessage = JSON.parse(message);

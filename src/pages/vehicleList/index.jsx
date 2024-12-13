@@ -58,7 +58,7 @@ const VehicleList = () => {
     // 连接到 MQTT 代理
     connectMQTT('ws://broker.emqx.io:8083/mqtt')
       .then(() => {
-        // 订阅主题 人员列表
+        // 订阅主题 车辆列表
         subscribeMQTT('onlineVehicle', (message) => {
           console.log('订阅的信息:', message);
           setLoading(true); // 设置 loading 状态为 true

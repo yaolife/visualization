@@ -38,7 +38,7 @@ const VehiclePositioning = () => {
     connectMQTT('ws://broker.emqx.io:8083/mqtt')
       .then(() => {
         // 订阅主题 当前车辆的实时定位
-        subscribeMQTT('vehicle', (message) => {
+        subscribeMQTT('realTimeVehicle', (message) => {
           console.log('订阅的信息:', message);
           try {
             const parsedMessage = JSON.parse(message);
