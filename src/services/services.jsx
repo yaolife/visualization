@@ -134,7 +134,7 @@ export const connectMQTT = (brokerUrl, options = {}) => {
       reject(error);
     });
   }).catch((e) => {
-    console.log(e, '7777');
+    console.log(e);
   });
 };
 

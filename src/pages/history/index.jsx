@@ -12,7 +12,6 @@ import styles from './index.less';
 const History = () => {
   const location = useLocation();
   const { personId, cardId, startTime, endTime } = location.query;
-  console.log(personId, cardId, startTime, endTime, 'History的参数');
 
   const [visible, setVisible] = useState(false);
   const [realName, setRealName] = useState('');

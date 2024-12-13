@@ -12,8 +12,6 @@ import area from '@/images/area.png';
 const VehicleHistory = () => {
   const location = useLocation();
   const { vehicleNumber, cardId, startTime, endTime } = location.query;
-
-  console.log(vehicleNumber, cardId, startTime, endTime, 'VehicleHistory的参数');
   const [visible, setVisible] = useState(false);
   const [vNumber, setVehicleNumber] = useState('');
   const [imagePosition, setImagePosition] = useState([
