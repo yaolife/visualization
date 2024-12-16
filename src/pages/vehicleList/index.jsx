@@ -2,6 +2,7 @@ import Header from '@/components/Navbar';
 import position from '@/images/position.png';
 import { connectMQTT, disconnectMQTT, subscribeMQTT } from '@/services/services';
 import { Button, DotLoading, Image, SearchBar } from 'antd-mobile';
+import { EnvironmentOutline } from 'antd-mobile-icons';
 import { sleep } from 'antd-mobile/es/utils/sleep';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { AutoSizer, List as VirtualizedList, WindowScroller } from 'react-virtualized';
@@ -71,7 +72,10 @@ const VehicleList = () => {
               newData.forEach((newItem) => {
                 if (updatedDataMap.has(newItem.vehicleNumber)) {
                   // 如果存在相同的 vehicleNumber，则更新该项
-                  updatedDataMap.set(newItem.vehicleNumber, { ...updatedDataMap.get(newItem.vehicleNumber), ...newItem });
+                  updatedDataMap.set(newItem.vehicleNumber, {
+                    ...updatedDataMap.get(newItem.vehicleNumber),
+                    ...newItem,
+                  });
                 } else {
                   updatedDataMap.set(newItem.vehicleNumber, newItem);
                 }
@@ -112,9 +116,11 @@ const VehicleList = () => {
       return data;
     } else {
       const lowerCaseQuery = searchQuery.toLowerCase();
-      return data.filter(item => {
-        const vehicleNumber = typeof item.vehicleNumber === 'string' ? item.vehicleNumber.toLowerCase() : '';
-        const vehicleTypeShow = typeof item.vehicleTypeShow === 'string' ? item.vehicleTypeShow.toLowerCase() : '';
+      return data.filter((item) => {
+        const vehicleNumber =
+          typeof item.vehicleNumber === 'string' ? item.vehicleNumber.toLowerCase() : '';
+        const vehicleTypeShow =
+          typeof item.vehicleTypeShow === 'string' ? item.vehicleTypeShow.toLowerCase() : '';
         return vehicleNumber.includes(lowerCaseQuery) || vehicleTypeShow.includes(lowerCaseQuery);
       });
     }
@@ -131,24 +137,28 @@ const VehicleList = () => {
     });
   }, []);
 
-  const rowRenderer = useCallback(({ key, index, style }) => {
-    const item = filteredData[index]; // 使用过滤后的数据
+  const rowRenderer = useCallback(
+    ({ key, index, style }) => {
+      const item = filteredData[index]; // 使用过滤后的数据
 
-    return (
-      <div
-        key={key}
-        style={style}
-        className={styles.singleItem}
-        onClick={() => goVehiclePositioning(item)}
-      >
-        <div className={styles.singleItemLeft}>
-          <Image src={position} width={16} height={16} fit="fill" />
-          <div className={styles.listItem}>{item?.vehicleNumber}</div>
+      return (
+        <div
+          key={key}
+          style={style}
+          className={styles.singleItem}
+          onClick={() => goVehiclePositioning(item)}
+        >
+          <div className={styles.singleItemLeft}>
+            <EnvironmentOutline fontSize={16} />
+            {/* <Image src={position} width={16} height={16} fit="fill" /> */}
+            <div className={styles.listItem}>{item?.vehicleNumber}</div>
+          </div>
+          <span>{item?.vehicleTypeShow}</span>
         </div>
-        <span>{item?.vehicleTypeShow}</span>
-      </div>
-    );
-  }, [filteredData, goVehiclePositioning]);
+      );
+    },
+    [filteredData, goVehiclePositioning],
+  );
 
   return (
     <>

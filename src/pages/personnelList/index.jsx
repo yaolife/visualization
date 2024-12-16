@@ -1,6 +1,7 @@
 import Header from '@/components/Navbar';
 import position from '@/images/position.png';
 import { connectMQTT, disconnectMQTT, subscribeMQTT } from '@/services/services';
+import { EnvironmentOutline } from 'antd-mobile-icons';
 import { Button, DotLoading, Image, SearchBar } from 'antd-mobile';
 import { sleep } from 'antd-mobile/es/utils/sleep';
 import { useCallback, useEffect, useState } from 'react';
@@ -143,7 +144,7 @@ const PersonnelList = () => {
       setFilteredData(data);
     } else {
       const lowerCaseQuery = searchQuery.toLowerCase();
-      const filteredData = data.filter(item => {
+      const filteredData = data.filter((item) => {
         const orgName = typeof item.orgName === 'string' ? item.orgName.toLowerCase() : '';
         const personName = typeof item.personName === 'string' ? item.personName.toLowerCase() : '';
         return orgName.includes(lowerCaseQuery) || personName.includes(lowerCaseQuery);
@@ -162,7 +163,8 @@ const PersonnelList = () => {
         onClick={() => goPersonnelTrajectory(item)}
       >
         <div className={styles.singleItemLeft}>
-          <Image src={position} width={16} height={16} fit="fill" />
+          <EnvironmentOutline fontSize={16} />
+          {/* <Image src={position} width={16} height={16} fit="fill" /> */}
           <div className={styles.listItem}>{item?.orgName}</div>
         </div>
         <span>{item?.personName}</span>
