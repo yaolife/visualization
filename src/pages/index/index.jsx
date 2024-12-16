@@ -186,9 +186,6 @@ const Index = () => {
     });
   };
 
-  console.log(pointPositions, 'pointPositions 的数据');
-  console.log(vehiclePointPositions, 'vehiclePointPositions 的数据');
-
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
       <div

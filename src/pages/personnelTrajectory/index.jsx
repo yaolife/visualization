@@ -164,7 +164,7 @@ const PersonnelTrajectory = () => {
       <Back />
       <div style={{ position: 'relative', width: '100%', height: '100%' }}>
         <div
-          className="firstPage"
+          className="personPage"
           ref={areaRef}
           draggable
           onDragStart={handleDragStart}
