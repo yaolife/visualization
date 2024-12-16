@@ -1,7 +1,9 @@
 // services.jsx
 import mqtt from 'mqtt';
 import { request } from 'umi';
-const API_ROOT = 'http://10.44.100.133:8080';
+
+// const API_ROOT = 'http://10.44.100.133:8080';
+const API_ROOT = 'http://10.40.198.95:8011/threeHttp'
 
 // 通用请求函数
 const requestWithMethod = (url, method, data = {}, headers = {}) => {
