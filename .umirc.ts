@@ -1,10 +1,10 @@
-import postcssPx2ViewPort from 'postcss-px-to-viewport';
+import postcssPxToViewport from 'postcss-px-to-viewport';
 import { defineConfig } from 'umi';
 import routes from './src/router'
 
 export default defineConfig({
   extraPostCSSPlugins: [
-    postcssPx2ViewPort({
+    postcssPxToViewport({
       unitToConvert: 'px', // 要转化的单位
       viewportWidth: 375, // UI设计稿的宽度
       propList: ['*'], // 指定转换的css属性的单位，*代表全部css属性的单位都进行转换

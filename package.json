@@ -51,6 +51,7 @@
     "@umijs/test": "^3.5.23",
     "eruda": "^2.5.0",
     "lint-staged": "^13.0.3",
+    "postcss": "^8.0.0",
     "postcss-px-to-viewport": "^1.1.1",
     "prettier": "^2.7.1",
     "stylelint": "13.0.0",
