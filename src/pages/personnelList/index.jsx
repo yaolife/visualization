@@ -69,6 +69,8 @@ const PersonnelList = () => {
         // 订阅主题 人员列表
         subscribeMQTT('onlinePerson', (message) => {
           console.log('订阅的信息:', message);
+          setLoading(true); // 设置 loading 状态为 true
+
           try {
             const parsedMessage = JSON.parse(message);
             console.log('解析后的消息onlinePerson:', parsedMessage);
@@ -101,10 +103,13 @@ const PersonnelList = () => {
             });
           } catch (error) {
             console.error('Failed to parse message:', error);
+          } finally {
+            setLoading(false); // 数据更新完成后设置 loading 状态为 false
           }
         });
       } catch (error) {
         console.error('Failed to connect to MQTT broker:', error);
+        setLoading(false); // 连接失败后设置 loading 状态为 false
       }
     };
 
@@ -117,6 +122,7 @@ const PersonnelList = () => {
   }, []); // 空依赖数组确保只在组件挂载和卸载时执行
 
   useEffect(() => {
+    setLoading(true); // 初始加载时设置 loading 为 true
     console.log('useEffect called, calling doSearch');
     doSearch();
   }, [doSearch]);
@@ -126,6 +132,7 @@ const PersonnelList = () => {
     setHasMore(true);
     setCount(0); // 重置计数器
     console.log('doSearch called, resetting count to 0');
+    setLoading(true); // 确保在调用 loadMore 之前设置 loading 为 true
     loadMore();
   }, [loadMore]);
 
