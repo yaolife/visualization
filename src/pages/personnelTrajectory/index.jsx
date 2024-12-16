@@ -37,11 +37,8 @@ const PersonnelTrajectory = () => {
       .then(() => {
         // 订阅主题 人员的
         subscribeMQTT('realTimeWorker', (message) => {
-          console.log('订阅的信息:', message);
           try {
             const parsedMessage = JSON.parse(message);
-            console.log('解析后的消息:', parsedMessage);
-
             // 检查消息格式
             if (Array.isArray(parsedMessage) && parsedMessage.length > 0) {
               const firstMessage = parsedMessage[0];
@@ -80,7 +77,6 @@ const PersonnelTrajectory = () => {
         });
       })
       .catch((error) => {
-        console.log(error, 'error');
         console.error('Failed to connect to MQTT broker:', error);
       });
 
