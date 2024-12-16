@@ -12,9 +12,11 @@ import { getCount, setCount } from './sharedState'; // 导入 sharedState
 const pageSize = 20000;
 const VehicleList = () => {
   const [data, setPerData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]); // 新增过滤后的数据状态
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false); // 添加 loading 状态
   const [isFetching, setIsFetching] = useState(false); // 添加 isFetching 状态以防止并发请求
+  const [searchQuery, setSearchQuery] = useState(''); // 搜索查询
 
   const sleepRequest = useCallback(
     async (count) => {
@@ -112,6 +114,7 @@ const VehicleList = () => {
       disconnectMQTT();
     };
   }, []);
+
   useEffect(() => {
     console.log('useEffect called, calling doSearch');
     doSearch();
@@ -125,8 +128,22 @@ const VehicleList = () => {
     loadMore();
   }, [loadMore]);
 
+  useEffect(() => {
+    if (searchQuery.trim() === '') {
+      setFilteredData(data);
+    } else {
+      const lowerCaseQuery = searchQuery.toLowerCase();
+      const filteredData = data.filter(item => {
+        const vehicleNumber = typeof item.vehicleNumber === 'string' ? item.vehicleNumber.toLowerCase() : '';
+        const vehicleTypeShow = typeof item.vehicleTypeShow === 'string' ? item.vehicleTypeShow.toLowerCase() : '';
+        return vehicleNumber.includes(lowerCaseQuery) || vehicleTypeShow.includes(lowerCaseQuery);
+      });
+      setFilteredData(filteredData);
+    }
+  }, [searchQuery, data]);
+
   const rowRenderer = ({ key, index, style }) => {
-    const item = data[index];
+    const item = filteredData[index]; // 使用过滤后的数据
     return (
       <div
         key={key}
@@ -156,7 +173,11 @@ const VehicleList = () => {
         <Header />
         <div className={styles.searchBar}>
           <div className={styles.left}>
-            <SearchBar />
+            <SearchBar
+              placeholder="搜索..."
+              value={searchQuery}
+              onChange={(value) => setSearchQuery(value)}
+            />
           </div>
           <div className={styles.right}>
             <Button size="small" color="primary" onClick={doSearch}>
@@ -182,13 +203,13 @@ const VehicleList = () => {
                   height={height}
                   isScrolling={isScrolling}
                   onScroll={onChildScroll}
-                  rowCount={data.length}
+                  rowCount={filteredData.length} // 使用过滤后的数据长度
                   rowHeight={50}
                   rowRenderer={rowRenderer}
                   scrollTop={scrollTop}
                   width={width}
                   onRowsRendered={({ startIndex, stopIndex }) => {
-                    if (stopIndex >= data.length - 1 && hasMore) {
+                    if (stopIndex >= filteredData.length - 1 && hasMore) {
                       loadMore();
                     }
                   }}
