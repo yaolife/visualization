@@ -96,7 +96,8 @@ let isConnected = false;
 // 连接到 MQTT 代理
 export const connectMQTT = (options = {}) => {
   // const brokerUrl='ws://broker.emqx.io:8083/mqtt'//本地调试
-  const brokerUrl = 'tcp://10.44.100.132:1883'; // 写死的 brokerUrl生产环境的
+  // const brokerUrl = 'tcp://10.44.100.132:1883'; // 写死的 brokerUrl生产环境的
+  const brokerUrl = 'http://10.40.198.95:8011/ws'
 
   return new Promise((resolve, reject) => {
     if (isConnected) {
