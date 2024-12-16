@@ -3,13 +3,14 @@ import position from '@/images/position.png';
 import { connectMQTT, disconnectMQTT, subscribeMQTT } from '@/services/services';
 import { Button, DotLoading, Image, SearchBar } from 'antd-mobile';
 import { sleep } from 'antd-mobile/es/utils/sleep';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { AutoSizer, List as VirtualizedList, WindowScroller } from 'react-virtualized';
 import { history } from 'umi';
 import styles from './index.less';
 import { getCount, setCount } from './sharedState'; // 导入 sharedState
 
 const pageSize = 20000;
+
 const VehicleList = () => {
   const [data, setPerData] = useState([]);
   const [filteredData, setFilteredData] = useState([]); // 新增过滤后的数据状态
@@ -24,10 +25,6 @@ const VehicleList = () => {
       const startIndex = count * pageSize;
       const endIndex = startIndex + pageSize;
       const result = data.slice(startIndex, endIndex);
-      console.log(
-        `sleepRequest called with count: ${count}, startIndex: ${startIndex}, endIndex: ${endIndex}, result:`,
-        result,
-      );
       return result;
     },
     [data],
@@ -40,15 +37,11 @@ const VehicleList = () => {
 
     try {
       const currentCount = getCount(); // 获取当前的 count 值
-      console.log(`loadMore called with count: ${currentCount}`);
       const append = await sleepRequest(currentCount); // 使用 getCount 获取 count
 
       if (!Array.isArray(append)) {
-        console.warn('append is not an array:', append);
         append = [];
       }
-
-      console.log(`Data appended:`, append);
       setPerData((val) => [...val, ...append]);
       setHasMore(append.length > 0);
       setCount(currentCount + 6); // 更新 count，增加 pageSize 的值
@@ -65,9 +58,7 @@ const VehicleList = () => {
       .then(() => {
         // 订阅主题 车辆列表
         subscribeMQTT('onlineVehicle', (message) => {
-          console.log('订阅的信息:', message);
           setLoading(true); // 设置 loading 状态为 true
-
           try {
             const parsedMessage = JSON.parse(message);
             console.log('解析后的消息onlineVehicle:', parsedMessage);
@@ -75,28 +66,18 @@ const VehicleList = () => {
             // 合并新数据到现有数据中
             setPerData((prevData) => {
               const newData = Array.isArray(parsedMessage) ? parsedMessage : [parsedMessage];
-              const updatedData = prevData.reduce((acc, item) => {
-                const existingItemIndex = newData.findIndex(
-                  (newItem) => newItem.vehicleNumber === item.vehicleNumber,
-                );
-                if (existingItemIndex !== -1) {
+              const updatedDataMap = new Map(prevData.map((item) => [item.vehicleNumber, item]));
+
+              newData.forEach((newItem) => {
+                if (updatedDataMap.has(newItem.vehicleNumber)) {
                   // 如果存在相同的 vehicleNumber，则更新该项
-                  acc.push({ ...item, ...newData[existingItemIndex] });
-                  newData.splice(existingItemIndex, 1); // 移除已处理的项
+                  updatedDataMap.set(newItem.vehicleNumber, { ...updatedDataMap.get(newItem.vehicleNumber), ...newItem });
                 } else {
-                  acc.push(item);
+                  updatedDataMap.set(newItem.vehicleNumber, newItem);
                 }
-                return acc;
-              }, []);
+              });
 
-              // 添加剩余的新数据
-              updatedData.push(...newData);
-
-              // 去重， vehicleNumber就是唯一标识
-              const uniqueData = Array.from(
-                new Map(updatedData.map((item) => [item.vehicleNumber, item])).values(),
-              );
-              return uniqueData;
+              return Array.from(updatedDataMap.values());
             });
           } catch (error) {
             console.error('Failed to parse message:', error);
@@ -106,7 +87,6 @@ const VehicleList = () => {
         });
       })
       .catch((error) => {
-        console.log(error, 'error');
         console.error('Failed to connect to MQTT broker:', error);
       });
     // 清理函数，在组件卸载时断开连接
@@ -124,26 +104,36 @@ const VehicleList = () => {
     setPerData([]);
     setHasMore(true);
     setCount(0); // 重置计数器
-    console.log('doSearch called, resetting count to 0');
     loadMore();
   }, [loadMore]);
 
-  useEffect(() => {
+  const filteredDataMemo = useMemo(() => {
     if (searchQuery.trim() === '') {
-      setFilteredData(data);
+      return data;
     } else {
       const lowerCaseQuery = searchQuery.toLowerCase();
-      const filteredData = data.filter(item => {
+      return data.filter(item => {
         const vehicleNumber = typeof item.vehicleNumber === 'string' ? item.vehicleNumber.toLowerCase() : '';
         const vehicleTypeShow = typeof item.vehicleTypeShow === 'string' ? item.vehicleTypeShow.toLowerCase() : '';
         return vehicleNumber.includes(lowerCaseQuery) || vehicleTypeShow.includes(lowerCaseQuery);
       });
-      setFilteredData(filteredData);
     }
   }, [searchQuery, data]);
 
-  const rowRenderer = ({ key, index, style }) => {
+  useEffect(() => {
+    setFilteredData(filteredDataMemo);
+  }, [filteredDataMemo]);
+
+  const goVehiclePositioning = useCallback((item) => {
+    history.push({
+      pathname: '/vehiclePositioning',
+      query: item,
+    });
+  }, []);
+
+  const rowRenderer = useCallback(({ key, index, style }) => {
     const item = filteredData[index]; // 使用过滤后的数据
+
     return (
       <div
         key={key}
@@ -158,14 +148,7 @@ const VehicleList = () => {
         <span>{item?.vehicleTypeShow}</span>
       </div>
     );
-  };
-
-  const goVehiclePositioning = (item) => {
-    history.push({
-      pathname: '/vehiclePositioning',
-      query: item,
-    });
-  };
+  }, [filteredData, goVehiclePositioning]);
 
   return (
     <>
