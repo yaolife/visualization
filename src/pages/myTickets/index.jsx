@@ -43,10 +43,11 @@ const MyTicket = () => {
   return (
     <div className={styles.myTicket}>
       <div className={styles.ticketTitle}>
-            <Image src={whiteJob} width={24} height={24} fit="fill" />
-            <span>我的作业票</span>
+        <Image src={whiteJob} width={24} height={24} fit="fill" />
+        <span>我的作业票</span>
       </div>
       <div>
+        <TicketItem />
         <TicketItem />
         <TicketItem />
       </div>
