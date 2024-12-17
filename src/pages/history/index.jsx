@@ -1,4 +1,3 @@
-// index.jsx
 import UsModal from '@/components/UsModal';
 import area from '@/images/area.png';
 import locationPng from '@/images/location.png';
@@ -29,6 +28,7 @@ const History = () => {
   const [isLocationImageVisible, setIsLocationImageVisible] = useState(false); // 新增状态变量
   const areaRef = useRef(null);
   const historyRef = useRef(null);
+  const [historyHeight, setHistoryHeight] = useState(0); // 新增状态来存储 historyRef 的高度
 
   const calculatePointPosition = (point, imageCorners) => {
     const [topLeft, topRight, bottomLeft, bottomRight] = imageCorners;
@@ -92,6 +92,14 @@ const History = () => {
       setIsLocationImageVisible(false);
     };
   }, [imagePosition, startTime, endTime, personId, cardId]);
+
+  useEffect(() => {
+    // 在组件挂载后获取 historyRef 的高度
+    if (historyRef.current) {
+      const currentHeight = historyRef.current.offsetHeight;
+      setHistoryHeight(currentHeight);
+    }
+  }, []); // 空依赖数组表示只在组件挂载时执行一次
 
   const generatePathData = (points) => {
     return points.reduce((acc, point, index) => {
@@ -166,7 +174,7 @@ const History = () => {
             position: 'absolute',
             left: '0px',
             top: '0px',
-            paddingBottom: historyRef.current?.offsetHeight,
+            paddingBottom: historyHeight, // 使用 historyHeight
           }}
         >
           <LazyLoad>

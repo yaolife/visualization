@@ -1,4 +1,3 @@
-// vehicleHistory/index.jsx
 import React, { useEffect, useState, useRef } from 'react';
 import { LeftOutline } from 'antd-mobile-icons';
 import { history, useLocation } from 'umi';
@@ -28,6 +27,7 @@ const VehicleHistory = () => {
   const [isLocationImageVisible, setIsLocationImageVisible] = useState(false); // 新增状态变量
   const areaRef = useRef(null);
   const vehicleRef = useRef(null);
+  const [vehicleHeight, setVehicleHeight] = useState(0); // 新增状态来存储 vehicleRef 的高度
 
   const calculatePointPosition = (point, imageCorners) => {
     const [topLeft, topRight, bottomLeft, bottomRight] = imageCorners;
@@ -88,6 +88,15 @@ const VehicleHistory = () => {
       setIsLocationImageVisible(false);
     };
   }, [vehicleNumber, cardId, startTime, endTime, imagePosition]);
+
+  useEffect(() => {
+    // 在组件挂载后获取 vehicleRef 的高度
+    if (vehicleRef.current) {
+      const currentHeight = vehicleRef.current.offsetHeight;
+      setVehicleHeight(currentHeight);
+      console.log('Vehicle height:', currentHeight);
+    }
+  }, []); // 空依赖数组表示只在组件挂载时执行一次
 
   const generatePathData = (points) => {
     return points.reduce((acc, point, index) => {
@@ -162,7 +171,7 @@ const VehicleHistory = () => {
             position: 'absolute',
             left: '0px',
             top: '0px',
-            paddingBottom: vehicleRef.current?.offsetHeight,
+            paddingBottom: vehicleHeight, // 使用 vehicleHeight
           }}
         >
           <LazyLoad>
