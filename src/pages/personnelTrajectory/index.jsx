@@ -18,9 +18,9 @@ const PersonnelTrajectory = () => {
     { latitude: 21.698033, longitude: 112.248986 }, // 图片位置 左下
     { latitude: 21.698032, longitude: 112.272816 }, // 图片位置 右下
   ]);
-    // 图片的实际尺寸
-    const imageWidth = 2418;
-    const imageHeight = 2309;
+  // 图片的实际尺寸
+  const imageWidth = 2418;
+  const imageHeight = 2309;
   const [pointLocation, setPointLocation] = useState({
     longitude: 0,
     latitude: 0,
@@ -34,7 +34,7 @@ const PersonnelTrajectory = () => {
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [isLocationImageVisible, setIsLocationImageVisible] = useState(false); // 新增状态变量
   const areaRef = useRef(null);
-  const employeeInfoRef = useRef(null);      
+  const employeeInfoRef = useRef(null);
 
   useEffect(() => {
     // 连接到 MQTT 代理
@@ -109,8 +109,6 @@ const PersonnelTrajectory = () => {
     const relativeLatitude = (point.latitude - minLatitude) / (maxLatitude - minLatitude);
     const relativeLongitude = (point.longitude - minLongitude) / (maxLongitude - minLongitude);
 
-  
-
     // 将相对位置转换为像素位置
     const pixelX = relativeLongitude * imageWidth;
     const pixelY = (1 - relativeLatitude) * imageHeight; // 注意：Y轴是从上到下的
@@ -179,7 +177,7 @@ const PersonnelTrajectory = () => {
             position: 'absolute',
             left: '0px',
             top: '0px',
-            paddingBottom:employeeInfoRef.current?.offsetHeight,
+            paddingBottom: employeeInfoRef.current?.offsetHeight,
             zIndex: 999,
           }}
         >
@@ -194,7 +192,7 @@ const PersonnelTrajectory = () => {
               transform: 'translate(-50%, -50%)',
               zIndex: 666,
             }}
-            className="location-image"
+            className="locationImage"
           >
             <span className={styles.locationRealName}>{personMessages[0]?.realName || ''}</span>
             <Image src={locationPng} width={33} height={54} />

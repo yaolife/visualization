@@ -34,7 +34,9 @@ const VehiclePositioning = () => {
   const [pointPosition, setPointPosition] = useState({ x: 0, y: 0 });
   const [vehicleMessages, setVehicleMessages] = useState([]); // 人员的消息
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [isLocationImageVisible, setIsLocationImageVisible] = useState(false); // 新增状态变量
   const areaRef = useRef(null);
+  const vehicleInfoRef = useRef(null);      
 
   useEffect(() => {
     // 连接到 MQTT 代理
@@ -72,6 +74,8 @@ const VehiclePositioning = () => {
                     longitude: firstMessage.longitude,
                     latitude: firstMessage.latitude,
                   });
+                    // 显示 locationImage
+                    setIsLocationImageVisible(true);
                 }
               } else {
                 console.error('消息格式不正确:', firstMessage);
@@ -179,26 +183,29 @@ const VehiclePositioning = () => {
             position: 'absolute',
             left: '0px',
             top: '0px',
-            zIndex: 22,
+            paddingBottom:vehicleInfoRef.current?.offsetHeight,
+            zIndex: 999,
           }}
         >
           <Image src={area} width={imageWidth} height={imageHeight} />
         </div>
-        <div
-          style={{
-            position: 'absolute',
-            left: `${pointPosition.x + 4}px`,
-            top: `${pointPosition.y - 14}px`,
-            transform: 'translate(-50%, -50%)',
-            zIndex: 666,
-          }}
-          className="location-image"
-        >
-          <span className={styles.locationRealName}>{vehicleMessages[0]?.vehicleNumber || ''}</span>
-          <Image src={locationPng} width={33} height={54} />
-        </div>
+        {isLocationImageVisible && (
+          <div
+            style={{
+              position: 'absolute',
+              left: `${pointPosition.x + 4}px`,
+              top: `${pointPosition.y - 14}px`,
+              transform: 'translate(-50%, -50%)',
+              zIndex: 666,
+            }}
+            className="locationImage"
+          >
+            <span className={styles.locationRealName}>{vehicleMessages[0]?.vehicleNumber || ''}</span>
+            <Image src={locationPng} width={33} height={54} />
+          </div>
+        )}
       </div>
-      <div className={styles.vehicleInformation}>
+      <div className={styles.vehicleInformation} ref={vehicleInfoRef}>
         <div className={styles.informationTop}>
           <div>
             <Image src={vehicle} width={36} height={36} />
