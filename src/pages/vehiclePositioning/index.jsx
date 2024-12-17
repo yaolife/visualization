@@ -4,7 +4,7 @@ import area from '@/images/area.png';
 import locationPng from '@/images/location.png';
 import vehicle from '@/images/vehicle.png';
 import { formatDateTime } from '@/utils';
-import { connectMQTT,disconnectMQTT, subscribeMQTT } from '@/services/services';
+import { connectMQTT, disconnectMQTT, subscribeMQTT } from '@/services/services';
 import { Button, DatePicker, Image, Toast } from 'antd-mobile';
 import { useEffect, useRef, useState } from 'react';
 import { history, useLocation } from 'umi';
@@ -24,6 +24,9 @@ const VehiclePositioning = () => {
     longitude: 0,
     latitude: 0,
   });
+  // 图片的实际尺寸
+  const imageWidth = 2418;
+  const imageHeight = 2309;
   const [startTime, setStartTime] = useState(null);
   const [endTime, setEndTime] = useState(null);
   const [startDateVisible, setStartDateVisible] = useState(false);
@@ -108,10 +111,6 @@ const VehiclePositioning = () => {
     const relativeLatitude = (point.latitude - minLatitude) / (maxLatitude - minLatitude);
     const relativeLongitude = (point.longitude - minLongitude) / (maxLongitude - minLongitude);
 
-    // 图片的实际尺寸
-    const imageWidth = 2418;
-    const imageHeight = 2309;
-
     // 将相对位置转换为像素位置
     const pixelX = relativeLongitude * imageWidth;
     const pixelY = (1 - relativeLatitude) * imageHeight; // 注意：Y轴是从上到下的
@@ -153,9 +152,9 @@ const VehiclePositioning = () => {
       return;
     }
     const queryParams = {
-      vehicleNumber:item?.vehicleNumber,
-      startTime:formatDateTime(startTime),
-      endTime:formatDateTime(endTime),
+      vehicleNumber: item?.vehicleNumber,
+      startTime: formatDateTime(startTime),
+      endTime: formatDateTime(endTime),
       cardId: vehicleMessages[0]?.cardId,
     };
     history.push({
@@ -183,7 +182,7 @@ const VehiclePositioning = () => {
             zIndex: 22,
           }}
         >
-          <Image src={area} width={2418} height={2309} />
+          <Image src={area} width={imageWidth} height={imageHeight} />
         </div>
         <div
           style={{
@@ -243,17 +242,17 @@ const VehiclePositioning = () => {
               <DatePicker
                 title="开始时间"
                 visible={startDateVisible}
-                value={startTime}  // 绑定 value 属性到 startTime
+                value={startTime} // 绑定 value 属性到 startTime
                 onClose={() => {
                   setStartDateVisible(false);
                 }}
                 mouseWheel
                 precision="second"
                 onConfirm={(val) => {
-                  setStartTime(val);          
+                  setStartTime(val);
                 }}
-              />   
-              {startTime && <span >{formatDateTime(startTime)}</span>}       
+              />
+              {startTime && <span>{formatDateTime(startTime)}</span>}
             </div>
             <div>
               {' '}
@@ -267,17 +266,17 @@ const VehiclePositioning = () => {
               <DatePicker
                 title="结束时间"
                 visible={endDateVisible}
-                value={endTime}  // 绑定 value 属性到 endTime
+                value={endTime} // 绑定 value 属性到 endTime
                 onClose={() => {
                   setEndDateVisible(false);
                 }}
                 mouseWheel
                 precision="second"
                 onConfirm={(val) => {
-                  setEndTime(val);           
+                  setEndTime(val);
                 }}
-              />            
-              {endTime && <span >{formatDateTime(endTime)}</span>}       
+              />
+              {endTime && <span>{formatDateTime(endTime)}</span>}
             </div>
           </div>
         </div>
