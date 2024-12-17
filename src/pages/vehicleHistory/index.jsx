@@ -27,6 +27,7 @@ const VehicleHistory = () => {
   const [pathData, setPathData] = useState('');
   const [isLocationImageVisible, setIsLocationImageVisible] = useState(false); // 新增状态变量
   const areaRef = useRef(null);
+  const vehicleRef = useRef(null);
 
   const calculatePointPosition = (point, imageCorners) => {
     const [topLeft, topRight, bottomLeft, bottomRight] = imageCorners;
@@ -161,6 +162,7 @@ const VehicleHistory = () => {
             position: 'absolute',
             left: '0px',
             top: '0px',
+            paddingBottom: vehicleRef.current?.offsetHeight,
           }}
         >
           <LazyLoad>
@@ -186,7 +188,7 @@ const VehicleHistory = () => {
           <Image src={locationPng} width={33} height={54} />
         </div>
       </div>
-      <div className={styles.historyBottom}>
+      <div className={styles.historyBottom} ref={vehicleRef}>
         <div className={styles.historyBottomNav}>
           <div className={styles.historyBottomNavLeft} onClick={goBack}>
             <LeftOutline fontSize={24} />
