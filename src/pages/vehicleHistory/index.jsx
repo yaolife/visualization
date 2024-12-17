@@ -2,6 +2,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { LeftOutline } from 'antd-mobile-icons';
 import { history, useLocation } from 'umi';
+import LazyLoad from 'react-lazyload';
 import { getVehicleTrackList } from '@/services/services';
 import { Image } from 'antd';
 import UsModal from '@/components/UsModal';
@@ -56,7 +57,9 @@ const VehicleHistory = () => {
           if (response.data?.length > 0) {
             setVehicleNumber(response.data[0]?.vehicleNumber);
           }
-          const points = response.data?.map((point) => calculatePointPosition(point, imagePosition));
+          const points = response.data?.map((point) =>
+            calculatePointPosition(point, imagePosition),
+          );
           const pathData = generatePathData(points);
           setPathData(pathData);
 
@@ -160,8 +163,14 @@ const VehicleHistory = () => {
             top: '0px',
           }}
         >
-          <Image src={area} width={imageWidth} height={imageHeight} />
-          <svg width={imageWidth} height={imageHeight} style={{ position: 'absolute', left: '0px', top: '0px' }}>
+          <LazyLoad>
+            <Image src={area} width={imageWidth} height={imageHeight} />
+          </LazyLoad>
+          <svg
+            width={imageWidth}
+            height={imageHeight}
+            style={{ position: 'absolute', left: '0px', top: '0px' }}
+          >
             <path d={pathData} stroke="#84FF25" fill="none" strokeWidth="3" />
           </svg>
         </div>

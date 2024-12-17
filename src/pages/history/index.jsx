@@ -2,11 +2,12 @@
 import UsModal from '@/components/UsModal';
 import area from '@/images/area.png';
 import locationPng from '@/images/location.png';
+import LazyLoad from 'react-lazyload';
 import { getUserTrackList } from '@/services/services';
 import { Image } from 'antd-mobile';
 import { LeftOutline } from 'antd-mobile-icons';
 import { useEffect, useRef, useState } from 'react';
-import { history,useLocation } from 'umi';
+import { history, useLocation } from 'umi';
 import styles from './index.less';
 
 const History = () => {
@@ -59,12 +60,14 @@ const History = () => {
         if (response.code === '0') {
           if (response.data?.length > 0) {
             setRealName(response?.data[0]?.realName);
-          }       
+          }
           // 处理响应数据
-          const points = response?.data?.map((point) => calculatePointPosition(point, imagePosition));
+          const points = response?.data?.map((point) =>
+            calculatePointPosition(point, imagePosition),
+          );
           const pathData = generatePathData(points);
           setPathData(pathData);
-  
+
           // 更新location图片的位置
           if (points.length > 0) {
             const lastPoint = points[points.length - 1];
@@ -76,21 +79,18 @@ const History = () => {
         } else {
           console.error('获取用户轨迹列表失败:', response.msg);
         }
-
-     
       } catch (error) {
         console.error('Failed to fetch user track list:', error);
       }
     };
 
     fetchUserTrackList();
-      // 清理函数，在组件卸载时清除数据
-      return () => {
-        setPathData('');
-        setIsLocationImageVisible(false);
-      };
-
-  }, [imagePosition, startTime, endTime,personId,cardId]);
+    // 清理函数，在组件卸载时清除数据
+    return () => {
+      setPathData('');
+      setIsLocationImageVisible(false);
+    };
+  }, [imagePosition, startTime, endTime, personId, cardId]);
 
   const generatePathData = (points) => {
     return points.reduce((acc, point, index) => {
@@ -167,8 +167,14 @@ const History = () => {
             top: '0px',
           }}
         >
-          <Image src={area} width={imageWidth} height={imageHeight} />
-          <svg width={imageWidth} height={imageHeight} style={{ position: 'absolute', left: '0px', top: '0px' }}>
+          <LazyLoad>
+            <Image src={area} width={imageWidth} height={imageHeight} />
+          </LazyLoad>
+          <svg
+            width={imageWidth}
+            height={imageHeight}
+            style={{ position: 'absolute', left: '0px', top: '0px' }}
+          >
             <path d={pathData} stroke="#FFAE00" fill="none" strokeWidth="3" />
           </svg>
         </div>
