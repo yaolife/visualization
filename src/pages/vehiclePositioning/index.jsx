@@ -196,7 +196,7 @@ const VehiclePositioning = () => {
               left: `${pointPosition.x + 4}px`,
               top: `${pointPosition.y - 14}px`,
               transform: 'translate(-50%, -50%)',
-              zIndex: 666,
+              zIndex: 1000,
             }}
             className="locationImage"
           >
