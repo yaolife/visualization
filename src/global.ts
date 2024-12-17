@@ -1,6 +1,6 @@
 import eruda from 'eruda';
 
-if (process.env.UMI_ENV !== 'prod') {
+if (process.env.UMI_ENV !== 'prod' && process.env.ENABLE_ERUDA === 'true') {
   const el = document.createElement('div');
   document.body.appendChild(el);
 
