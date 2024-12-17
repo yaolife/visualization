@@ -5,7 +5,7 @@ import { Image } from 'antd-mobile';
 import UsModal from '@/components/UsModal';
 import { mockRequest } from './mock-request';
 import styles from './index.less';
-import location from '@/images/location.png';
+import locationPng from '@/images/location.png';
 import area from '@/images/area.png';
 
 const TicketNavigation = () => {
@@ -20,6 +20,7 @@ const TicketNavigation = () => {
 
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [pathData, setPathData] = useState('');
+  const [isLocationImageVisible, setIsLocationImageVisible] = useState(false); // 新增状态变量
   const areaRef = useRef(null);
   const navigationRef = useRef(null);
 
@@ -43,7 +44,11 @@ const TicketNavigation = () => {
       const data = await mockRequest();
       if (data?.length > 0) {
         setRealName(data[0]?.realName);
+        setIsLocationImageVisible(true); // 如果有数据，则显示 location-image
+      } else {
+        setIsLocationImageVisible(false); // 如果没有数据，则隐藏 location-image
       }
+
       const points = data?.map((point) => calculatePointPosition(point, imagePosition));
       const pathData = points.reduce((acc, point, index) => {
         if (index === 0) {
@@ -102,7 +107,6 @@ const TicketNavigation = () => {
     setVisible(true); // 显示确认对话框
   };
 
-
   const handleClose = () => {
     setVisible(false); // 关闭确认对话框
   };
@@ -132,24 +136,26 @@ const TicketNavigation = () => {
             <path d={pathData} stroke="#FFAE00" fill="none" strokeWidth="3" />
           </svg>
         </div>
-        <div
-          style={{
-            position: 'absolute',
-            zIndex: 33,
-          }}
-          className="location-image"
-        >
-          <span
-             className={styles.locationRealName}
+        {isLocationImageVisible && ( // 根据 isLocationImageVisible 决定是否渲染 location-image
+          <div
+            style={{
+              position: 'absolute',
+              zIndex: 33,
+            }}
+            className="location-image"
           >
-            {realName}
-          </span>
-          <Image src={location} width={33} height={54} />
-        </div>
+            <span
+              className={styles.locationRealName}
+            >
+              {realName}
+            </span>
+            <Image src={locationPng} width={33} height={54} />
+          </div>
+        )}
       </div>
       <div className={styles.navigationBottom} onClick={goBack} ref={navigationRef}>
         <div className={styles.navigationBottomContent}>       
-            <label>退出导航</label>
+          <label>退出导航</label>
         </div>
       </div>
       <UsModal
