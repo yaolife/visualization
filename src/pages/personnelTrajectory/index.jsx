@@ -2,7 +2,7 @@ import Back from '@/components/Back';
 import area from '@/images/area.png';
 import locationPng from '@/images/location.png';
 import portrait from '@/images/portrait.png';
-import { connectMQTT, disconnectMQTT,subscribeMQTT } from '@/services/services';
+import { connectMQTT, disconnectMQTT, subscribeMQTT } from '@/services/services';
 import { formatDateTime } from '@/utils';
 import { Button, DatePicker, Image, Toast } from 'antd-mobile';
 import { useEffect, useRef, useState } from 'react';
@@ -29,6 +29,7 @@ const PersonnelTrajectory = () => {
   const [pointPosition, setPointPosition] = useState({ x: 0, y: 0 });
   const [personMessages, setPersonMessages] = useState([]); // 人员的消息
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [isLocationImageVisible, setIsLocationImageVisible] = useState(false); // 新增状态变量
   const areaRef = useRef(null);
 
   useEffect(() => {
@@ -64,6 +65,8 @@ const PersonnelTrajectory = () => {
                     longitude: firstMessage.longitude,
                     latitude: firstMessage.latitude,
                   });
+                  // 显示 locationImage
+                  setIsLocationImageVisible(true);
                 }
               } else {
                 console.error('消息格式不正确:', firstMessage);
@@ -85,6 +88,7 @@ const PersonnelTrajectory = () => {
       disconnectMQTT();
     };
   }, [item.personId]); // 添加 item.personId 作为依赖
+
   useEffect(() => {
     const position = calculatePointPosition(pointLocation, imagePosition);
     setPointPosition(position);
@@ -109,7 +113,7 @@ const PersonnelTrajectory = () => {
     const pixelX = relativeLongitude * imageWidth;
     const pixelY = (1 - relativeLatitude) * imageHeight; // 注意：Y轴是从上到下的
 
-    return { x: pixelX, y: pixelY }; //减去图片宽度和高度的一半
+    return { x: pixelX, y: pixelY }; // 减去图片宽度和高度的一半
   };
 
   const handleDragStart = (e) => {
@@ -137,10 +141,10 @@ const PersonnelTrajectory = () => {
 
   const clickHistory = () => {
     const queryParams = {
-      personId:item?.personId,
-      startTime:formatDateTime(startTime),
-      endTime:formatDateTime(endTime),
-      cardId:personMessages[0]?.cardId
+      personId: item?.personId,
+      startTime: formatDateTime(startTime),
+      endTime: formatDateTime(endTime),
+      cardId: personMessages[0]?.cardId,
     };
     if (!startTime || !endTime) {
       Toast.show('请选择开始时间和结束时间');
@@ -173,24 +177,26 @@ const PersonnelTrajectory = () => {
             position: 'absolute',
             left: '0px',
             top: '0px',
-            zIndex:22,
+            zIndex: 22,
           }}
         >
           <Image src={area} width={2418} height={2309} />
         </div>
-        <div
-          style={{
-            position: 'absolute',
-            left: `${pointPosition.x + 4}px`,
-            top: `${pointPosition.y - 14}px`,
-            transform: 'translate(-50%, -50%)',
-            zIndex:666,
-          }}
-          className="location-image"
-        >
-          <span className={styles.locationRealName}>{personMessages[0]?.realName || ''}</span>
-          <Image src={locationPng} width={33} height={54} />
-        </div>
+        {isLocationImageVisible && (
+          <div
+            style={{
+              position: 'absolute',
+              left: `${pointPosition.x + 4}px`,
+              top: `${pointPosition.y - 14}px`,
+              transform: 'translate(-50%, -50%)',
+              zIndex: 666,
+            }}
+            className="location-image"
+          >
+            <span className={styles.locationRealName}>{personMessages[0]?.realName || ''}</span>
+            <Image src={locationPng} width={33} height={54} />
+          </div>
+        )}
       </div>
       <div className={styles.employeeInformation}>
         <div className={styles.informationTop}>
@@ -198,7 +204,6 @@ const PersonnelTrajectory = () => {
             <Image src={portrait} width={40} height={40} />
           </div>
           <div className={styles.informationTopMiddle}>
-            {' '}
             <span>{personMessages[0]?.realName || ''}</span>
             <label>{personMessages[0]?.ticketNo || ''}</label>
           </div>
@@ -226,7 +231,6 @@ const PersonnelTrajectory = () => {
           </div>
           <div className={styles.informationMiddleRight}>
             <div>
-              {' '}
               <Button
                 onClick={() => {
                   setStartDateVisible(true);
@@ -237,20 +241,19 @@ const PersonnelTrajectory = () => {
               <DatePicker
                 title="开始时间"
                 visible={startDateVisible}
-                value={startTime}  // 绑定 value 属性到 startTime
+                value={startTime} // 绑定 value 属性到 startTime
                 onClose={() => {
                   setStartDateVisible(false);
                 }}
                 mouseWheel
                 precision="second"
                 onConfirm={(val) => {
-                  setStartTime(val);          
+                  setStartTime(val);
                 }}
-              />   
-              {startTime && <span >{formatDateTime(startTime)}</span>}       
+              />
+              {startTime && <span>{formatDateTime(startTime)}</span>}
             </div>
             <div>
-              {' '}
               <Button
                 onClick={() => {
                   setEndDateVisible(true);
@@ -261,17 +264,17 @@ const PersonnelTrajectory = () => {
               <DatePicker
                 title="结束时间"
                 visible={endDateVisible}
-                value={endTime}  // 绑定 value 属性到 endTime
+                value={endTime} // 绑定 value 属性到 endTime
                 onClose={() => {
                   setEndDateVisible(false);
                 }}
                 mouseWheel
                 precision="second"
                 onConfirm={(val) => {
-                  setEndTime(val);           
+                  setEndTime(val);
                 }}
-              />            
-              {endTime && <span >{formatDateTime(endTime)}</span>}       
+              />
+              {endTime && <span>{formatDateTime(endTime)}</span>}
             </div>
           </div>
         </div>

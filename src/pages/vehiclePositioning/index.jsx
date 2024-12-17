@@ -180,6 +180,7 @@ const VehiclePositioning = () => {
             position: 'absolute',
             left: '0px',
             top: '0px',
+            zIndex: 22,
           }}
         >
           <Image src={area} width={2418} height={2309} />
@@ -190,6 +191,7 @@ const VehiclePositioning = () => {
             left: `${pointPosition.x + 4}px`,
             top: `${pointPosition.y - 14}px`,
             transform: 'translate(-50%, -50%)',
+            zIndex: 666,
           }}
           className="location-image"
         >
