@@ -21,6 +21,7 @@ const TicketNavigation = () => {
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [pathData, setPathData] = useState('');
   const areaRef = useRef(null);
+  const navigationRef = useRef(null);
 
   const calculatePointPosition = (point, imageCorners) => {
     const [topLeft, topRight, bottomLeft, bottomRight] = imageCorners;
@@ -123,6 +124,7 @@ const TicketNavigation = () => {
             position: 'absolute',
             left: '0px',
             top: '0px',
+            paddingBottom: navigationRef.current?.offsetHeight,
           }}
         >
           <Image src={area} width={2418} height={2309} />
@@ -145,7 +147,7 @@ const TicketNavigation = () => {
           <Image src={location} width={33} height={54} />
         </div>
       </div>
-      <div className={styles.navigationBottom} onClick={goBack}>
+      <div className={styles.navigationBottom} onClick={goBack} ref={navigationRef}>
         <div className={styles.navigationBottomContent}>       
             <label>退出导航</label>
         </div>
