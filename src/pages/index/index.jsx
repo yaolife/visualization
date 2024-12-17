@@ -19,10 +19,6 @@ const Index = () => {
     longitude: 0,
     latitude: 0,
   });
-  const [vehicleLocation, setVehicleLocation] = useState({
-    longitude: 0,
-    latitude: 0,
-  });
   const [orient, setOrient] = useState(true); // 没有找到定位点
   const [pointPosition, setPointPosition] = useState({ x: 0, y: 0 });
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
@@ -198,6 +194,7 @@ const Index = () => {
           position: 'absolute',
           left: '0px',
           top: '0px',
+          paddingBottom:'64px',
         }}
       >
         <LazyLoad>
