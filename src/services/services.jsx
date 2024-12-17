@@ -2,8 +2,8 @@
 import mqtt from 'mqtt';
 import { request } from 'umi';
 
-// const API_ROOT = 'http://10.44.100.133:8080';
-const API_ROOT = 'http://10.40.198.95:8011/threeHttp'
+ const API_ROOT = 'http://10.44.100.133:8080';
+// const API_ROOT = 'http://10.40.198.95:8011/threeHttp'
 
 // 通用请求函数
 const requestWithMethod = (url, method, data = {}, headers = {}) => {
@@ -95,9 +95,9 @@ let isConnected = false;
 
 // 连接到 MQTT 代理
 export const connectMQTT = (options = {}) => {
-  // const brokerUrl='ws://broker.emqx.io:8083/mqtt'//本地调试
+  const brokerUrl='ws://broker.emqx.io:8083/mqtt'//本地调试
   // const brokerUrl = 'tcp://10.44.100.132:1883'; // 写死的 brokerUrl生产环境的
-  const brokerUrl = 'http://10.40.198.95:8011/ws'
+  // const brokerUrl = 'http://10.40.198.95:8011/ws'
 
   return new Promise((resolve, reject) => {
     if (isConnected) {
