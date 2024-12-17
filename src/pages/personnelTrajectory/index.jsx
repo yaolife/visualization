@@ -178,7 +178,7 @@ const PersonnelTrajectory = () => {
             left: '0px',
             top: '0px',
             paddingBottom: employeeInfoRef.current?.offsetHeight,
-            zIndex: 999,
+            zIndex: 888,
           }}
         >
           <Image src={area} width={imageWidth} height={imageHeight} />
@@ -190,7 +190,7 @@ const PersonnelTrajectory = () => {
               left: `${pointPosition.x + 4}px`,
               top: `${pointPosition.y - 14}px`,
               transform: 'translate(-50%, -50%)',
-              zIndex: 1000,
+              zIndex: 999,
             }}
             className="locationImage"
           >
