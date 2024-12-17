@@ -3,6 +3,7 @@ import { BgEnum, StatusEnum } from '@/constants';
 import area from '@/images/area.png';
 import locationPng from '@/images/location.png';
 import vehicle from '@/images/vehicle.png';
+import LazyLoad from 'react-lazyload';
 import { formatDateTime } from '@/utils';
 import { connectMQTT, disconnectMQTT, subscribeMQTT } from '@/services/services';
 import { Button, DatePicker, Image, Toast } from 'antd-mobile';
@@ -36,7 +37,7 @@ const VehiclePositioning = () => {
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [isLocationImageVisible, setIsLocationImageVisible] = useState(false); // 新增状态变量
   const areaRef = useRef(null);
-  const vehicleInfoRef = useRef(null);      
+  const vehicleInfoRef = useRef(null);
 
   useEffect(() => {
     // 连接到 MQTT 代理
@@ -74,8 +75,8 @@ const VehiclePositioning = () => {
                     longitude: firstMessage.longitude,
                     latitude: firstMessage.latitude,
                   });
-                    // 显示 locationImage
-                    setIsLocationImageVisible(true);
+                  // 显示 locationImage
+                  setIsLocationImageVisible(true);
                 }
               } else {
                 console.error('消息格式不正确:', firstMessage);
@@ -183,11 +184,13 @@ const VehiclePositioning = () => {
             position: 'absolute',
             left: '0px',
             top: '0px',
-            paddingBottom:vehicleInfoRef.current?.offsetHeight,
+            paddingBottom: vehicleInfoRef.current?.offsetHeight,
             zIndex: 888,
           }}
         >
-          <Image src={area} width={imageWidth} height={imageHeight} />
+          <LazyLoad>
+            <Image src={area} width={imageWidth} height={imageHeight} />
+          </LazyLoad>
         </div>
         {isLocationImageVisible && (
           <div
@@ -200,7 +203,9 @@ const VehiclePositioning = () => {
             }}
             className="locationImage"
           >
-            <span className={styles.locationRealName}>{vehicleMessages[0]?.vehicleNumber || ''}</span>
+            <span className={styles.locationRealName}>
+              {vehicleMessages[0]?.vehicleNumber || ''}
+            </span>
             <Image src={locationPng} width={33} height={54} />
           </div>
         )}

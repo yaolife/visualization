@@ -2,6 +2,7 @@ import Back from '@/components/Back';
 import area from '@/images/area.png';
 import locationPng from '@/images/location.png';
 import portrait from '@/images/portrait.png';
+import LazyLoad from 'react-lazyload';
 import { connectMQTT, disconnectMQTT, subscribeMQTT } from '@/services/services';
 import { formatDateTime } from '@/utils';
 import { Button, DatePicker, Image, Toast } from 'antd-mobile';
@@ -181,7 +182,9 @@ const PersonnelTrajectory = () => {
             zIndex: 888,
           }}
         >
-          <Image src={area} width={imageWidth} height={imageHeight} />
+          <LazyLoad>
+            <Image src={area} width={imageWidth} height={imageHeight} />
+          </LazyLoad>
         </div>
         {isLocationImageVisible && (
           <div

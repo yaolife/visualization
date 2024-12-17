@@ -20,7 +20,8 @@ const VehicleHistory = () => {
     { latitude: 21.698033, longitude: 112.248986 }, // 图片位置 左下
     { latitude: 21.698032, longitude: 112.272816 }, // 图片位置 右下
   ]);
-
+  const imageWidth = 2418;
+  const imageHeight = 2309;
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [pathData, setPathData] = useState('');
   const [isLocationImageVisible, setIsLocationImageVisible] = useState(false); // 新增状态变量
@@ -35,8 +36,8 @@ const VehicleHistory = () => {
     const relativeX = (point.longitude - topLeft.longitude) / width;
     const relativeY = (point.latitude - topLeft.latitude) / height;
 
-    const pixelX = relativeX * 2418;
-    const pixelY = relativeY * 2309;
+    const pixelX = relativeX * imageWidth;
+    const pixelY = relativeY * imageHeight;
 
     return { x: pixelX, y: pixelY };
   };
@@ -159,8 +160,8 @@ const VehicleHistory = () => {
             top: '0px',
           }}
         >
-          <Image src={area} width={2418} height={2309} />
-          <svg width="2418" height="2309" style={{ position: 'absolute', left: '0px', top: '0px' }}>
+          <Image src={area} width={imageWidth} height={imageHeight} />
+          <svg width={imageWidth} height={imageHeight} style={{ position: 'absolute', left: '0px', top: '0px' }}>
             <path d={pathData} stroke="#84FF25" fill="none" strokeWidth="3" />
           </svg>
         </div>
