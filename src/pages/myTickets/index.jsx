@@ -1,11 +1,10 @@
 // src/pages/myTickets/index.jsx
 import React, { useState, useEffect } from 'react';
-import { Image, Space, Button } from 'antd-mobile';
+import { Image, Button } from 'antd-mobile';
 import { history, useLocation } from 'umi';
 import TicketItem from '@/components/TicketItem';
 import Layout from '@/layout';
-import job from '@/images/job.png';
-import navigation from '@/images/navigation.png';
+import whiteJob from '@/images/whiteJob.png';
 import styles from './index.less';
 
 const MyTicket = () => {
@@ -27,9 +26,8 @@ const MyTicket = () => {
   ]);
 
   const goNavigation = () => {
-    history.push('/ticketNavigation')
+    history.push('/ticketNavigation');
   };
-
 
   const location = useLocation();
   const activeTab = location.state?.activeTab || 0;
@@ -44,30 +42,13 @@ const MyTicket = () => {
 
   return (
     <div className={styles.myTicket}>
-      <div className={styles.ticketContent}>
-        <div className={styles.ticketTop}>
-          <Image src={job} width={24} height={24} fit="fill" />
-          <span>我的作业票</span>
-        </div>
-        <div className={styles.ticketMiddle}>
-          {ticketList.map((item, index) => (
-            <div key={item.id}>
-              <TicketItem item={item} key={item.id} />
-            </div>
-          ))}
-        </div>
-        <div className={styles.jopButton} onClick={goNavigation}>
-          <Button
-            shape="default"
-            style={{ backgroundColor: '#004A86' }}
-            className={styles.customButton}
-          >
-            <Space className={styles.buttonNav}>
-              <Image src={navigation} width={20} height={20} fit="fill" />
-              <span>导航</span>
-            </Space>
-          </Button>
-        </div>
+      <div className={styles.ticketTitle}>
+            <Image src={whiteJob} width={24} height={24} fit="fill" />
+            <span>我的作业票</span>
+      </div>
+      <div>
+        <TicketItem />
+        <TicketItem />
       </div>
       <Layout />
     </div>

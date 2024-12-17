@@ -1,18 +1,132 @@
 .ticketItem {
+  border-radius: 18px;
+  border: 1px solid #f6f6f6;
+  background: #fff;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  margin: 13px 0;
+  height: 323px;
+  padding-bottom: 12px;
   display: flex;
-  justify-content: flex-start;
-  margin: 10px 0;
-  .ticketItemLeft {
-    margin-right: 18px;
-    color: rgba(0, 0, 0, 0.6);
-    font-size: 14px;
-    font-weight: 400;
-    min-width: 60px;
+  flex-wrap: wrap;
+  .ticketItemTop {
+    width: 100%;
+    display: flex;
+    align-self: flex-start; /* 顶部盒子在父盒子中靠顶部 */
+    margin-top: 13px;
+    justify-content: space-between;
+    align-items: center;
+    height: 32px;
+    padding-left: 20px;
+    padding-right: 13px;
+    .ticketItemTopLeft {
+      span {
+        color: #000;
+        font-size: 19px;
+        font-weight: 500;
+        margin-right: 18px;
+      }
+      label {
+        color: rgba(0, 0, 0, 0.6);
+        font-size: 14px;
+        font-weight: 400;
+      }
+    }
+    .ticketItemTopRight {
+      display: flex;
+      width: 81px;
+      height: 32px;
+      padding: 10px 3px 10px 0px;
+      justify-content: center;
+      align-items: center;
+      border-radius: 6px;
+      border: 1px solid #004a86;
+      gap: 5px;
+      span {
+        color: #004a86;
+        font-size: 12px;
+        font-weight: 500;
+      }
+    }
   }
-  .ticketItemRight {
-    color: rgba(0, 0, 0, 0.8);
-    font-size: 14px;
-    font-style: normal;
-    font-weight: 400;
+  .ticketItemMiddle {
+    width: 100%;
+    > div {
+      width: 100%;
+      line-height: 20px;
+      margin: 10px 0;
+    }
+    .ticketItemMiddleDeviceInfo {
+      color: rgba(0, 0, 0, 0.8);
+      font-size: 12px;
+      font-weight: 500;
+      padding-left: 20px;
+      padding-right: 15px;
+      label {
+        margin-right: 20px;
+      }
+    }
+    .locateCardNumber {
+      width: 100%;
+      height: 28px;
+      background-color: #f1f1f1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-left: 17px;
+      padding-right: 18px;
+      label {
+        margin-right: 20px;
+        color: rgba(0, 0, 0, 0.6);
+        font-size: 12px;
+      }
+      span {
+        color: rgba(0, 0, 0, 0.8);
+        font-size: 12px;
+        font-weight: 400;
+      }
+    }
+    .ticketItemMiddleOperationInfo {
+      display: flex;
+      padding-left: 20px;
+      padding-right: 15px;
+      label {
+        color: rgba(0, 0, 0, 0.6);
+        font-size: 12px;
+        font-weight: 400;
+        margin-right: 20px;
+      }
+      span {
+        color: rgba(0, 0, 0, 0.8);
+        font-size: 12px;
+        font-weight: 400;
+      }
+      .operationInfo {
+        display: inline-block;
+      }
+      .operationContent {
+        width: 75%;
+        display: inline-block;
+      }
+    }
+  }
+  .ticketItemBottom {
+    display: contents;
+    align-self: flex-end; /* 底部盒子在父盒子中靠底部 */
+    > div {
+      width: 100%;
+      padding-left: 17px;
+      padding-right: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      button {
+        width: 83px;
+        color: #fff;
+        font-family: 'PingFang SC';
+        font-size: 13px;
+        font-weight: 500;
+        border-radius: 6px;
+      }
+    }
   }
 }
