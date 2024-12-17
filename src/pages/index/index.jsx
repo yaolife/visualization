@@ -68,11 +68,8 @@ const Index = () => {
 
         // 订阅主题 车辆的
         subscribeMQTT('realTimeVehicle', (message) => {
-          console.log('订阅的信息:', message);
           try {
             const parsedMessage = JSON.parse(message);
-            console.log('解析后的消息:', parsedMessage);
-
             // 检查消息格式
             if (Array.isArray(parsedMessage) && parsedMessage.length > 0) {
               const firstMessage = parsedMessage[0];
