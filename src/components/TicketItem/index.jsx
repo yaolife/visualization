@@ -6,7 +6,12 @@ import navigation from '@/images/navigation.png';
 import styles from './index.less';
 
 const TicketItem = (props) => {
+  const { clickReceiveCard } = props;
   const [getCardVisible, setGetCardVisible] = useState(true);
+
+  const handleGetCard = () => {
+    clickReceiveCard();
+  };
   return (
     <div className={styles.ticketItem}>
       <div className={styles.ticketItemTop}>
@@ -63,8 +68,13 @@ const TicketItem = (props) => {
               <ScanningOutline fontSize={26} />
             </span>
             <span className={styles.ticketLine} />
-            <Input placeholder="输入定位卡号领取" clearable  className={styles.inputPlaceholder}  />
-            <Button shape="default" block style={{ backgroundColor: '#004A86' }}>
+            <Input placeholder="输入定位卡号领取" clearable className={styles.inputPlaceholder} />
+            <Button
+              shape="default"
+              block
+              style={{ backgroundColor: '#004A86' }}
+              onClick={handleGetCard}
+            >
               {' '}
               领卡
             </Button>
