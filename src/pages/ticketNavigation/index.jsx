@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { LeftOutline } from 'antd-mobile-icons';
-import { history, useLocation } from 'umi';
+import { history } from 'umi';
 import { Image } from 'antd-mobile';
 import UsModal from '@/components/UsModal';
 import { mockRequest } from './mock-request';
@@ -144,17 +144,13 @@ const TicketNavigation = () => {
             }}
             className="location-image"
           >
-            <span
-              className={styles.locationRealName}
-            >
-              {realName}
-            </span>
+            <span className={styles.locationRealName}>{realName}</span>
             <Image src={locationPng} width={33} height={54} />
           </div>
         )}
       </div>
       <div className={styles.navigationBottom} onClick={goBack} ref={navigationRef}>
-        <div className={styles.navigationBottomContent}>       
+        <div className={styles.navigationBottomContent}>
           <label>退出导航</label>
         </div>
       </div>

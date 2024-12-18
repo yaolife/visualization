@@ -125,7 +125,6 @@ const ElectronicFenceList = () => {
 
   useEffect(() => {
     setLoading(true); // 初始加载时设置 loading 为 true
-    console.log('useEffect called, calling doSearch');
     doSearch();
   }, [doSearch]);
 
@@ -133,7 +132,6 @@ const ElectronicFenceList = () => {
     setPerData([]);
     setHasMore(true);
     setCount(0); // 重置计数器
-    console.log('doSearch called, resetting count to 0');
     setLoading(true); // 确保在调用 loadMore 之前设置 loading 为 true
     loadMore();
   }, [loadMore]);
