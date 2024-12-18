@@ -8,12 +8,31 @@
     border-radius: 18px;
     .ticketTop {
       margin-bottom: 68px;
-      span {
-        color: #000;
-        font-size: 14px;
-        font-weight: 500;
-        line-height: 20px;
-        margin-left: 10px;
+      > div {
+        width: 100%;
+        line-height: 25px;
+        margin: 15px 0;
+        label {
+          color: rgba(0, 0, 0, 0.6);
+          font-size: 14px;
+          font-weight: 400;
+        }
+        span {
+          color: rgba(0, 0, 0, 0.8);
+          font-size: 14px;
+          font-weight: 400;
+          margin-left: 18px;
+        }  
+      } 
+      .ticketRequire{
+        display: flex;
+        label{
+          display: inline-block;
+        }
+        span{
+          display: inline-block;
+          width: 75%;
+        }
       }
     }
     .ticketNumber {

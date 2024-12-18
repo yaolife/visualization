@@ -5,7 +5,6 @@ import Header from '@/components/Navbar';
 import { history } from 'umi';
 import TicketItem from '@/components/TicketItem';
 import UsModal from '@/components/UsModal';
-import Layout from '@/layout';
 import styles from './index.less';
 
 const Ticket = () => {
@@ -33,11 +32,12 @@ const Ticket = () => {
       <Header />
       <div className={styles.ticketContent}>
         <div className={styles.ticketTop}>
-          {ticketList.map((item, index) => (
-            <div key={item.id}>
-              <TicketItem item={item} key={item.id} />
-            </div>
-          ))}
+            <div><label>作业票号</label><span>FJ4315665</span></div>
+            <div className={styles.ticketRequire}><label>作业内容</label><span>设备阀门检修长字段显示长字段显示长字段显示</span></div>
+            <div><label>作业设备</label><span>SJ2132H</span><span>冷却阀门</span></div>
+            <div><label>作业位置</label><span>5mx</span> <span>L3</span><span>R09</span></div>
+            <div><label>开始时间</label><span>2024-06-09 23：59</span></div>
+            <div><label>结束时间</label><span>2024-09-23 23：59</span></div>
         </div>
         <div className={styles.ticketNumber}>
           <Input
