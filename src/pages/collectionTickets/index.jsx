@@ -33,7 +33,7 @@ const Ticket = () => {
         <div className={styles.ticketNumber}>
           <Input
             className={styles.customInput}
-            placeholder="输入作业票号查询"
+            placeholder="输入我的定位卡号"
             value={value}
             placeholderTextColor="grey"
             placeholderTextStyle={{ fontSize: 45 }}
