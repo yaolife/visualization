@@ -53,7 +53,7 @@ export const authenticatedGet = (url) => {
 
 // 封装获取当前用户轨迹列表请求
 export const getUserTrackList = async (params) => {
-  const url = `${API_ROOT}/api/yj-server/personTracks/getUserTrackList`;
+  const url = `${API_ROOT}/server-api/personTracks/getUserTrackList`;
   const headers = getHeaders(); // 使用公共请求头，包括 Authorization 头
 
   try {
@@ -67,7 +67,7 @@ export const getUserTrackList = async (params) => {
 
 // 封装获取当前车辆轨迹列表请求
 export const getVehicleTrackList = async (params) => {
-  const url = `${API_ROOT}/api/yj-server/vehicleTracks/getVehicleTrackList`;
+  const url = `${API_ROOT}/server-api/vehicleTracks/getVehicleTrackList`;
   const headers = getHeaders(); // 使用公共请求头，包括 Authorization 头
 
   try {
