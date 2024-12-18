@@ -23,7 +23,7 @@ const MyTicket = () => {
     if (activeTab !== undefined) {
       history.replace({ pathname: '/myTickets', state: { activeTab } });
     }
-  }, [activeTab]); // 移除了 history 依赖
+  }, [activeTab]); 
 
   const receiveCard = () => {
     setVisible(true);
@@ -43,8 +43,8 @@ const MyTicket = () => {
         </div>
         <div>
           <TicketItem clickReceiveCard={clickReceiveCard} />
-          <TicketItem />
-          <TicketItem />
+          <TicketItem clickReceiveCard={clickReceiveCard}/>
+          <TicketItem clickReceiveCard={clickReceiveCard}/>
         </div>
         <Layout />
       </div>

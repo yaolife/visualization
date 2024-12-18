@@ -53,7 +53,6 @@ const PersonnelList = () => {
         append = [];
       }
 
-      console.log(`Data appended:`, append);
       setPerData((val) => [...val, ...append]);
       setHasMore(append.length > 0);
       setCount(currentCount + 6); // 更新 count，增加 pageSize 的值
@@ -126,7 +125,6 @@ const PersonnelList = () => {
 
   useEffect(() => {
     setLoading(true); // 初始加载时设置 loading 为 true
-    console.log('useEffect called, calling doSearch');
     doSearch();
   }, [doSearch]);
 
@@ -134,7 +132,6 @@ const PersonnelList = () => {
     setPerData([]);
     setHasMore(true);
     setCount(0); // 重置计数器
-    console.log('doSearch called, resetting count to 0');
     setLoading(true); // 确保在调用 loadMore 之前设置 loading 为 true
     loadMore();
   }, [loadMore]);
