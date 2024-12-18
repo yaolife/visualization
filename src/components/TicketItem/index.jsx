@@ -1,10 +1,12 @@
-import React from 'react';
-import { Button, Card, Image } from 'antd-mobile';
+import React, { useState, useEffect } from 'react';
+import { Button, Input, Image } from 'antd-mobile';
+import { ScanningOutline } from 'antd-mobile-icons';
 import { TicketStatusEnum, TicketColorEnum } from '@/constants';
 import navigation from '@/images/navigation.png';
 import styles from './index.less';
 
 const TicketItem = (props) => {
+  const [getCardVisible, setGetCardVisible] = useState(true);
   return (
     <div className={styles.ticketItem}>
       <div className={styles.ticketItemTop}>
@@ -55,21 +57,35 @@ const TicketItem = (props) => {
         </div>
       </div>
       <div className={styles.ticketItemBottom}>
-        <div>
-          {' '}
-          <Button shape="default" block style={{ backgroundColor: '#004A86' }}>
+        {getCardVisible ? (
+          <div className={styles.ticketReceive}>
+            <span className={styles.ticketIcon}>
+              <ScanningOutline fontSize={26} />
+            </span>
+            <span className={styles.ticketLine} />
+            <Input placeholder="输入定位卡号领取" clearable  className={styles.inputPlaceholder}  />
+            <Button shape="default" block style={{ backgroundColor: '#004A86' }}>
+              {' '}
+              领卡
+            </Button>
+          </div>
+        ) : (
+          <div className={styles.ticketButtons}>
             {' '}
-            开始作业
-          </Button>
-          <Button shape="default" block style={{ backgroundColor: '#004A86' }}>
-            {' '}
-            结束作业
-          </Button>
-          <Button shape="default" block style={{ backgroundColor: '#004A86' }}>
-            {' '}
-            还卡
-          </Button>
-        </div>
+            <Button shape="default" block style={{ backgroundColor: '#004A86' }}>
+              {' '}
+              开始作业
+            </Button>
+            <Button shape="default" block style={{ backgroundColor: '#004A86' }}>
+              {' '}
+              结束作业
+            </Button>
+            <Button shape="default" block style={{ backgroundColor: '#004A86' }}>
+              {' '}
+              还卡
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -112,7 +112,7 @@
   .ticketItemBottom {
     display: contents;
     align-self: flex-end; /* 底部盒子在父盒子中靠底部 */
-    > div {
+    > div.ticketButtons {
       width: 100%;
       padding-left: 17px;
       padding-right: 15px;
@@ -122,11 +122,46 @@
       button {
         width: 83px;
         color: #fff;
-        font-family: 'PingFang SC';
         font-size: 13px;
         font-weight: 500;
         border-radius: 6px;
       }
     }
+    > div.ticketReceive {
+      width: 100%;
+      height: 32px;
+      background-color: #f1f1f1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 0 18px;
+      .ticketIcon {
+        margin: 0 4px;
+      }
+      .ticketLine {
+        padding-right: 8px;
+        width: 4px;
+        border-left: 1px  solid rgba(0, 0, 0, 0.30);
+        display: inline-block;
+      height: 18px;
+      }
+      button {
+        width: 70px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        line-height: 32px;
+        color: #fff;
+        font-size: 14px;
+        font-weight: 500;
+        border-radius: 0px 6px 6px 0px;
+      }
+    }
+  }
+}
+.inputPlaceholder {
+  ::placeholder {
+    font-size: 12px; // 设置 placeholder 文字大小
+    color:#999;
   }
 }
