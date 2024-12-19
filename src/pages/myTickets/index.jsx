@@ -233,14 +233,13 @@ const MyTicket = () => {
   const handleConfirm = () => {
     setVisible(false);
   };
-  console.log('时间', addOneMonthToCurrentDate());
-  const clickReceiveCard = async (item, index) => {
-    console.log('领卡', item);
+  const clickReceiveCard = async (updatedItem) => {
+    console.log('领卡', updatedItem);
   
     const queryParams = {
       personId:'P970203',//personId为登陆钉钉的用户id
-      trackingCardId:item?.lstPerson[0]?.trackingCardId,
-      workOrderId: item.workOrderId,
+      trackingCardId:updatedItem.trackingCardId,
+      workOrderId: updatedItem.workOrderId,
       expiryTime: addOneMonthToCurrentDate(),//当前时间加了一个月
       cardStatus:1,//有效
       cardType:'2'//临时卡
@@ -271,7 +270,7 @@ const MyTicket = () => {
               key={item.workOrderId}
               visible={visible}
               item={item}
-              clickReceiveCard={() => clickReceiveCard(item)}
+              clickReceiveCard={(items) => clickReceiveCard({ ...item, ...items })}
             />
           ))}
         </div>

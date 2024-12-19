@@ -6,9 +6,13 @@ import styles from './index.less';
 
 const TicketItem = (props) => {
   const { item, clickReceiveCard } = props;
+  const [inputValue, setInputValue] = useState('');
+  const handleInputChange = (value) => {
+    setInputValue(value);
+  };
 
   const handleGetCard = () => {
-    clickReceiveCard();
+    clickReceiveCard({ ...item, trackingCardId: inputValue });
   };
   return (
     <div className={styles.ticketItem}>
@@ -82,7 +86,13 @@ const TicketItem = (props) => {
               <ScanningOutline fontSize={26} />
             </span>
             <span className={styles.ticketLine} />
-            <Input placeholder="输入定位卡号领取" clearable className={styles.inputPlaceholder} />
+            <Input
+              placeholder="输入定位卡号领取"
+              clearable
+              className={styles.inputPlaceholder}
+              value={inputValue}
+              onChange={handleInputChange}
+            />
             <Button
               shape="default"
               block
