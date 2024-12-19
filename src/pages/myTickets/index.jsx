@@ -4,7 +4,7 @@ import { history, useLocation } from 'umi';
 import UsModal from '@/components/UsModal';
 import { addOneMonthToCurrentDate } from '@/utils';
 import TicketItem from '@/components/TicketItem';
-import { getTicketList, receiveTicket,returnTicket } from '@/services/services';
+import { getTicketList, receiveTicket,returnTicket,updateTicketStatus } from '@/services/services';
 import { AutoSizer, List as VirtualizedList, WindowScroller } from 'react-virtualized';
 import Layout from '@/layout';
 import whiteJob from '@/images/whiteJob.png';
@@ -257,7 +257,7 @@ const MyTicket = () => {
       console.error('Error receiving ticket:', error);
     }
   };
-  const returnTicket= async (rItem) => {
+  const handleReturnTicket= async (rItem) => {
     console.log('还卡', rItem);
     const queryParams = {
       personId: 'P970203', // personId为登录钉钉的用户ID
@@ -291,7 +291,7 @@ const MyTicket = () => {
               key={item.workOrderId}
               item={item}
               clickReceiveCard={(updateItem) => clickReceiveCard({ ...item, ...updateItem })}
-              returnTicket={(rItem) => returnTicket(rItem)}
+              returnTicket={(rItem) => handleReturnTicket(rItem)}
             />
           ))}
         </div>
