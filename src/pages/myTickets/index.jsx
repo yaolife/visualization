@@ -267,7 +267,7 @@ const MyTicket = () => {
             <TicketItem
               key={item.workOrderId}
               item={item}
-              clickReceiveCard={(items) => clickReceiveCard({ ...item, ...items })}
+              clickReceiveCard={(updateItem) => clickReceiveCard({ ...item, ...updateItem })}
             />
           ))}
         </div>
