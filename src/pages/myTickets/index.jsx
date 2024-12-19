@@ -14,7 +14,6 @@ const MyTicket = () => {
   const [visible, setVisible] = useState(false);
   const [ticketList, setTicketList] = useState([]);
 
-
   useEffect(() => {
     // 获取票务列表
     const fetchTicketList = async () => {
@@ -44,15 +43,15 @@ const MyTicket = () => {
   };
   return (
     <>
+      <div className={styles.ticketTitle}>
+        <Image src={whiteJob} width={24} height={24} fit="fill" />
+        <span>我的作业票</span>
+      </div>
       <div className={styles.myTicket}>
-        <div className={styles.ticketTitle}>
-          <Image src={whiteJob} width={24} height={24} fit="fill" />
-          <span>我的作业票</span>
-        </div>
         <div className={styles.ticketList}>
           <TicketItem clickReceiveCard={clickReceiveCard} />
-          <TicketItem clickReceiveCard={clickReceiveCard}/>
-          <TicketItem clickReceiveCard={clickReceiveCard}/>
+          <TicketItem clickReceiveCard={clickReceiveCard} />
+          <TicketItem clickReceiveCard={clickReceiveCard} />
         </div>
         <Layout />
       </div>
