@@ -48,7 +48,7 @@ const MyTicket = () => {
         <span>我的作业票</span>
       </div>
       <div className={styles.myTicket}>
-        <div className={styles.ticketList}>
+        <div className={styles.ticketData}>
           <TicketItem clickReceiveCard={clickReceiveCard} />
           <TicketItem clickReceiveCard={clickReceiveCard} />
           <TicketItem clickReceiveCard={clickReceiveCard} />
