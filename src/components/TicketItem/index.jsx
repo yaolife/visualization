@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Button, Input, Image } from 'antd-mobile';
 import { ScanningOutline } from 'antd-mobile-icons';
 import { TicketStatusEnum, TicketColorEnum } from '@/constants';
-import navigation from '@/images/navigation.png';
 import styles from './index.less';
 
 const TicketItem = (props) => {
@@ -18,10 +17,6 @@ const TicketItem = (props) => {
         <div className={styles.ticketItemTopLeft}>
           <span>FJ4315665</span>
           <label>作业票</label>
-        </div>
-        <div className={styles.ticketItemTopRight}>
-          <Image src={navigation} width={20} height={20} fit="fill" />
-          <span>导航</span>
         </div>
       </div>
       <div className={styles.ticketItemMiddle}>

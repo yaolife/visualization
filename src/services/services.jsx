@@ -78,6 +78,19 @@ export const getVehicleTrackList = async (params) => {
     throw error;
   }
 };
+// 获取作业票列表请求
+export const getTicketList = async (params) => {
+  const url = `${API_ROOT}/server-api/dingTalk/workOrder/person/list`;
+  const headers = getHeaders(); // 使用公共请求头，包括 Authorization 头
+
+  try {
+    const response = await post(url, params, headers);
+    return response;
+  } catch (error) {
+    console.error('Failed to get vehicle track list:', error);
+    throw error;
+  }
+};
 
 function generateRandomClientId(length) {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';

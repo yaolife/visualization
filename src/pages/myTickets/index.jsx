@@ -3,6 +3,8 @@ import { Image, Button } from 'antd-mobile';
 import { history, useLocation } from 'umi';
 import UsModal from '@/components/UsModal';
 import TicketItem from '@/components/TicketItem';
+import { getTicketList } from '@/services/services';
+import { AutoSizer, List as VirtualizedList, WindowScroller } from 'react-virtualized';
 import Layout from '@/layout';
 import whiteJob from '@/images/whiteJob.png';
 import styles from './index.less';
@@ -10,20 +12,26 @@ import styles from './index.less';
 const MyTicket = () => {
   const [value, setValue] = useState('');
   const [visible, setVisible] = useState(false);
+  const [ticketList, setTicketList] = useState([]);
 
-  const goNavigation = () => {
-    history.push('/ticketNavigation');
-  };
-
-  const location = useLocation();
-  const activeTab = location.state?.activeTab || 0;
 
   useEffect(() => {
-    // 设置底部导航栏的激活状态
-    if (activeTab !== undefined) {
-      history.replace({ pathname: '/myTickets', state: { activeTab } });
-    }
-  }, [activeTab]); 
+    // 获取票务列表
+    const fetchTicketList = async () => {
+      try {
+        const response = await getTicketList({ personId: 'P970203' });
+        if (response.code === '0') {
+          setTicketList(response.data);
+        } else {
+          console.error('Failed to fetch ticket list:', response.msg);
+        }
+      } catch (error) {
+        console.error('Error fetching ticket list:', error);
+      }
+    };
+
+    fetchTicketList();
+  }, []);
 
   const receiveCard = () => {
     setVisible(true);
@@ -41,7 +49,7 @@ const MyTicket = () => {
           <Image src={whiteJob} width={24} height={24} fit="fill" />
           <span>我的作业票</span>
         </div>
-        <div>
+        <div className={styles.ticketList}>
           <TicketItem clickReceiveCard={clickReceiveCard} />
           <TicketItem clickReceiveCard={clickReceiveCard}/>
           <TicketItem clickReceiveCard={clickReceiveCard}/>

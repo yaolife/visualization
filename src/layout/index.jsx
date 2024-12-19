@@ -37,7 +37,7 @@ const Bottom = ({ activeKey, setActiveTab }) => {
         active ? <Image src={activePersonnel} width={32} height={32} /> : <Image src={personnel} width={32} height={32} />,
     },
     {
-      key: '/job',
+      key: '/myTickets',
       title: '作业票',
       icon: (active) =>
         active ? <Image src={activeTicket} width={32} height={32} /> : <Image src={ticket} width={32} height={32} />,
