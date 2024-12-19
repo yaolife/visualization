@@ -5,7 +5,7 @@ import { TicketColorEnum } from '@/constants';
 import styles from './index.less';
 
 const TicketItem = (props) => {
-  const { item, clickReceiveCard } = props;
+  const { item, clickReceiveCard,returnTicket } = props;
   const [inputValue, setInputValue] = useState('');
   const handleInputChange = (value) => {
     setInputValue(value);
@@ -14,6 +14,9 @@ const TicketItem = (props) => {
   const handleGetCard = () => {
     clickReceiveCard({ ...item, trackingCardId: inputValue });
   };
+  const returnCard=()=>{
+    returnTicket(item)
+  }
   return (
     <div className={styles.ticketItem}>
       <div className={styles.ticketItemTop}>
@@ -75,7 +78,7 @@ const TicketItem = (props) => {
               {' '}
               结束作业
             </Button>
-            <Button shape="default" block style={{ backgroundColor: '#004A86' }}>
+            <Button shape="default" block style={{ backgroundColor: '#004A86' }}   onClick={returnCard}>
               {' '}
               还卡
             </Button>

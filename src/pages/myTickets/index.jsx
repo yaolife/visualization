@@ -4,7 +4,7 @@ import { history, useLocation } from 'umi';
 import UsModal from '@/components/UsModal';
 import { addOneMonthToCurrentDate } from '@/utils';
 import TicketItem from '@/components/TicketItem';
-import { getTicketList, receiveTicket } from '@/services/services';
+import { getTicketList, receiveTicket,returnTicket } from '@/services/services';
 import { AutoSizer, List as VirtualizedList, WindowScroller } from 'react-virtualized';
 import Layout from '@/layout';
 import whiteJob from '@/images/whiteJob.png';
@@ -12,6 +12,8 @@ import styles from './index.less';
 
 const MyTicket = () => {
   const [value, setValue] = useState('');
+  const [mContent, setMContent] = useState('');
+  
   const [visible, setVisible] = useState(false);
   const [ticketList, setTicketList] = useState([ {
     id: '1861652379991715841',
@@ -245,6 +247,7 @@ const MyTicket = () => {
     try {
       const response = await receiveTicket(queryParams);
       if (response.code === '0') {
+        setMContent('领取成功!')
         setVisible(true); // 显示模态框
         fetchTicketList(); // 刷新票务列表
       } else {
@@ -254,7 +257,27 @@ const MyTicket = () => {
       console.error('Error receiving ticket:', error);
     }
   };
-
+  const returnTicket= async (rItem) => {
+    console.log('还卡', rItem);
+    const queryParams = {
+      personId: 'P970203', // personId为登录钉钉的用户ID
+      trackingCardId: rItem.trackingCardId,
+      cardStatus: 1, // 有效
+      cardType: '2', // 临时卡
+    };
+    try {
+      const response = await returnTicket(queryParams);
+      if (response.code === '0') {
+        setMContent('还卡成功!')
+        setVisible(true); // 显示模态框
+        fetchTicketList(); // 刷新票务列表
+      } else {
+        console.error('Failed to receive ticket:', response.msg);
+      }
+    } catch (error) {
+      console.error('Error receiving ticket:', error);
+    }
+  };
   return (
     <>
       <div className={styles.ticketTitle}>
@@ -268,6 +291,7 @@ const MyTicket = () => {
               key={item.workOrderId}
               item={item}
               clickReceiveCard={(updateItem) => clickReceiveCard({ ...item, ...updateItem })}
+              returnTicket={(rItem) => returnTicket(rItem)}
             />
           ))}
         </div>
@@ -275,7 +299,7 @@ const MyTicket = () => {
       </div>
       <UsModal
         visible={visible}
-        content={'领取成功!'}
+        content={mContent}
         showCloseButtonFlag={false}
         handleConfirm={handleConfirm}
       />

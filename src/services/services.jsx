@@ -104,7 +104,19 @@ export const receiveTicket= async (params) => {
     throw error;
   }
 };
+// 获取作业票还卡
+export const returnTicket= async (params) => {
+  const url = `${API_ROOT}/server-api/dingTalk/person/card/return`;
+  const headers = getHeaders(); // 使用公共请求头，包括 Authorization 头
 
+  try {
+    const response = await post(url, params, headers);
+    return response;
+  } catch (error) {
+    console.error('Failed to get vehicle track list:', error);
+    throw error;
+  }
+};
 function generateRandomClientId(length) {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let result = '';
