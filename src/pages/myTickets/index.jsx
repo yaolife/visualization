@@ -261,7 +261,7 @@ const MyTicket = () => {
     console.log('还卡', rItem);
     const queryParams = {
       personId: 'P970203', // personId为登录钉钉的用户ID
-      trackingCardId: rItem.trackingCardId,
+      trackingCardId: rItem.lstPerson[0]?.trackingCardId,
       cardStatus: 1, // 有效
       cardType: '2', // 临时卡
     };
