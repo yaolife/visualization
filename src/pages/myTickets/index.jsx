@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Image, Button } from 'antd-mobile';
 import { history, useLocation } from 'umi';
 import UsModal from '@/components/UsModal';
+import { addOneMonthToCurrentDate } from '@/utils';
 import TicketItem from '@/components/TicketItem';
 import { getTicketList, receiveTicket } from '@/services/services';
 import { AutoSizer, List as VirtualizedList, WindowScroller } from 'react-virtualized';
@@ -151,7 +152,7 @@ const MyTicket = () => {
           personId: 'R004',
           personName: '巡视人员4',
           department: '软件部门',
-          trackingCardId: '12314',
+          trackingCardId: '',
           workOrderId: '1838393433044234241',
         },
       ],
@@ -206,13 +207,12 @@ const MyTicket = () => {
       ltrmn: null,
     },
   ]);
-  const [getCardVisibles, setGetCardVisibles] = useState([]);
 
   useEffect(() => {
     // 获取票务列表
     const fetchTicketList = async () => {
       try {
-        const response = await getTicketList({ personId: 'P970203' });
+        const response = await getTicketList({ personId: 'P970203' });//personId为登陆钉钉的用户id
         if (response.code === '0') {
           setTicketList(response.data);
         } else {
@@ -233,25 +233,30 @@ const MyTicket = () => {
   const handleConfirm = () => {
     setVisible(false);
   };
-
+  console.log('时间', addOneMonthToCurrentDate());
   const clickReceiveCard = async (item, index) => {
     console.log('领卡', item);
-    setVisible(true); // 显示模态框
-
-    // try {
-    //   const response = await receiveTicket({ workOrderId: item.workOrderId });
-    //   if (response.code === '0') {
-    //     setVisible(true); // 显示模态框
-    //     // 更新指定索引的 getCardVisible 状态
-    //     setGetCardVisibles(prevStates =>
-    //       prevStates.map((state, i) => (i === index ? true : state))
-    //     );
-    //   } else {
-    //     console.error('Failed to receive ticket:', response.msg);
-    //   }
-    // } catch (error) {
-    //   console.error('Error receiving ticket:', error);
-    // }
+  
+    const queryParams = {
+      personName:item?.lstPerson[0]?.personName,
+      personId:item?.lstPerson[0]?.personId,
+      trackingCardId:item?.lstPerson[0]?.trackingCardId,
+      workOrderId: item.workOrderId,
+      expiryTime: addOneMonthToCurrentDate(),//当前时间加了一个月
+      cardStatus:1,//有效
+      cardType:'2'//临时卡
+    }
+    try {
+      const response = await receiveTicket(queryParams);
+      if (response.code === '0') {
+        setVisible(true); // 显示模态框
+        // 更新指定索引的 getCardVisible 状态
+      } else {
+        console.error('Failed to receive ticket:', response.msg);
+      }
+    } catch (error) {
+      console.error('Error receiving ticket:', error);
+    }
   };
 
   return (
