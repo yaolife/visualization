@@ -18,15 +18,11 @@ export const BgEnum = {
   '3': '#FF4E4E',
   '4': '#9D9D9D'
 }
-//工作票的状态枚举颜色
-export const TicketStatusEnum = {
-  '1': '未开始',
-  '2': '作业中',
-  '3': '已结束',
-}
+
 //工作票的状态枚举颜色
 export const TicketColorEnum = {
-  '1': 'rgba(96, 96, 96, 0.80)',
-  '2': 'rgba(31, 188, 0, 0.80)',
-  '3': 'rgba(255, 3, 3, 0.80)',
+  '1': '#D7C227',
+  '2': '#25E000',
+  '3': '#FF4E4E',
+  '4': '#9D9D9D',
 }

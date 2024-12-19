@@ -31,12 +31,20 @@
         font-weight: 400;
       }
     }
+    .ticketItemTopRight {
+      text-align: center;
+      width: 52px;
+      height: 20px;
+      line-height: 20px;
+      border-radius: 40px;
+      color: #ffffff;
+    }
   }
   .ticketItemMiddle {
     width: 100%;
     > div {
       width: 100%;
-      line-height: 20px;
+      line-height: 25px;
       margin: 10px 0;
     }
     .ticketItemMiddleDeviceInfo {
@@ -45,8 +53,23 @@
       font-weight: 500;
       padding-left: 20px;
       padding-right: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       label {
         margin-right: 20px;
+      }
+      .checkDevice {
+        display: flex;
+        width: 70px;
+        height: 32px;
+        color: #004a86;
+        justify-content: center;
+        align-items: center;
+        font-size: 12px;
+        font-weight: 500;
+        border-radius: 6px;
+        border: 1px solid #004a86;
       }
     }
     .locateCardNumber {
@@ -125,9 +148,9 @@
       .ticketLine {
         padding-right: 8px;
         width: 4px;
-        border-left: 1px  solid rgba(0, 0, 0, 0.30);
+        border-left: 1px solid rgba(0, 0, 0, 0.3);
         display: inline-block;
-      height: 18px;
+        height: 18px;
       }
       button {
         width: 70px;
@@ -146,6 +169,6 @@
 .inputPlaceholder {
   ::placeholder {
     font-size: 12px; // 设置 placeholder 文字大小
-    color:#999;
+    color: #999;
   }
 }
