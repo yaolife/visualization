@@ -238,8 +238,7 @@ const MyTicket = () => {
     console.log('领卡', item);
   
     const queryParams = {
-      personName:item?.lstPerson[0]?.personName,
-      personId:item?.lstPerson[0]?.personId,
+      personId:'P970203',//personId为登陆钉钉的用户id
       trackingCardId:item?.lstPerson[0]?.trackingCardId,
       workOrderId: item.workOrderId,
       expiryTime: addOneMonthToCurrentDate(),//当前时间加了一个月
