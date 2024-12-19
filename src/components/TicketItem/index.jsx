@@ -50,11 +50,13 @@ const TicketItem = (props) => {
           <div>
             {' '}
             <label>作业设备</label>
-            <span>JKSJAJ... 等10个设备</span>
-          </div>     
-          <div className={styles.checkDevice}>
-             查看设备
+            {item?.equipments?.length > 0 && (
+              <span>
+                {item?.equipments?.[0].equipmentName}... 等{item?.equipments?.length}个设备
+              </span>
+            )}
           </div>
+          <div className={styles.checkDevice}>查看设备</div>
         </div>
       </div>
       <div className={styles.ticketItemBottom}>
